@@ -1,0 +1,129 @@
+name: test
+desc: >-
+  this the the standard test map.
+author: halida
+version: 0.1
+
+maxround: 8000
+maxplayer: 4
+starts:
+  - A
+  - B
+  - C
+  - D
+
+map: |
+  A...B
+  .E.F.
+  ..I..
+  .H.G.
+  C...D
+planets:
+  :A:
+    :def: 2
+    :res: 1
+    :cos: 10
+    :max: 1000
+  :B:
+    :def: 2
+    :res: 1
+    :cos: 10
+    :max: 1000
+  :C:
+    :def: 2
+    :res: 1
+    :cos: 10
+    :max: 1000
+
+  :D:
+    :def: 2
+    :res: 1
+    :cos: 10
+    :max: 1000
+
+  :E:
+    :def: 1.5
+    :res: 1.1
+    :cos: 0
+    :max: 300
+  :F:
+    :def: 1.5
+    :res: 1.1
+    :cos: 0
+    :max: 300
+  :G:
+    :def: 1.5
+    :res: 1.1
+    :cos: 0
+    :max: 300
+  :H:
+    :def: 1.5
+    :res: 1.1
+    :cos: 0
+    :max: 300
+
+  :I:
+    :def: 0.5
+    :res: 1.5
+    :cos: 0
+    :max: 300
+
+
+routes:
+  - - A
+    - B
+    - 10
+  - - A
+    - C
+    - 10
+  - - D
+    - B
+    - 10
+  - - C
+    - D
+    - 10
+
+  - - A
+    - E
+    - 1
+  - - C
+    - H
+    - 1
+  - - B
+    - F
+    - 1
+  - - G
+    - D
+    - 1
+
+  - - E
+    - I
+    - 1
+  - - F
+    - I
+    - 1
+  - - H
+    - I
+    - 1
+  - - G
+    - I
+    - 1
+
+  - - E
+    - H
+    - 2
+  - - E
+    - F
+    - 2
+  - - H
+    - G
+    - 2
+  - - F
+    - G
+    - 2
+
+
+
+
+  
+

@@ -1,6 +1,6 @@
 #-*- coding:utf-8 -*-
 unittest:
-	python srcs/snake_game.py
+	python srcs/conquer_game.py
 	python srcs/game_controller.py
 	python srcs/ailib.py
 

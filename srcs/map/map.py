@@ -4,7 +4,6 @@
 module: map
 """
 import random, yaml, json
-from game import *
 
 class Map:
     walltoken = ['.','W','S']
