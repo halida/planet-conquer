@@ -1,0 +1,18 @@
+*.orig
+*.pyc
+*_ui.py
+*~
+*.qm
+*.log
+*.txt
+*.cfg
+*.bak
+*.out
+
+tmp
+
+# rubyweb
+
+rubyweb/public/assets/*.css
+
+
