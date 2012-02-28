@@ -4,7 +4,6 @@
 module: player_game
 """
 from lib import *
-from simple import *
 from map.map import Map
 import db
 
@@ -14,6 +13,15 @@ RUNNING='running'
 FINISHED='finished'
 
 DEFAULT_MAP = 'srcs/map/test.yml'
+
+class Player():
+    def __init__(self, game, name=""):
+        """设置player
+        """
+        self.game = game
+        self.name = name
+        self.id = uuid.uuid4().hex
+        self.alive = True
 
 class Game():
     """游戏场景"""
@@ -26,6 +34,7 @@ class Game():
         if not map:
             map = Map.loadfile(DEFAULT_MAP)
         self.set_map(map)
+        
         self.start()
 
     def log(self, msg):
@@ -48,117 +57,80 @@ class Game():
         
     def set_map(self, map):
         self.map = map
-        self.MAX_ROUND = map.meta['round']
+        self.planet_data = self.map.planets
+        self.routes = self.map.routes
 
     def start(self):
-        '''
-        # 因为js没有(), 只好用[]
-        self.walls = [[10, i]
-                      for i in range(5, 35)]
-        '''
         self.logs = []
         self.info = None
 
         self.round = 0
-        self.player_op = []
+        self.moves = []
+        self.players = []
         self.loop_count = 0
+        self.player_ops = []
         self.status = WAITFORPLAYER
 
-    def add_player(self,
-                  type=PYTHON,
-                  direction=DOWN,
-                  head=None,
-                  name="unknown"):
-        length = self.map.meta['player_init']
-        # 检查蛇类型
-        if type not in (PYTHON, RUBY):
-            return dict(status='player type error: %s' % type)
-        # 检查蛇数量
-        if len(self.players) >= self.map.meta['player_max']:
-            return dict(status='no place for new player.')
-        if self.status == FINISHED:
-            return dict(stauts='cannot add player when game is finished.')
+        self.planets = [(None, 0) for i in range(len(self.map.planets))]
         
-        # 随机生成蛇的位置
-        d = DIRECT[direction]
-        if not head:
-            while True:
-                # 蛇所在的地点不能有东西存在..
-                next = self.get_empty_place()
-                for i in range(length + 1):
-                    body = [(next[0] - d[0] * i) % self.w,
-                            (next[1] - d[1] * i) % self.h]
-                    if self.check_hit(body):
-                        break
-                # 如果检查没有发现任何一点重合, 就用改点了.
-                else:
-                    head = [(next[0] - d[0]) % self.w,
-                            (next[1] - d[1]) % self.h]
-                    break
-
-        # 生成蛇
-        player = Player(self, type, direction, head, length, name)
+    def add_player(self, name="unknown"):
+        # 生成玩家
+        player = Player(self, name)
         self.players.append(player)
-        self.player_op.append(dict(op='turn', direction=direction))
         # 强制更新info
         self.info = None
-        # 返回蛇的顺序, 以及蛇的id(用来验证控制权限)
+        # 玩家加入地图
+        player_id = len(self.players)-1
+        planet_id = self.map.starts[player_id]
+        self.planets[planet_id] = [player_id, self.map.meta['start_unit']]
+        # 返回玩家的顺序, 以及玩家的id(用来验证控制权限)
         return dict(seq=len(self.players) - 1, id=player.id)
 
-    def set_player(self, n, player):
-        """设置蛇, 调试用"""
-        self.players[n] = player
-        
     def get_seq(self, id):
-        """根据蛇的id获取seq"""
+        """根据玩家的id获取seq"""
         for i, s in enumerate(self.players):
             if s.id == id:
                 return i
 
-    def set_player_op(self, id, round, kw):
-        # 获取蛇的seq
+    def set_playerop(self, id, kw):
+        # 获取玩家的seq
         n = self.get_seq(id)
         if n == None:
             return "noid"
-        # 检查轮数是否正确
-        if round != -1 and self.round != round:
-            return "round error, current round: %d" % self.round
         
-        if kw['op'] == 'turn':
-            kw['direction'] = int(kw['direction'])
-            d = kw['direction']
-            # 检查direction
-            if not 0<=d<=3:
-                return "direction error: %d" % d
-            # check turn back
-            sd = self.players[n].direction
-        
-            self.player_op[n] = kw
-            if (sd != d and sd % 2 == d % 2):
-                return "noturnback"
-            return 'ok'
-
-        elif kw['op'] == 'sprint':
-            self.player_op[n] = kw
+        if kw['op'] == 'moves':
+            for count, _from, to in kw['moves']:
+                # 检查moves合法性
+                # todo
+                step = self.routes[(_from, to)]
+                self.moves.append([n, _from, to, count, step])
             return 'ok'
         else:
-            return 'wrong op: ' + kw['op'] 
+            return 'wrong op: ' + kw['op']
 
-    def check_score(self):
-        """计算最高分, 保存到历史中"""
-        # 只统计活下来的蛇
-        lives = [s
-                 for s in self.players
-                 if s.alive]
-        if len(lives) <=0: return
-        # 计算谁的分数最大
-        highest = max(lives, key=lambda s: s.length())
-        self.log('game finished, winner: ' + highest.name)
+    def check_winner(self):
+        """
+        胜利判断按照: 星球总数, 单位数量, 玩家顺序 依个判断数值哪个玩家最高来算. (不会出现平局)
+        同时计算最高分, 保存到历史中
+        """
+        scores = [[0, 0, i] for i in range(len(self.players))]
+        for side, count in self.planets:
+            if side != None:
+                scores[side][0] += 1
+                scores[side][1] += count
+
+        maxid = max(scores)[2]
+        winner = self.players[maxid]
+        self.log('game finished, winner: ' + winner.name)
         # 再加到最高分里面去
-        db.cursor.execute('insert into scores values(?, ?)', (datetime.datetime.now(), highest.name))
+        db.cursor.execute('insert into scores values(?, ?)', (datetime.datetime.now(), winner.name))
         db.db.commit()
+        return maxid
 
     def scores(self):
+        """
+        获取游戏历史分数
+        """
         d = date.today()
         today = datetime.datetime(d.year, d.month, d.day)
         dailys =  list(db.cursor.execute('select * from (select name, count(*) as count from scores where time > ? group by name) order by count desc limit 10', (today, )))
@@ -194,12 +166,30 @@ class Game():
                          logs=self.logs)
         return self.info
 
+    def check_finished(self):
+        """
+        检查游戏是否结束
+        当回合限制到达或者只有一个玩家剩下的时候, 游戏结束.
+        """
+        if self.round > self.map.meta['max_round']:
+            return True
+
+        players = set()
+        for side, count in self.planets:
+            if side != None:
+                players.add(side)
+        if len(players) == 1: 
+            return True
+
     def step(self):
-        """游戏进行一步..."""
+        """
+        游戏进行一步
+        返回值代表游戏是否有更新
+        """
         self.logs = []
         self.info = None
-        # 如果游戏结束或者waitforplayer, 等待一会继续开始
-        if self.loop_count <= 50 and self.status in [FINISHED, WAITFORPLAYER]:
+        # 如果游戏结束, 等待一会继续开始
+        if self.loop_count <= 50 and self.status in [FINISHED]:
             self.loop_count += 1
             return
 
@@ -208,47 +198,96 @@ class Game():
             self.start()
             return True
 
-        # 游戏开始的时候, 需要有2条以上的蛇加入.
+        # 游戏开始的时候, 需要有2个以上的玩家加入.
         if self.status == WAITFORPLAYER:
             if len(self.players) < 2: return
             self.status = RUNNING
             self.log('game running.')
 
-        # 首先检查获胜条件:
-        # 并且只有一个人剩余
-        # 或者时间到
-        alives = sum([s.alive for s in self.players])
-        if alives <= 1 or(self.MAX_ROUND != 0 and self.round > self.MAX_ROUND):
+        if self.check_finished():
             self.status = FINISHED
             self.loop_count = 0
-            self.check_score()
+            self.check_winner()
             return True
 
-        # 移动player
-        for i, d in enumerate(self.player_op):
+        # 生产回合
+        for i, data in enumerate(self.planets):
+            side, count = data
+            if side == None: continue
+            next = self.count_growth(count, self.planet_data[i])
+            if next <= 0: side = None
+            self.planets[i] = [side, next]
+
+        # 玩家移动回合
+        for i, d in enumerate(self.player_ops):
             player = self.players[i]
             if not player.alive: continue
 
-            # 如果连续没有响应超过10次, 让蛇死掉
+            # 如果连续没有响应超过10次, 让玩家死掉
             if d == None and self.enable_no_resp_die:
                 self.no_response_player_die(player, self.round)
 
             player.op(d)
-            player.move()
 
-        # 生成豆子
-        if self.map.beangen.can(self):
-            beans = self.map.beangen.gen(self)
-            self.eggs += beans[0]
-            self.gems += beans[1]
+        # 到达回合
+        for move in self.moves:
+            move[-1] -= 1
+        arrives = filter(lambda move: move[-1]<=0,  self.moves)
+        self.moves = filter(lambda move: move[-1]>0,  self.moves)
         
-        #if self.round % self.bean_time == 0:
-        #    self.create_bean()
-
+        # 战斗回合
+        for move in arrives:
+            self.battle(move)
+            
         # next round
         self.round += 1
         self.player_op = [None, ] * len(self.players)
         return True
+
+    def battle(self, move):
+        """
+        战斗阶段
+        首先进行def加权, 星球的单位Xdef 当作星球的战斗力量.
+        双方数量一样, 同时全灭, A>B的时候, B全灭, A-B/(A/B) (B/(A/B)按照浮点计算, 最后去掉小数部分到整数)
+        如果驻守方胜利, 除回def系数, 去掉小数部分到整数作为剩下的数量.
+        """
+        side, _from, to, count, _round = move
+        planet_side, planet_count = self.planets[to]
+        _def = self.planet_data[to]['def']
+
+        if planet_side == None:
+            # 如果星球没有驻军, 就占领
+            planet_side = side
+            planet_count = count
+        elif side == planet_side:
+            # 如果是己方, 就加入
+            planet_count += count
+        else:
+            # 敌方战斗
+            # 防守方加权
+            planet_count *= _def
+            if planet_count == count:
+                # 数量一样的话, 同时全灭
+                planet_side, planet_count = None, 0
+            elif planet_count < count:
+                # 进攻方胜利
+                planet_side = side
+                planet_count = count - int(planet_count**2/float(count))
+            else:
+                # 防守方胜利                
+                planet_count -= int(count**2/float(planet_count))
+                planet_count = int(planet_count / _def)
+                
+        self.planets[to] = [planet_side, planet_count]
+
+    def count_growth(self, planet_count, planet):
+        max = planet['max']
+        res = planet['res']
+        cos = planet['cos']
+        if planet_count <= max or res < 1:
+            return planet_count * res + cos
+        else:
+            return planet_count
 
     def get_portal_next(self, p):
         seq = self.portals.index(p)
@@ -311,7 +350,7 @@ class Game():
 
     def no_response_player_die(self, player, round):
         """
-        如果连续没有响应超过3次, 让蛇死掉
+        如果连续没有响应超过3次, 让玩家死掉
         round是没有响应的轮数(用来检查是否连续没有响应)
         
         """
@@ -335,49 +374,99 @@ class Game():
 def test():
     """
     # 初始化游戏
-    >>> game = Game(
-    ...     start_unit=100, 
-    ...     enable_no_resp_die=False)
+    >>> g = Game(enable_no_resp_die=False)
 
     # 玩家加入
-    >>> player1 = game.add_player('player1')
+    >>> player1 = g.add_player('player1')
     >>> player1['seq'] == 0
     True
-    >>> player2 = game.add_player('player2')
+    >>> player2 = g.add_player('player2')
     >>> player2['seq'] == 1
     True
-
+    >>> g.planets
+    [[0, 100], [1, 100], (None, 0), (None, 0), (None, 0)]
+    
     # 游戏可以开始了
-    >>> game.status == WAITFORPLAYER
+    >>> g.status == WAITFORPLAYER
     True
-    >>> game.round == 0
+    >>> g.round == 0
     True
-    >>> game.step()
-    >>> game.round == 1
+    >>> g.step()
+    True
+    >>> g.round == 1
     True
     
     # 一个回合之后, 玩家的单位开始增长了
-    >>> game.holds[0] == 110
-    >>> game.holds[1] == 100
+    >>> g.planets
+    [[0, 110], [1, 110], (None, 0), (None, 0), (None, 0)]
 
     # 玩家开始出兵
-    >>> game.player_move(0, [[100, 0, 4], ])
-    >>> game.player_move(1, [[10, 1, 4], ])
+    >>> g.set_playerop(player1['id'], {'op': 'moves', 'moves': [[100, 0, 4], ]})
+    'ok'
+    >>> g.set_playerop(player2['id'], {'op': 'moves', 'moves': [[10, 1, 4], ]})
+    'ok'
     
     # 出兵到达目标星球
+    >>> g.step()
+    True
+    >>> g.moves
+    [[0, 0, 4, 100, 1], [1, 1, 4, 10, 1]]
+    >>> g.step()
+    True
+
     # 战斗计算
+    >>> g.planets[4]
+    [0, 96]
 
     # 结束逻辑测试
+    >>> import copy
+
     # 只有一个玩家剩下的时候, 游戏结束
+    >>> gend = copy.deepcopy(g)
+    >>> gend.planets[1] = [None, 0]
+    >>> gend.step()
+    True
+    >>> gend.status == FINISHED
+    True
+    >>> gend.check_winner()
+    0
+    
     # 回合数到的时候, 星球多的玩家胜利
+    >>> gend = copy.deepcopy(g)
+    >>> gend.round = 10000
+    >>> gend.step()
+    True
+    >>> gend.status == FINISHED
+    True
+    >>> gend.check_winner()
+    0
+    
     # 回合数到的时候, 星球一样, 单位多的玩家胜利
-    # 回合数到的时候, 星球一样, 单位一样, 序号后面的玩家胜利 
+    >>> gend = copy.deepcopy(g)
+    >>> gend.round = 10000
+    >>> gend.planets[4] = [None, 0]
+    >>> gend.step()
+    True
+    >>> gend.status == FINISHED
+    True
+    >>> gend.check_winner()
+    1
+    
+    # 回合数到的时候, 星球一样, 单位一样, 序号后面的玩家胜利
+    >>> gend = copy.deepcopy(g)
+    >>> gend.round = 10000
+    >>> gend.planets[4] = [None, 0]
+    >>> gend.planets[0] = [0, 100]
+    >>> gend.planets[1] = [1, 100]
+    >>> gend.step()
+    True
+    >>> gend.status == FINISHED
+    True
+    >>> gend.check_winner()
+    1
     """
     import doctest
     doctest.testmod()
-
-def main():
-    test()
     
 if __name__=="__main__":
-    main()
+    test()

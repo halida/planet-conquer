@@ -4,8 +4,9 @@ desc: >-
 author: halida
 version: 0.1
 
-maxround: 8000
-maxplayer: 4
+max_round: 8000
+max_player: 4
+start_unit: 100
 starts:
   - A
   - B
@@ -19,27 +20,32 @@ map: |
   .....
   C...D
 planets:
-  :A:
-    :def: 2
-    :res: 1
-    :cos: 10
-    :max: 1000
-  :B:
-    :def: 2
-    :res: 1
-    :cos: 10
-    :max: 1000
-  :C:
-    :def: 2
-    :res: 1
-    :cos: 10
-    :max: 1000
+  A:
+    def: 2
+    res: 1
+    cos: 10
+    max: 1000
+  B:
+    def: 2
+    res: 1
+    cos: 10
+    max: 1000
+  C:
+    def: 2
+    res: 1
+    cos: 10
+    max: 1000
+  D:
+    def: 2
+    res: 1
+    cos: 10
+    max: 1000
 
-  :E:
-    :def: 0.5
-    :res: 1.5
-    :cos: 0
-    :max: 300
+  E:
+    def: 0.5
+    res: 1.5
+    cos: 0
+    max: 300
 
 
 routes:
