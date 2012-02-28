@@ -23,7 +23,6 @@ class Shower():
         self.player_colors = []
 
     def set_map(self, map):
-        print map
         self.map = map
         size = self.map['map_size']
         self.screen = pygame.display.set_mode(
@@ -32,7 +31,6 @@ class Shower():
             s['color'] = random_planet_color()
 
     def flip(self, info):
-        print info
         # 退出判断
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -60,9 +58,10 @@ class Shower():
             
         # players
         for i, s in enumerate(info['holds']):
-            print s
-            sur = self.font.render(s[2], True, self.player_colors[s[0]])
-            planet_pos = self.map['planets'][i[1]]['pos']
+            player_id, count = s
+            if player_id == None: continue
+            sur = self.font.render(str(count), True, self.player_colors[player_id])
+            planet_pos = self.map['planets'][i]['pos']
             self.screen.blit(sur,
                              (planet_pos[0]*SIZE,
                               planet_pos[1]*SIZE))

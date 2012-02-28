@@ -44,12 +44,33 @@ class SimpleAI():
         self.info = self.cmd("info")
 
     def cmd_moves(self, moves):
-        return self.cmd("move",
+        return self.cmd("moves",
                         dict(id = self.me["id"],
                              moves = moves))
 
     def step(self):
-        return []
+        moves = []
+        sended = 20
+        small_hold = 50
+        for i, s in enumerate(self.info['holds']):
+            side, count = s
+            # 寻找自己的星球
+            if side != self.me['seq']:
+                continue
+
+            for route in self.map['routes']:
+                # 数量超过一定程度的时候, 才派兵
+                if count < small_hold:
+                    break
+                # 当前星球的路径, 并且对方星球不是自己的星球
+                _from, to, step = route
+                if _from != i or self.info['holds'][to] == self.me['seq']:
+                    continue
+                # 派兵!
+                moves.append([sended, _from, to])
+                count -= sended
+
+        return moves
 
 
 def main():
@@ -57,11 +78,10 @@ def main():
     rs.cmd_map()
     logging.debug(rs.cmd_add())
     while True:
-        time.sleep(0.3)
+        time.sleep(1.0)
         rs.cmd_info()
         result = rs.step()
         rs.cmd_moves(result)
-        logging.debug(result)
     
 if __name__=="__main__":
     main()

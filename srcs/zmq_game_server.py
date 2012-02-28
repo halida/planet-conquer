@@ -11,7 +11,7 @@ from game import *
 
 context = zmq.Context()
 
-ROOMS = 10
+ROOMS = 1
 
 class Server():
     """
@@ -22,7 +22,7 @@ class Server():
     """
     def on_logic(self, g, ok):
         """判断定期更新的时间是否到了"""
-        min_waits = 0.2
+        min_waits = 2
         max_waits = self.max_waits
         if not hasattr(g, 'pre'):
             g.pre = time.time()
@@ -81,11 +81,11 @@ class Server():
                     
                 # 为了防止错误命令搞挂服务器, 加上错误处理
                 except Exception as e:
+                    raise
                     error_msg = str(e)
                     result = dict(status=error_msg, data=rc)
                     logging.debug(error_msg)
 
-                print result
                 oper.send(json.dumps(result))
 
             # 处理所有room的游戏id
@@ -103,6 +103,7 @@ class Server():
     
                 # 游戏处理
                 updated = g.step()
+                print g.get_info()
 
                 # 发送更新信息
                 if updated:

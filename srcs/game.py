@@ -100,11 +100,18 @@ class Game():
             return "noid"
         
         if kw['op'] == 'moves':
+            moves = []
             for count, _from, to in kw['moves']:
                 # 检查moves合法性
                 # todo
                 step = self.routes[(_from, to)]
-                self.moves.append([n, _from, to, count, step])
+                moves.append([n, _from, to, count, step])
+            # 更新moves
+            self.moves = [i
+                          for i in self.moves
+                          if i[0] != n]
+            self.moves.extend(moves)
+            
             return 'ok'
         else:
             return 'wrong op: ' + kw['op']
@@ -198,6 +205,7 @@ class Game():
             self.status = RUNNING
             self.log('game running.')
 
+        # 游戏结束判断
         if self.check_finished():
             self.status = FINISHED
             self.loop_count = 0
@@ -226,8 +234,10 @@ class Game():
         # 到达回合
         for move in self.moves:
             move[-1] -= 1
-        arrives = filter(lambda move: move[-1]<=0,  self.moves)
-        self.moves = filter(lambda move: move[-1]>0,  self.moves)
+        arrives = [i for i in self.moves
+                   if i[-1]<=0]
+        self.moves = [i for i in self.moves
+                      if move[-1]>0]
         
         # 战斗回合
         for move in arrives:
@@ -411,7 +421,7 @@ def test():
     >>> g.get_map()
     {'planets': [{'res': 1, 'cos': 10, 'pos': (0, 0), 'def': 2, 'max': 1000}, {'res': 1, 'cos': 10, 'pos': (4, 0), 'def': 2, 'max': 1000}, {'res': 1, 'cos': 10, 'pos': (0, 4), 'def': 2, 'max': 1000}, {'res': 1, 'cos': 10, 'pos': (4, 4), 'def': 2, 'max': 1000}, {'res': 1.5, 'cos': 0, 'pos': (2, 2), 'def': 0.5, 'max': 300}], 'name': 'test', 'map_size': (5, 5), 'author': 'halida', 'routes': [(0, 1, 4), (3, 2, 4), (1, 3, 4), (3, 4, 2), (3, 1, 4), (1, 4, 2), (2, 4, 2), (2, 0, 4), (2, 3, 4), (4, 3, 2), (0, 4, 2), (4, 2, 2), (1, 0, 4), (4, 1, 2), (0, 2, 4), (4, 0, 2)], 'max_round': 8000, 'desc': 'this the the standard test map.'}
     >>> g.get_info()
-    {'status': 'running', 'holds': [[0, 120], [1, 120], (None, 0), (None, 0), (None, 0)], 'moves': [[0, 0, 4, 100, 1], [1, 1, 4, 10, 1]], 'logs': [], 'round': 2}
+    {'status': 'running', 'players': [{'name': 'player1'}, {'name': 'player2'}], 'moves': [[0, 0, 4, 100, 1], [1, 1, 4, 10, 1]], 'logs': [], 'holds': [[0, 120], [1, 120], (None, 0), (None, 0), (None, 0)], 'round': 2}
     
     # 战斗计算
     >>> g.step()

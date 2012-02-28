@@ -43,6 +43,8 @@ class Controller():
             return self.game.add_player(data['name'])
         
         elif op in ('moves'):
+            if isinstance(data['moves'] , basestring):
+                data['moves'] = json.loads(data['moves'])
             return dict(status=self.game.set_player_op(data['id'], data))
         
         elif op == 'map':
