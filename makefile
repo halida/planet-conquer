@@ -2,7 +2,7 @@
 unittest:
 	python srcs/map/map.py
 	python srcs/game.py
-# python srcs/game_controller.py
+	python srcs/game_controller.py
 # python srcs/ailib.py
 
 # run the game server

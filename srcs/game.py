@@ -57,8 +57,9 @@ class Game():
         
     def set_map(self, map):
         self.map = map
-        self.planet_data = self.map.planets
+        self.planets = self.map.planets
         self.routes = self.map.routes
+        self.max_round = self.map.max_round
 
     def start(self):
         self.logs = []
@@ -71,7 +72,7 @@ class Game():
         self.player_ops = []
         self.status = WAITFORPLAYER
 
-        self.planets = [(None, 0) for i in range(len(self.map.planets))]
+        self.holds = [(None, 0) for i in range(len(self.map.planets))]
         
     def add_player(self, name="unknown"):
         # 生成玩家
@@ -82,7 +83,7 @@ class Game():
         # 玩家加入地图
         player_id = len(self.players)-1
         planet_id = self.map.starts[player_id]
-        self.planets[planet_id] = [player_id, self.map.meta['start_unit']]
+        self.holds[planet_id] = [player_id, self.map.meta['start_unit']]
         # 返回玩家的顺序, 以及玩家的id(用来验证控制权限)
         return dict(seq=len(self.players) - 1, id=player.id)
 
@@ -92,7 +93,7 @@ class Game():
             if s.id == id:
                 return i
 
-    def set_playerop(self, id, kw):
+    def set_player_op(self, id, kw):
         # 获取玩家的seq
         n = self.get_seq(id)
         if n == None:
@@ -114,7 +115,7 @@ class Game():
         同时计算最高分, 保存到历史中
         """
         scores = [[0, 0, i] for i in range(len(self.players))]
-        for side, count in self.planets:
+        for side, count in self.holds:
             if side != None:
                 scores[side][0] += 1
                 scores[side][1] += count
@@ -139,30 +140,23 @@ class Game():
         return dict(dailys=dailys, weeklys=weeklys, monthlys=monthlys)
 
     def get_map(self):
-        return dict(walls=self.walls,
-                    portals=self.portals,
-                    size=self.size,
+        return dict(routes=self.map.seq_routes,
+                    planets=self.planets,
+                    max_round=self.max_round,
+                    desc=self.map.desc,
                     name=self.map.name,
                     author=self.map.author,
+                    map_size = self.map.map_size,
                     )
 
     def get_info(self):
         if self.info:
             return self.info
-        players = [dict(direction=s.direction,
-                       body=s.body,
-                       name=s.name,
-                       type=s.type,
-                       sprint=s.sprint,
-                       length=len(s.body),
-                       alive=s.alive)
-                  for s in self.players
-                  ]
-        self.info = dict(players=players,
+        self.info = dict(round=self.round,
                          status=self.status,
-                         eggs=self.eggs,
-                         gems=self.gems,
-                         round=self.round,
+                         players=[dict(name=p.name) for p in self.players],
+                         moves=self.moves,
+                         holds=self.holds,
                          logs=self.logs)
         return self.info
 
@@ -171,11 +165,11 @@ class Game():
         检查游戏是否结束
         当回合限制到达或者只有一个玩家剩下的时候, 游戏结束.
         """
-        if self.round > self.map.meta['max_round']:
+        if self.round > self.max_round:
             return True
 
         players = set()
-        for side, count in self.planets:
+        for side, count in self.holds:
             if side != None:
                 players.add(side)
         if len(players) == 1: 
@@ -211,12 +205,12 @@ class Game():
             return True
 
         # 生产回合
-        for i, data in enumerate(self.planets):
+        for i, data in enumerate(self.holds):
             side, count = data
             if side == None: continue
-            next = self.count_growth(count, self.planet_data[i])
+            next = self.count_growth(count, self.planets[i])
             if next <= 0: side = None
-            self.planets[i] = [side, next]
+            self.holds[i] = [side, next]
 
         # 玩家移动回合
         for i, d in enumerate(self.player_ops):
@@ -252,8 +246,8 @@ class Game():
         如果驻守方胜利, 除回def系数, 去掉小数部分到整数作为剩下的数量.
         """
         side, _from, to, count, _round = move
-        planet_side, planet_count = self.planets[to]
-        _def = self.planet_data[to]['def']
+        planet_side, planet_count = self.holds[to]
+        _def = self.planets[to]['def']
 
         if planet_side == None:
             # 如果星球没有驻军, 就占领
@@ -278,7 +272,7 @@ class Game():
                 planet_count -= int(count**2/float(planet_count))
                 planet_count = int(planet_count / _def)
                 
-        self.planets[to] = [planet_side, planet_count]
+        self.holds[to] = [planet_side, planet_count]
 
     def count_growth(self, planet_count, planet):
         max = planet['max']
@@ -383,7 +377,7 @@ def test():
     >>> player2 = g.add_player('player2')
     >>> player2['seq'] == 1
     True
-    >>> g.planets
+    >>> g.holds
     [[0, 100], [1, 100], (None, 0), (None, 0), (None, 0)]
     
     # 游戏可以开始了
@@ -397,25 +391,32 @@ def test():
     True
     
     # 一个回合之后, 玩家的单位开始增长了
-    >>> g.planets
+    >>> g.holds
     [[0, 110], [1, 110], (None, 0), (None, 0), (None, 0)]
 
+
     # 玩家开始出兵
-    >>> g.set_playerop(player1['id'], {'op': 'moves', 'moves': [[100, 0, 4], ]})
+    >>> g.set_player_op(player1['id'], {'op': 'moves', 'moves': [[100, 0, 4], ]})
     'ok'
-    >>> g.set_playerop(player2['id'], {'op': 'moves', 'moves': [[10, 1, 4], ]})
+    >>> g.set_player_op(player2['id'], {'op': 'moves', 'moves': [[10, 1, 4], ]})
     'ok'
-    
+
     # 出兵到达目标星球
     >>> g.step()
     True
     >>> g.moves
     [[0, 0, 4, 100, 1], [1, 1, 4, 10, 1]]
+
+    # 能够获取API
+    >>> g.get_map()
+    {'planets': [{'res': 1, 'cos': 10, 'pos': (0, 0), 'def': 2, 'max': 1000}, {'res': 1, 'cos': 10, 'pos': (4, 0), 'def': 2, 'max': 1000}, {'res': 1, 'cos': 10, 'pos': (0, 4), 'def': 2, 'max': 1000}, {'res': 1, 'cos': 10, 'pos': (4, 4), 'def': 2, 'max': 1000}, {'res': 1.5, 'cos': 0, 'pos': (2, 2), 'def': 0.5, 'max': 300}], 'name': 'test', 'map_size': (5, 5), 'author': 'halida', 'routes': [(0, 1, 4), (3, 2, 4), (1, 3, 4), (3, 4, 2), (3, 1, 4), (1, 4, 2), (2, 4, 2), (2, 0, 4), (2, 3, 4), (4, 3, 2), (0, 4, 2), (4, 2, 2), (1, 0, 4), (4, 1, 2), (0, 2, 4), (4, 0, 2)], 'max_round': 8000, 'desc': 'this the the standard test map.'}
+    >>> g.get_info()
+    {'status': 'running', 'holds': [[0, 120], [1, 120], (None, 0), (None, 0), (None, 0)], 'moves': [[0, 0, 4, 100, 1], [1, 1, 4, 10, 1]], 'logs': [], 'round': 2}
+    
+    # 战斗计算
     >>> g.step()
     True
-
-    # 战斗计算
-    >>> g.planets[4]
+    >>> g.holds[4]
     [0, 96]
 
     # 结束逻辑测试
@@ -423,7 +424,7 @@ def test():
 
     # 只有一个玩家剩下的时候, 游戏结束
     >>> gend = copy.deepcopy(g)
-    >>> gend.planets[1] = [None, 0]
+    >>> gend.holds[1] = [None, 0]
     >>> gend.step()
     True
     >>> gend.status == FINISHED
@@ -444,7 +445,7 @@ def test():
     # 回合数到的时候, 星球一样, 单位多的玩家胜利
     >>> gend = copy.deepcopy(g)
     >>> gend.round = 10000
-    >>> gend.planets[4] = [None, 0]
+    >>> gend.holds[4] = [None, 0]
     >>> gend.step()
     True
     >>> gend.status == FINISHED
@@ -455,9 +456,9 @@ def test():
     # 回合数到的时候, 星球一样, 单位一样, 序号后面的玩家胜利
     >>> gend = copy.deepcopy(g)
     >>> gend.round = 10000
-    >>> gend.planets[4] = [None, 0]
-    >>> gend.planets[0] = [0, 100]
-    >>> gend.planets[1] = [1, 100]
+    >>> gend.holds[4] = [None, 0]
+    >>> gend.holds[0] = [0, 100]
+    >>> gend.holds[1] = [1, 100]
     >>> gend.step()
     True
     >>> gend.status == FINISHED

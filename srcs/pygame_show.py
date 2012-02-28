@@ -7,93 +7,66 @@ module: pygame_show
 from lib import *
 import pygame
 
-snake_colors = [(0xa5, 0xc9, 0xe7), (0x08, 0x46, 0x7b), (0x3e, 0x9b, 0xe9), (0x88, 0xdb, 0x99), (0x0e, 0x74, 0x83), (0x85, 0xf5, 0x6b), (0xa5, 0xc9, 0xe7), (0x0a, 0x48, 0x46), (0x3a, 0xe7, 0x12), (0x88, 0xdb, 0x99), (0xf3, 0xf0, 0x0a), (0x0d, 0xb0, 0x2c)]
+SIZE = 40
 
+def random_planet_color():
+    return (random.randint(120, 225), random.randint(120, 225), random.randint(120, 225))
 
-SIZE = 10
+def random_player_color():
+    return (random.randint(0, 120), random.randint(0, 120), random.randint(0, 120))
+
 class Shower():
     def __init__(self, map):
         pygame.init()
         self.font = pygame.font.SysFont('sans', 12)
         self.set_map(map)
+        self.player_colors = []
 
     def set_map(self, map):
+        print map
         self.map = map
-        size = self.map['size']
+        size = self.map['map_size']
         self.screen = pygame.display.set_mode(
-            (size[0]*SIZE + 100,
-             size[1]*SIZE))
+            (size[0]*SIZE, size[1]*SIZE))
+        for s in self.map['planets']:
+            s['color'] = random_planet_color()
 
     def flip(self, info):
+        print info
         # 退出判断
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 sys.exit()
+
+        # 给玩家加颜色
+        while len(info['players']) > len(self.player_colors):
+            self.player_colors.append(random_player_color())
         
         size = SIZE
-        gem_color = (100,0,0)
-        egg_color = (100,100,0)
-        portal_color = (100, 0, 100)
         def drawRect(c, x, y, w, h):
             pygame.draw.rect(self.screen, c,
                              pygame.Rect(x, y, w, h))
+        def drawCircle(c, pos):
+            pygame.draw.circle(self.screen, c,
+                               (pos[0]*SIZE+SIZE/2, pos[1]*SIZE+SIZE/2), SIZE/2)
+        
         # draw map background
         self.screen.fill((200,200,200))
         
-        # snakes
-        y = 10
-        for i, s in enumerate(info['snakes']):
-            color = snake_colors[i]
-
-            for dot in s['body']:
-                drawRect(color,
-                         dot[0] * size,
-                         dot[1] * size,
-                         size, size)
-            # head
-            dot = s['body'][0]
-            hcolor = egg_color if s['type'] == 'python' else gem_color
-            drawRect(hcolor,
-                     dot[0] * size + 2,
-                     dot[1] * size + 2,
-                     size-4, size-4)
-
-            # snake info
-            drawRect(color,
-                     self.map['size'][0]*size + 10, y, 
-                     size, size)
-            # text
-            sur = self.font.render(s['name'], True, (0,0,0))
+        # planets
+        for i, s in enumerate(self.map['planets']):
+            pos = s['pos']
+            drawCircle(s['color'], s['pos'])
+            
+        # players
+        for i, s in enumerate(info['holds']):
+            print s
+            sur = self.font.render(s[2], True, self.player_colors[s[0]])
+            planet_pos = self.map['planets'][i[1]]['pos']
             self.screen.blit(sur,
-                             (self.map['size'][0]*size + 30, y))
-            y += size + 10
-                
-        # beans
-        for bean in info['eggs']:
-            drawRect(egg_color,
-                     bean[0] * size,
-                     bean[1] * size,
-                     size, size)
-        for bean in info['gems']:
-            drawRect(gem_color,
-                      bean[0] * size,
-                      bean[1] * size,
-                      size, size)
-        
-        # walls
-        for wall in self.map['walls']:
-            drawRect((0,0,0),
-                     wall[0] * size,
-                     wall[1] * size,
-                     size, size)
-
-        # portals
-        for b in self.map['portals']:
-            drawRect(portal_color,
-                     b[0] * size,
-                     b[1] * size,
-                     size, size)
-
+                             (planet_pos[0]*SIZE,
+                              planet_pos[1]*SIZE))
+            
         pygame.display.flip()
 
 

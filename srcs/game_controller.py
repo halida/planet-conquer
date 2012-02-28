@@ -5,7 +5,7 @@ module: game_controller
 游戏控制器.. 提供api级别的接口, 方便服务器调用game
 
 """
-from snake_game import *
+from game import *
 
 class RoomController():
     def __init__(self, games):
@@ -40,11 +40,10 @@ class Controller():
         """
         op = data['op']
         if op == 'add':
-            return self.game.add_snake(type=data['type'], name=data['name'])
+            return self.game.add_player(data['name'])
         
-        elif op in ('turn', 'sprint'):
-            if not data.has_key(round): data['round'] = -1
-            return dict(status=self.game.set_snake_op(data['id'], int(data['round']), data))
+        elif op in ('moves'):
+            return dict(status=self.game.set_player_op(data['id'], data))
         
         elif op == 'map':
             return self.game.get_map()
@@ -70,21 +69,21 @@ def test():
     >>> game = Game()
     >>> c = Controller(game)
 
-    # 添加新的蛇
-    >>> result = c.add(name='foo',type='python')
-    >>> result = c.add(name='bar',type='python')
+    # 添加新玩家
+    >>> result = c.op(dict(op='add', name='foo'))
+    >>> result = c.op(dict(op='add', name='bar'))
     >>> id = result['id']
     >>> result['seq']
     1
 
-    # 控制蛇的方向
-    >>> result = c.turn(id=id, d=0, round=-1)
+    # 发送指令
+    >>> result = c.op(dict(op='moves', id=id, moves=[]))
 
     # 获取地图信息
-    >>> m = c.map()
+    >>> m = c.op(dict(op='map'))
 
     # 获取实时信息
-    >>> info = c.info()
+    >>> info = c.op(dict(op='info'))
     """
     import doctest
     doctest.testmod()

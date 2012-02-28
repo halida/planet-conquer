@@ -7,7 +7,7 @@ from lib import *
 import zmq, json, random
 
 import game_controller
-from snake_game import *
+from game import *
 
 context = zmq.Context()
 
@@ -84,7 +84,8 @@ class Server():
                     error_msg = str(e)
                     result = dict(status=error_msg, data=rc)
                     logging.debug(error_msg)
-                    
+
+                print result
                 oper.send(json.dumps(result))
 
             # 处理所有room的游戏id

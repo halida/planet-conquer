@@ -42,6 +42,19 @@ class Map:
         self.planet_name_to_id = dict([(i[0], c)
                                        for c, i in enumerate(self.planets)])
         self.planets = [i[1] for i in self.planets]
+        # set planet location
+        x, y = 0, 0
+        map = self.meta['map'].strip().split("\n")
+        for line in map:
+            x = 0
+            for c in line:
+                if c in self.planet_tokens:
+                    id = self.planet_name_to_id[c]
+                    self.planets[id]['pos'] = (x, y)
+                x += 1
+            y += 1
+        self.map_size = (len(map[0]), len(map))
+        
         # route data
         self.routes = {}
         for _from, to, step in self.meta['routes']:
@@ -49,6 +62,9 @@ class Map:
             to_id   = self.planet_name_to_id[to]
             self.routes[(from_id, to_id)] = step
             self.routes[(to_id, from_id)] = step
+        # only for transport to client
+        self.seq_routes = [(t[0], t[1], step)
+                           for t, step in self.routes.items()]
                        
         self.starts = [self.planet_name_to_id[name]
                        for name in self.meta['starts']]
@@ -57,7 +73,7 @@ def test():
     """
     >>> map = Map.loadfile("srcs/map/test.yml")
     >>> map.planets
-    [{'res': 1, 'cos': 10, 'def': 2, 'max': 1000}, {'res': 1, 'cos': 10, 'def': 2, 'max': 1000}, {'res': 1, 'cos': 10, 'def': 2, 'max': 1000}, {'res': 1, 'cos': 10, 'def': 2, 'max': 1000}, {'res': 1.5, 'cos': 0, 'def': 0.5, 'max': 300}]
+    [{'res': 1, 'cos': 10, 'pos': (0, 0), 'def': 2, 'max': 1000}, {'res': 1, 'cos': 10, 'pos': (4, 0), 'def': 2, 'max': 1000}, {'res': 1, 'cos': 10, 'pos': (0, 4), 'def': 2, 'max': 1000}, {'res': 1, 'cos': 10, 'pos': (4, 4), 'def': 2, 'max': 1000}, {'res': 1.5, 'cos': 0, 'pos': (2, 2), 'def': 0.5, 'max': 300}]
     >>> map.starts
     [0, 1, 2, 3]
     """
