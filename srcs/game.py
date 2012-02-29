@@ -5,7 +5,7 @@ module: player_game
 """
 from lib import *
 from map.map import Map
-import db
+from scores import add_score
 
 # 游戏状态
 WAITFORPLAYER='waitforplayer'
@@ -131,20 +131,8 @@ class Game():
         winner = self.players[maxid]
         self.log('game finished, winner: ' + winner.name)
         # 再加到最高分里面去
-        db.cursor.execute('insert into scores values(?, ?)', (datetime.datetime.now(), winner.name))
-        db.db.commit()
+        add_score(datetime.datetime.now(), winner.name)
         return maxid
-
-    def scores(self):
-        """
-        获取游戏历史分数
-        """
-        d = date.today()
-        today = datetime.datetime(d.year, d.month, d.day)
-        dailys =  list(db.cursor.execute('select * from (select name, count(*) as count from scores where time > ? group by name) order by count desc limit 10', (today, )))
-        weeklys = list(db.cursor.execute('select * from (select name, count(*) as count from scores where time > ? group by name) order by count desc limit 10', (today - datetime.timedelta(days=7), )))
-        monthlys = list(db.cursor.execute('select * from (select name, count(*) as count from scores where time > ? group by name) order by count desc limit 10', (today - datetime.timedelta(days=30), )))
-        return dict(dailys=dailys, weeklys=weeklys, monthlys=monthlys)
 
     def get_map(self):
         return dict(routes=self.map.seq_routes,
