@@ -1,6 +1,6 @@
 - content_for :head do
   = stylesheet_link_tag "room"
-  = javascript_include_tag "spine", "room"
+  = javascript_include_tag "room"
 
 %h1 planet conquer
 
@@ -8,6 +8,7 @@
 - room_id = 0
 %canvas#room-canvas
 :coffeescript
-  g = new Game()
-  g.set_server("#{game_server}", #{room_id})
+  game = new Game()
+  shower = new GameShower(game, $('#room-canvas'))
+  game.set_server("#{game_server}", #{room_id})
 
