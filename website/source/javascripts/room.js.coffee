@@ -4,13 +4,15 @@ if MozWebSocket?
 else
   WS = WebSocket
 
-random_color = ()->
-    "#fff"
-    # todo
+side_color = (i)->
+    ['red', 'yellow', 'blue', 'green', 'pink', 'lightblue'][i]
+
 draw_circle = (ctx, x, y, r)->
     ctx.arc(x, y, r, 0, Math.PI*2, true)
 
-SIZE = 20
+create_svg = (obj)-> document.createElementNS('http://www.w3.org/2000/svg', obj)
+
+SIZE = 80
 
 class Game extends Spine.Module
     @extend(Spine.Events)
@@ -42,31 +44,111 @@ class Game extends Spine.Module
                 if data.status != 'ok'
                   console.log(data)
 
-class GameShower extends Spine.Module
-    @extend(Spine.Events)
+class GameShower extends Spine.Controller
 
-    constructor: (@game, @canvas)->
-        Game.bind "map", @proxy((@map)-> @update())
-        Game.bind "info", @proxy((@info)-> @update())
+    constructor: (@game)->
+        super
+        Game.bind "map", @proxy((@map)-> @update_map())
+        Game.bind "info", @proxy((@info)-> @update_info())
         @info = {}
         @map = {}
-        @ctx = @canvas[0].getContext("2d")
 
-    update: ()->
-        ctx = @ctx
-        # clear screen
-        ctx.fillStyle = '#ccc'
-        ctx.fillRect 0, 0, ctx.canvas.width, ctx.canvas.height
+        @scene = $('#scene')
+        @svg = @scene.svg()
+        @desc = $('#desc')
+
+    show_planet_desc: (e)->
+        id = $(e.target).attr('planet_id')
+        planet_info = @map.planets[id]
+        hold = @info.holds[id]
+        side = hold[0]
+        count = hold[1]
+        @desc.html(
+            "<div class=\"desc-planet\">the planet: #{id}<br/>
+            <span>def<span> #{planet_info.def}<br/>
+            <span>res<span> #{planet_info.res}<br/>
+            <span>cos<span> #{planet_info.cos}<br/>
+            <span>max<span> #{planet_info.max}<br/>
+            </div>
+            <div class=\"desc-holds\">with side: #{side}<br/>
+            <div class=\"desc-holds\">count: #{count}<br/>
+                ")
+
+    show_route_desc: (e)->
+        id = $(e.target).attr('route_id')
+        route = @map.routes[id]
+        moves = []
+        for move in @info.moves
+            continue if move[1] != route[0] or move[2] != route[1]
+            moves.push move
+        @desc.html(
+            "
+            <div class=\"desc-route\">
+                step: #{route[2]}
+                moves: #{moves}
+            </div>
+            "
+        )
+
+    update_map: ()->
+        @svg_planets = []
+        @svg_routes = []
+        # draw routes
+        for route, i in @map.routes
+            _from = route[0]
+            to = route[1]
+            step = route[2]
+            pos1 = @map.planets[_from].pos
+            pos2 = @map.planets[to].pos
+
+            svg_route = $ create_svg("line")
+            svg_route.attr
+                id: "route-"+i
+                class: "route"
+                route_id: i
+                style: "stroke:rgb(0,0,255);stroke-width:3"
+                x1: pos1[0]*SIZE + SIZE/2
+                y1: pos1[1]*SIZE + SIZE/2
+                x2: pos2[0]*SIZE + SIZE/2
+                y2: pos2[1]*SIZE + SIZE/2
+
+            svg_route.hover @proxy @show_route_desc
+            @scene.append(svg_route)
+            @svg_planets.push(svg_route)
+
         # draw planets
-        for planet in @map.planets
-            ctx.fillStyle = '#000'
-            x = planet.pos[0]
-            y = planet.pos[1]
-            draw_circle(ctx, x*SIZE, y*SIZE, SIZE)
-            console.log x, y
-        ctx.fill()
+        for planet, i in @map.planets
+            svg_planet = $ create_svg("circle")
+            svg_planet.attr
+                id: "planet-"+i
+                class: "planet"
+                planet_id: i
+                cx: planet.pos[0]*SIZE + SIZE/2
+                cy: planet.pos[1]*SIZE + SIZE/2
+                r: SIZE/4
+                fill: "white"
+            svg_planet.hover @proxy @show_planet_desc
+            @scene.append(svg_planet)
+            @svg_routes.push(svg_planet)
 
+            svg_planet_text = $ create_svg("text")
+            svg_planet_text.text('he')
+            svg_planet_text.attr
+                id: "planet-text-"+i
+                class: "planet-text"
+                x: planet.pos[0]*SIZE + SIZE/2
+                y: planet.pos[1]*SIZE + SIZE/2
+                dx: -SIZE/4
+                dy: +SIZE/16
+            @scene.append(svg_planet_text)
+
+
+    update_info: ()->
         # draw holds
+        for hold, i in @info.holds
+            $('circle#planet-'+i).attr
+                fill: side_color(hold[0])
+            $('text#planet-text-'+i).text(hold[1])
         # draw moves
         # todo
 

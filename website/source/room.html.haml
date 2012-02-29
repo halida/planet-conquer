@@ -1,14 +1,22 @@
 - content_for :head do
   = stylesheet_link_tag "room"
-  = javascript_include_tag "room"
+  = javascript_include_tag "jquery.svg", "room"
 
 %h1 planet conquer
 
-- game_server = "localhost:9999"
-- room_id = 0
-%canvas#room-canvas
+#board
+
+  - game_server = "localhost:9999"
+  - room_id = 0
+
+  #board-right
+    #desc
+  
+  %svg#scene{xmlns: "http://www.w3.org/2000/svg"}
+
+
 :coffeescript
   game = new Game()
-  shower = new GameShower(game, $('#room-canvas'))
+  shower = new GameShower(game)
   game.set_server("#{game_server}", #{room_id})
 

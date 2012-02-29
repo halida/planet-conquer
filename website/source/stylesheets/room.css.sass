@@ -1,4 +1,27 @@
-#room-canvas
+@import "compass"
+
+$PLANET_SIZE: 30px
+
+#board
+  width: 800px
+
+#scene
   width: 400px
   height: 400px
-  background: #eee
+  background: #444
+  position: relative
+
+#board-right
+  float: right
+  width: 300px
+  min-height: 600px 
+  background: yellow
+    
+.planet
+  position: absolute
+  width: $PLANET_SIZE * 2
+  height: $PLANET_SIZE * 2
+  +border-radius($PLANET_SIZE)
+
+  background: #ccc
+  
