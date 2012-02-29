@@ -6,6 +6,7 @@ module: game_controller
 
 """
 from game import *
+import scores
 
 class RoomController():
     def __init__(self, games):
@@ -60,7 +61,7 @@ class Controller():
             return self.history()
         
         elif op == 'scores':
-            return self.game.scores()
+            return scores.scores()
         
         else:
             return dict(status='op error: %s' % op)
@@ -86,6 +87,9 @@ def test():
 
     # 获取实时信息
     >>> info = c.op(dict(op='info'))
+
+    # 获取得分
+    >>> score = c.op({'op' : 'scores'})
     """
     import doctest
     doctest.testmod()

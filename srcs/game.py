@@ -5,7 +5,7 @@ module: player_game
 """
 from lib import *
 from map.map import Map
-import db
+from scores import add_score
 
 # 游戏状态
 WAITFORPLAYER='waitforplayer'
@@ -13,6 +13,8 @@ RUNNING='running'
 FINISHED='finished'
 
 DEFAULT_MAP = 'srcs/map/test.yml'
+
+MAX_LOST_TURN = 3
 
 class Player():
     def __init__(self, game, name=""):
@@ -103,7 +105,11 @@ class Game():
             moves = []
             for count, _from, to in kw['moves']:
                 # 检查moves合法性
-                # todo
+                owner, armies = self.holds[_from]
+                if owner != n:
+                    return 'not your planet'
+                elif armies < count:
+                    return 'no enough armies'
                 step = self.routes[(_from, to)]
                 moves.append([n, _from, to, count, step])
             # 更新moves
@@ -131,20 +137,8 @@ class Game():
         winner = self.players[maxid]
         self.log('game finished, winner: ' + winner.name)
         # 再加到最高分里面去
-        db.cursor.execute('insert into scores values(?, ?)', (datetime.datetime.now(), winner.name))
-        db.db.commit()
+        add_score(datetime.datetime.now(), winner.name)
         return maxid
-
-    def scores(self):
-        """
-        获取游戏历史分数
-        """
-        d = date.today()
-        today = datetime.datetime(d.year, d.month, d.day)
-        dailys =  list(db.cursor.execute('select * from (select name, count(*) as count from scores where time > ? group by name) order by count desc limit 10', (today, )))
-        weeklys = list(db.cursor.execute('select * from (select name, count(*) as count from scores where time > ? group by name) order by count desc limit 10', (today - datetime.timedelta(days=7), )))
-        monthlys = list(db.cursor.execute('select * from (select name, count(*) as count from scores where time > ? group by name) order by count desc limit 10', (today - datetime.timedelta(days=30), )))
-        return dict(dailys=dailys, weeklys=weeklys, monthlys=monthlys)
 
     def get_map(self):
         return dict(routes=self.map.seq_routes,
@@ -225,7 +219,7 @@ class Game():
             player = self.players[i]
             if not player.alive: continue
 
-            # 如果连续没有响应超过10次, 让玩家死掉
+            # 如果连续没有响应超过MAX_LOST_TURN次, 让玩家死掉
             if d == None and self.enable_no_resp_die:
                 self.no_response_player_die(player, self.round)
 
@@ -293,55 +287,6 @@ class Game():
         else:
             return planet_count
 
-    def get_portal_next(self, p):
-        seq = self.portals.index(p)
-        return self.portals[(seq / 2)*2 + ((seq%2)+1)%2 ]
-    
-    def create_bean(self):
-        """生成豆子
-        """
-        if not self.enable_bean: return
-
-        pos = self.get_empty_place()
-        # 随机掉落豆子的种类
-        if random.randint(0, 1):
-            # 有豆子数量限制
-            if len(self.gems) > 10: return
-            self.gems.append(pos)
-        else:
-            if len(self.eggs) > 10: return
-            self.eggs.append(pos)
-
-    def check_hit(self, p):
-        """检查p和什么碰撞了, 返回具体碰撞的对象"""
-        if p in self.walls:
-            return WALL
-        if p in self.eggs:
-            return EGG
-        if p in self.gems:
-            return GEM
-        if p in self.portals:
-            return PORTAL
-        return self.check_hit_player(p)
-
-    def check_hit_player(self, p):
-        for player in self.players:
-            if p in player.body:
-                return player
-
-    def get_empty_place(self):
-        """
-        随机获取一个空的位置
-        可能是性能陷阱?
-        """
-        while True:
-            p = [random.randint(0, self.w-1),
-                 random.randint(0, self.h-1)]
-            # 不要和其他东西碰撞
-            if self.check_hit(p):
-                continue
-            return p
-
     def alloped(self):
         """
         判断是否所有玩家都做过操作了
@@ -354,7 +299,7 @@ class Game():
 
     def no_response_player_die(self, player, round):
         """
-        如果连续没有响应超过3次, 让玩家死掉
+        如果连续没有响应超过MAX_LOST_TURN次, 让玩家死掉
         round是没有响应的轮数(用来检查是否连续没有响应)
         
         """
@@ -368,7 +313,7 @@ class Game():
         player.no_resp_time += 1
         player.no_resp_round = round            
         # 判断是否没有响应时间过长
-        if player.no_resp_time >= 5:
+        if player.no_resp_time >= MAX_LOST_TURN:
             player.alive = False
             logging.debug('kill no response player: %d' % \
                          self.players.index(player))
@@ -428,6 +373,12 @@ def test():
     True
     >>> g.holds[4]
     [0, 96]
+
+    # 再出一次兵，此时非法操作了
+    >>> g.set_player_op(player1['id'], {'op': 'moves', 'moves': [[1000, 0, 4], ]})
+    'no enough armies'
+    >>> g.set_player_op(player2['id'], {'op': 'moves', 'moves': [[10, 0, 4], ]})
+    'not your planet'
 
     # 结束逻辑测试
     >>> import copy
