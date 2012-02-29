@@ -105,7 +105,11 @@ class Game():
             moves = []
             for count, _from, to in kw['moves']:
                 # 检查moves合法性
-                # todo
+                owner, armies = self.holds[_from]
+                if owner != n:
+                    return 'not your planet'
+                elif armies < count:
+                    return 'no enough armies'
                 step = self.routes[(_from, to)]
                 moves.append([n, _from, to, count, step])
             # 更新moves
@@ -215,7 +219,7 @@ class Game():
             player = self.players[i]
             if not player.alive: continue
 
-            # 如果连续没有响应超过10次, 让玩家死掉
+            # 如果连续没有响应超过MAX_LOST_TURN次, 让玩家死掉
             if d == None and self.enable_no_resp_die:
                 self.no_response_player_die(player, self.round)
 
@@ -369,6 +373,12 @@ def test():
     True
     >>> g.holds[4]
     [0, 96]
+
+    # 再出一次兵，此时非法操作了
+    >>> g.set_player_op(player1['id'], {'op': 'moves', 'moves': [[1000, 0, 4], ]})
+    'no enough armies'
+    >>> g.set_player_op(player2['id'], {'op': 'moves', 'moves': [[10, 0, 4], ]})
+    'not your planet'
 
     # 结束逻辑测试
     >>> import copy
