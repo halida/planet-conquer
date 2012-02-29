@@ -11,6 +11,7 @@ from game import *
 
 context = zmq.Context()
 
+# room的个数
 ROOMS = 1
 
 class Server():
@@ -71,7 +72,7 @@ class Server():
                     rc = json.loads(rc)
                     result = self.controller.op(rc)
                     result['op'] = rc['op']
-                    #如果有新的蛇加进来, 也pub一下
+                    #如果有新的玩家加进来, 也pub一下
                     if rc['op'] == 'add' and result.has_key('seq'):
                         self.pub_info(int(rc['room']))
                     #如果地图变动也pub
