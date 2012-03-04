@@ -22,7 +22,7 @@ map: |
 planets:
   A:
     def: 2
-    res: 1
+    res: 1.1
     cos: 10
     max: 1000
   B:
@@ -51,26 +51,25 @@ planets:
 routes:
   - - A
     - B
-    - 4
+    - 2
   - - A
     - C
-    - 4
+    - 2
   - - D
     - B
-    - 4
+    - 2
   - - C
     - D
-    - 4
-
+    - 2
   - - A
     - E
-    - 2
+    - 1
   - - B
     - E
-    - 2
+    - 1
   - - C
     - E
-    - 2
+    - 1
   - - D
     - E
-    - 2
+    - 1
