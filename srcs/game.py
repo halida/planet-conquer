@@ -12,7 +12,7 @@ WAITFORPLAYER='waitforplayer'
 RUNNING='running'
 FINISHED='finished'
 
-DEFAULT_MAP = 'srcs/map/test.yml'
+DEFAULT_MAP = 'srcs/map/oneline.yml'
 
 MAX_LOST_TURN = 3
 
@@ -211,7 +211,9 @@ class Game():
             side, count = data
             if side == None: continue
             next = self.count_growth(count, self.planets[i])
-            if next <= 0: side = None
+            if next <= 0:
+                side = None
+                next = 0
             self.holds[i] = [side, next]
 
         # 玩家移动回合
@@ -282,6 +284,7 @@ class Game():
         max = planet['max']
         res = planet['res']
         cos = planet['cos']
+        print planet
         if planet_count <= max or res < 1:
             return planet_count * res + cos
         else:
@@ -323,7 +326,7 @@ class Game():
 def test():
     """
     # 初始化游戏
-    >>> g = Game(enable_no_resp_die=False)
+    >>> g = Game(enable_no_resp_die=False, map="srcs/map/test.yml")
 
     # 玩家加入
     >>> player1 = g.add_player('player1')

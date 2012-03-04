@@ -50,7 +50,6 @@ class SimpleAI():
 
     def step(self):
         moves = []
-        sended = 20
         small_hold = 50
         for i, s in enumerate(self.info['holds']):
             side, count = s
@@ -62,6 +61,7 @@ class SimpleAI():
                 # 数量超过一定程度的时候, 才派兵
                 if count < small_hold:
                     break
+                sended = count / 2
                 # 当前星球的路径, 并且对方星球不是自己的星球
                 _from, to, step = route
                 if _from != i or self.info['holds'][to] == self.me['seq']:

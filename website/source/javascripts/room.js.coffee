@@ -56,6 +56,7 @@ class GameShower extends Spine.Controller
         @scene = $('#scene')
         @svg = @scene.svg()
         @desc = $('#desc')
+        @status =  $('#status')
 
     show_planet_desc: (e)->
         id = $(e.target).attr('planet_id')
@@ -93,6 +94,10 @@ class GameShower extends Spine.Controller
     update_map: ()->
         @svg_planets = []
         @svg_routes = []
+        # set board size
+        @scene.width(SIZE * @map.map_size[0])
+        @scene.height(SIZE * @map.map_size[1])
+
         # draw routes
         for route, i in @map.routes
             _from = route[0]
@@ -144,6 +149,8 @@ class GameShower extends Spine.Controller
 
 
     update_info: ()->
+        # game state
+        @status.html @info.status
         # draw holds
         for hold, i in @info.holds
             $('circle#planet-'+i).attr
