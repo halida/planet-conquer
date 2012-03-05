@@ -92,6 +92,7 @@ class Cmd(tornado.web.RequestHandler):
         data = json.dumps(data)
         oper.send_unicode(data)
         result = oper.recv()
+        print 'result', result
         self.set_header("Content-Type", "application/json")
         self.write(result)
 

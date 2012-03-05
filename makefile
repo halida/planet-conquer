@@ -25,6 +25,8 @@ http:
 ai:
 	$(PYTHON) examples/ai_halida.py zero 0
 
+ai_flreey:
+	$(PYTHON) examples/ai_flreey.py zero 0
 # run lots of test ai
 ais:
 	$(PYTHON) examples/ai_halida.py zero 0 4
@@ -40,3 +42,6 @@ record:
 	$(PYTHON) srcs/zmq_logger.py zero 0 test.log
 replay:
 	$(PYTHON) srcs/zmq_replayer.py test.log
+
+all:
+	$(PYTHON) running.py
