@@ -34,8 +34,11 @@ class Game():
         self.enable_no_resp_die = enable_no_resp_die
 
         if not map:
-            map = Map.loadfile(DEFAULT_MAP)
-        self.set_map(map)
+            m = Map.loadfile(DEFAULT_MAP)
+        else:
+            m = Map.loadfile(map)
+            
+        self.set_map(m)            
         
         self.start()
 
@@ -80,6 +83,7 @@ class Game():
         # 生成玩家
         player = Player(self, name)
         self.players.append(player)
+        self.player_ops.append(None)
         # 强制更新info
         self.info = None
         # 玩家加入地图
@@ -112,15 +116,24 @@ class Game():
                     return 'no enough armies'
                 step = self.routes[(_from, to)]
                 moves.append([n, _from, to, count, step])
-            # 更新moves
-            self.moves = [i
-                          for i in self.moves
-                          if i[0] != n]
-            self.moves.extend(moves)
+            self.player_ops[n] = moves
             
             return 'ok'
         else:
             return 'wrong op: ' + kw['op']
+
+    def do_player_op(self, n):
+        for move in self.player_ops[n]:
+            # check count <= self.holds[_from]
+            count, _from = move[3], move[1]
+            if count <= self.holds[_from][1]:
+                # go!
+                self.holds[_from][1] -= move[3]
+                self.moves.append(move)
+                # if all my armies gone?
+                if self.holds[_from][1] <= 0:
+                    self.holds[_from] = (None, 0)
+        self.player_ops[n] = None
 
     def check_winner(self):
         """
@@ -206,15 +219,6 @@ class Game():
             self.check_winner()
             return True
 
-        # 生产回合
-        for i, data in enumerate(self.holds):
-            side, count = data
-            if side == None: continue
-            next = self.count_growth(count, self.planets[i])
-            if next <= 0:
-                side = None
-                next = 0
-            self.holds[i] = [side, next]
 
         # 玩家移动回合
         for i, d in enumerate(self.player_ops):
@@ -225,8 +229,9 @@ class Game():
             if d == None and self.enable_no_resp_die:
                 self.no_response_player_die(player, self.round)
 
-            player.op(d)
-
+            if d != None:
+                self.do_player_op(i)
+                
         # 到达回合
         for move in self.moves:
             move[-1] -= 1
@@ -240,6 +245,16 @@ class Game():
             self.battle(move)
             
         # next round
+        # 生产回合
+        for i, data in enumerate(self.holds):
+            side, count = data
+            if side == None: continue
+            next = self.count_growth(count, self.planets[i])
+            if next <= 0:
+                side = None
+                next = 0
+            self.holds[i] = [side, next]
+            
         self.round += 1
         self.player_op = [None, ] * len(self.players)
         return True
@@ -284,11 +299,12 @@ class Game():
         max = planet['max']
         res = planet['res']
         cos = planet['cos']
-        print planet
-        if planet_count <= max or res < 1:
-            return planet_count * res + cos
-        else:
-            return planet_count
+        new_count = int(planet_count * res + cos)
+        if planet_count < max:
+            planet_count = min(new_count, max)
+        elif new_count < planet_count:
+            planet_count = new_count
+        return planet_count
 
     def alloped(self):
         """
