@@ -30,6 +30,13 @@ def start_game():
 def start_http():
     from srcs.web_server import main
     sys.stdout = Logger('http.log')
+    #application.settings['debug'] = False
+    #application.listen(9999)
+    #try:
+        #ioloop.IOLoop.instance().start()
+    #except KeyboardInterrupt:
+        #print "bye!"
+
     main()
 
 def start_ai(name):
@@ -37,12 +44,17 @@ def start_ai(name):
     sys.stdout = Logger('%s.log' % name)
     ai.main()
 
+def start_brower():
+    import webbrowser
+    webbrowser.open('./website/build/room.html')
+
 def run_all():
     ps = []
     ps.append(Process(target=start_game))
     ps.append(Process(target=start_http))
+    ps.append(Process(target=start_brower))
     ps.append(Process(target=start_ai, args=(['ai_halida'])))
-    ps.append(Process(target=start_ai, args=(['ai_halida'])))
+    ps.append(Process(target=start_ai, args=(['ai_flreey'])))
 
     for p in ps:
         import time

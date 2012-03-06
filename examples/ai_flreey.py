@@ -49,7 +49,7 @@ class SimpleAI():
                              moves = moves))
 
     def step(self):
-        anemy = filter(lambda x: x[0] != self.me['seq'], self.info['holds'])
+        #anemy = filter(lambda x: x[0] != self.me['seq'], self.info['holds'])
         #print anemy, sorted(anemy)
         #moves = []
         #sended = 20
@@ -73,8 +73,30 @@ class SimpleAI():
                 #count -= sended
 
         #print 'moves', moves
-        return moves
+        #return moves
 
+        moves = []
+        small_hold = 50
+        for i, s in enumerate(self.info['holds']):
+            side, count = s
+            # 寻找自己的星球
+            if side != self.me['seq']:
+                continue
+
+            for route in self.map['routes']:
+                # 数量超过一定程度的时候, 才派兵
+                if count < small_hold:
+                    break
+                sended = count / 2
+                # 当前星球的路径, 并且对方星球不是自己的星球
+                _from, to, step = route
+                if _from != i or self.info['holds'][to] == self.me['seq']:
+                    continue
+                # 派兵!
+                moves.append([sended, _from, to])
+                count -= sended
+
+        return moves
 
 def main():
     rs = SimpleAI()
