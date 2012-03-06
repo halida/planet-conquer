@@ -105,22 +105,25 @@ class Game():
         if n == None:
             return "noid"
         
-        if kw['op'] == 'moves':
-            moves = []
-            for count, _from, to in kw['moves']:
-                # 检查moves合法性
-                owner, armies = self.holds[_from]
-                if owner != n:
-                    return 'not your planet'
-                elif armies < count:
-                    return 'no enough armies'
-                step = self.routes[(_from, to)]
+        try:
+            if kw['op'] == 'moves':
+                moves = []
+                for count, _from, to in kw['moves']:
+                    # 检查moves合法性
+                    owner, armies = self.holds[_from]
+                    if owner != n:
+                        return 'not your planet'
+                    elif armies < count:
+                        return 'no enough armies'
+                    step = self.routes[(_from, to)]
                 moves.append([n, _from, to, count, step])
-            self.player_ops[n] = moves
+                self.player_ops[n] = moves
             
-            return 'ok'
-        else:
-            return 'wrong op: ' + kw['op']
+                return 'ok'
+            else:
+                return 'wrong op: ' + kw['op']
+        except:
+            return 'invalid command'
 
     def do_player_op(self, n):
         for move in self.player_ops[n]:
@@ -128,7 +131,7 @@ class Game():
             count, _from = move[3], move[1]
             if count <= self.holds[_from][1]:
                 # go!
-                self.holds[_from][1] -= move[3]
+                self.holds[_from][1] -= count
                 self.moves.append(move)
                 # if all my armies gone?
                 if self.holds[_from][1] <= 0:
@@ -189,6 +192,45 @@ class Game():
         if len(players) == 1: 
             return True
 
+    def move_stage(self):
+        for i, d in enumerate(self.player_ops):
+            player = self.players[i]
+            if not player.alive: continue
+
+            # 如果连续没有响应超过MAX_LOST_TURN次, 让玩家死掉
+            if d == None and self.enable_no_resp_die:
+                self.no_response_player_die(player, self.round)
+
+            if d != None:
+                self.do_player_op(i)
+
+    def arrive_stage(self):
+        for move in self.moves:
+            move[-1] -= 1
+        arrives = [move for move in self.moves
+                   if move[-1]<=0]
+        self.moves = [move for move in self.moves
+                      if move[-1]>0]
+        return arrives
+    
+    def battle_stage(self, arrives):
+        for move in arrives:
+            self.battle(move)
+
+    def next_round(self):
+        # 生产回合
+        for i, data in enumerate(self.holds):
+            side, count = data
+            if side == None: continue
+            next = self.count_growth(count, self.planets[i])
+            if next <= 0:
+                side = None
+                next = 0
+            self.holds[i] = [side, next]
+            
+        self.round += 1
+        self.player_op = [None, ] * len(self.players)
+
     def step(self):
         """
         游戏进行一步
@@ -219,44 +261,17 @@ class Game():
             self.check_winner()
             return True
 
-
-        # 玩家移动回合
-        for i, d in enumerate(self.player_ops):
-            player = self.players[i]
-            if not player.alive: continue
-
-            # 如果连续没有响应超过MAX_LOST_TURN次, 让玩家死掉
-            if d == None and self.enable_no_resp_die:
-                self.no_response_player_die(player, self.round)
-
-            if d != None:
-                self.do_player_op(i)
-                
-        # 到达回合
-        for move in self.moves:
-            move[-1] -= 1
-        arrives = [i for i in self.moves
-                   if i[-1]<=0]
-        self.moves = [i for i in self.moves
-                      if move[-1]>0]
+        # move stage
+        self.move_stage()
         
-        # 战斗回合
-        for move in arrives:
-            self.battle(move)
+        # arrive stage
+        arrives = self.arrive_stage()
+        
+        # battle stage
+        self.battle_stage(arrives)
             
         # next round
-        # 生产回合
-        for i, data in enumerate(self.holds):
-            side, count = data
-            if side == None: continue
-            next = self.count_growth(count, self.planets[i])
-            if next <= 0:
-                side = None
-                next = 0
-            self.holds[i] = [side, next]
-            
-        self.round += 1
-        self.player_op = [None, ] * len(self.players)
+        self.next_round()
         return True
 
     def battle(self, move):

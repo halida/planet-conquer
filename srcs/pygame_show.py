@@ -41,6 +41,9 @@ class Shower():
             self.player_colors.append(random_player_color())
         
         size = SIZE
+        def pp(p):
+            return (p[0] * SIZE + SIZE / 2, p[1] * SIZE + SIZE / 2)
+        
         def drawRect(c, x, y, w, h):
             pygame.draw.rect(self.screen, c,
                              pygame.Rect(x, y, w, h))
@@ -50,6 +53,9 @@ class Shower():
         
         # draw map background
         self.screen.fill((200,200,200))
+        for x, y, z in self.map['routes']:
+            print x, y, z
+            pygame.draw.line(self.screen, (0, 0, 0), pp(self.map['planets'][x]['pos']), pp(self.map['planets'][y]['pos']))
         
         # planets
         for i, s in enumerate(self.map['planets']):
