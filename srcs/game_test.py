@@ -62,4 +62,28 @@ def play_game_case_test():
     g.set_player_op(player1['id'], dict(op='moves', moves=[[100, 0, 4], ]))
     g.step()
     eq_(g.holds, [[0, 56], [1, 130], (None, 0), (None, 0), [0, 150]])
+    # round4: move all
+    eq_(g.set_player_op(player1['id'], dict(op='moves', moves=[[56, 0, 4], ])), "ok")
+    g.step()
+    eq_(g.holds, [(None, 0), [1, 140], (None, 0), (None, 0), [0, 300]])
+    # what for a long time:
+    for i in range(100):
+        g.step()
+    eq_(g.holds, [(None, 0), [1, 1000], (None, 0), (None, 0), [0, 300]])
+    # let's fight
+    g.set_player_op(player2['id'], dict(op='moves', moves=[[100, 1, 4],]))
+    g.step()
+    # Attack: 100 Defence 150 => 150 - 100 * 100 / 150 = 84 ~ 168
+    # growth: 168 * 1.5 = 252
+    eq_(g.holds, [(None, 0), [1, 910], (None, 0), (None, 0), [0, 252]])
+    g.step()
+    eq_(g.holds, [(None, 0), [1, 920], (None, 0), (None, 0), [0, 300]])
+    # get a new planet
+    g.set_player_op(player1['id'], dict(op='moves', moves=[[1, 4, 0], ]))
+    g.step()
+    eq_(g.holds,[[0, 11], [1, 930], (None, 0), (None, 0), [0, 300]])
+    g.step()
+    eq_(g.holds,[[0, 22], [1, 940], (None, 0), (None, 0), [0, 300]])
+    print g.moves
+    
     
