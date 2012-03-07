@@ -119,34 +119,46 @@ class EditorView:
         self.update()
                 
         self.screen.fill(BLACK)
-        mx, my = self.get_mouse_on()
-        for i in range(self.w):
-            for j in range(self.h):
-                color = (200, 200, 200)
-                if i == self.selected_i and j == self.selected_j:
-                    color = (170, 255, 172)
-                elif i == mx and j == my:
-                    color = (250, 170, 170)
-                pygame.draw.circle(self.screen,
-                                   color,
-                                   (i * SIZE + SIZE / 2,
-                                    j * SIZE + SIZE / 2),
-                                   SIZE / 2 - 1)
+        
+        def pp(p):
+            return (p[0] * SIZE + SIZE / 2, p[1] * SIZE + SIZE / 2)
+        
         def draw_route(pos_s, pos_e, len):
+            pygame.draw.line(self.screen,
+                             (200, 255, 200),
+                             pp(pos_s),
+                             pp(pos_e))
+
+        def gp(p):
+            for i in xrange(self.w):
+                for j in xrange(self.h):
+                    if self.map['map'][j][i] == p:
+                        return (i, j)
             
         for r in self.map['routes']:
-            draw_route(r[0], r[1], r[2])
+            draw_route(gp(r[0]), gp(r[1]), r[2])
             
+        mx, my = self.get_mouse_on()
+
         for i in range(self.w):
             for j in range(self.h):
                 planet_name = self.map['map'][j][i]
                 if planet_name != '.':
+                    color = (200, 200, 200)
+                    if i == self.selected_i and j == self.selected_j:
+                        color = (170, 255, 172)
+                    elif i == mx and j == my:
+                        color = (250, 170, 170)
+                    pygame.draw.circle(self.screen,
+                                       color,
+                                       pp((i, j)),
+                                       SIZE / 2 - 2)
                     if planet_name in self.map['starts']:
                         pygame.draw.circle(self.screen,
                                            BLACK,
                                            (i * SIZE + SIZE / 2,
                                             j * SIZE + SIZE / 2),
-                                           SIZE / 2 - 5, 2)
+                                           SIZE / 2 - 6, 2)
                     self.render_word((i * SIZE + SIZE / 2 - 6,
                                       j * SIZE + SIZE / 2 - 6),
                                      BLACK, planet_name)
@@ -189,7 +201,7 @@ class EditorView:
 
 def main():
     e = Editor()
-    e.load_file('test.yml')
+    e.load_file('fight_here.yml')
     view = EditorView(e)
     while True:
         view.render()

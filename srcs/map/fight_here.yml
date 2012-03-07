@@ -1,0 +1,324 @@
+name: Fight Here!
+desc: >-
+  this is a map for the game
+author: resty
+version: 0.1
+
+max_round: 8000
+max_player: 8
+start_unit: 100
+starts:
+  - A
+  - B
+  - C
+  - D
+
+map: |
+  .A.............
+  ...........Hb.B
+  .a.....m.......
+  .E.............
+  ....e..L..h....
+  .....i...l.....
+  .......M.......
+  ..n.I.N.P.K.p..
+  .......O.......
+  .....j...k.....
+  ....f..J..g....
+  .............G.
+  .......o.....c.
+  D.dF...........
+  .............C.
+
+planets:
+  A:
+    def: 1.5
+    res: 1
+    cos: 5
+    max: 300
+  B:
+    def: 1.5
+    res: 1
+    cos: 5
+    max: 300
+  C:
+    def: 1.5
+    res: 1
+    cos: 5
+    max: 300
+  D:
+    def: 1.5
+    res: 1
+    cos: 5
+    max: 300
+  E:
+    def: 1.5
+    res: 1
+    cos: 5
+    max: 300
+  F:
+    def: 1.5
+    res: 1
+    cos: 5
+    max: 300
+  G:
+    def: 1.5
+    res: 1
+    cos: 5
+    max: 300
+  H:
+    def: 1.5
+    res: 1
+    cos: 5
+    max: 300
+  I:
+    def: 1.5
+    res: 1
+    cos: 5
+    max: 300
+  J:
+    def: 1.5
+    res: 1
+    cos: 5
+    max: 300
+  K:
+    def: 1.5
+    res: 1
+    cos: 5
+    max: 300
+  L:
+    def: 1.5
+    res: 1
+    cos: 5
+    max: 300
+  M:
+    def: 1.5
+    res: 1
+    cos: 5
+    max: 300
+  N:
+    def: 1.5
+    res: 1
+    cos: 5
+    max: 300
+  O:
+    def: 1.5
+    res: 1
+    cos: 5
+    max: 300
+  P:
+    def: 1.5
+    res: 1
+    cos: 5
+    max: 300
+  a:
+    def: 1.5
+    res: 1
+    cos: 5
+    max: 300
+  b:
+    def: 1.5
+    res: 1
+    cos: 5
+    max: 300
+  c:
+    def: 1.5
+    res: 1
+    cos: 5
+    max: 300
+  d:
+    def: 1.5
+    res: 1
+    cos: 5
+    max: 300
+  e:
+    def: 1.5
+    res: 1
+    cos: 5
+    max: 300
+  f:
+    def: 1.5
+    res: 1
+    cos: 5
+    max: 300
+  g:
+    def: 1.5
+    res: 1
+    cos: 5
+    max: 300
+  h:
+    def: 1.5
+    res: 1
+    cos: 5
+    max: 300
+  i:
+    def: 1.5
+    res: 1
+    cos: 5
+    max: 300
+  j:
+    def: 1.5
+    res: 1
+    cos: 5
+    max: 300
+  k:
+    def: 1.5
+    res: 1
+    cos: 5
+    max: 300
+  l:
+    def: 1.5
+    res: 1
+    cos: 5
+    max: 300
+  m:
+    def: 1.5
+    res: 1
+    cos: 5
+    max: 300
+  n:
+    def: 1.5
+    res: 1
+    cos: 5
+    max: 300
+  o:
+    def: 1.5
+    res: 1
+    cos: 5
+    max: 300
+  p:
+    def: 1.5
+    res: 1
+    cos: 5
+    max: 300
+
+routes:
+  - - A
+    - a
+    - 2
+  - - B
+    - b
+    - 2
+  - - C
+    - c
+    - 2
+  - - D
+    - d
+    - 2
+  - - a
+    - E
+    - 1
+  - - d
+    - F
+    - 1
+  - - c
+    - G
+    - 1
+  - - b
+    - H
+    - 1
+  - - e
+    - E
+    - 2
+  - - f
+    - F
+    - 2
+  - - g
+    - G
+    - 2
+  - - h
+    - H
+    - 2
+  - - A
+    - e
+    - 2
+  - - B
+    - h
+    - 2
+  - - D
+    - f
+    - 2
+  - - C
+    - g
+    - 2
+  - - i
+    - I
+    - 1
+  - - j
+    - J
+    - 1
+  - - k
+    - K
+    - 1
+  - - l
+    - L
+    - 1
+  - - L
+    - M
+    - 3
+  - - I
+    - N
+    - 3
+  - - O
+    - J
+    - 3
+  - - K
+    - P
+    - 3
+  - - N
+    - M
+    - 2
+  - - M
+    - P
+    - 2
+  - - P
+    - O
+    - 2
+  - - O
+    - N
+    - 2
+  - - e
+    - m
+    - 2
+  - - h
+    - p
+    - 2
+  - - g
+    - o
+    - 2
+  - - f
+    - n
+    - 2
+  - - n
+    - I
+    - 1
+  - - m
+    - L
+    - 1
+  - - p
+    - K
+    - 1
+  - - o
+    - J
+    - 1
+  - - e
+    - i
+    - 5
+  - - h
+    - l
+    - 5
+  - - k
+    - g
+    - 5
+  - - f
+    - j
+    - 5
+
+
+
+
+
+
+
+
+  
