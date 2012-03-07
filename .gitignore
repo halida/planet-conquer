@@ -21,3 +21,4 @@ rubyweb/public/assets/*.css
 tags
 PYSMELLTAGS
 log
+*.swp

@@ -17,11 +17,12 @@ DEFAULT_MAP = 'srcs/map/oneline.yml'
 MAX_LOST_TURN = 3
 
 class Player():
-    def __init__(self, game, name=""):
+    def __init__(self, game, name="", script='python'):
         """设置player
         """
         self.game = game
         self.name = name
+        self.script = script
         self.id = uuid.uuid4().hex
         self.alive = True
 
@@ -79,9 +80,9 @@ class Game():
 
         self.holds = [(None, 0) for i in range(len(self.map.planets))]
         
-    def add_player(self, name="unknown"):
+    def add_player(self, name="unknown", script='python'):
         # 生成玩家
-        player = Player(self, name)
+        player = Player(self, name, script)
         self.players.append(player)
         self.player_ops.append(None)
         # 强制更新info

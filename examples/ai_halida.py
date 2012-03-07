@@ -34,7 +34,7 @@ class SimpleAI():
 
     def cmd_add(self):
         self.me = self.cmd("add",
-                           dict(name = "SimplePython"))
+                           dict(name = "SimplePython", script='python'))
         return self.me
     
     def cmd_map(self):
@@ -70,6 +70,9 @@ class SimpleAI():
                 moves.append([sended, _from, to])
                 count -= sended
 
+        print self.info
+        print self.map
+        print moves
         return moves
 
 
