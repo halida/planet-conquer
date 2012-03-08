@@ -4,7 +4,8 @@
 module: lib
 """
 import sys, os
-import time, logging, json, random, uuid, datetime
+import time, logging, json, random, uuid, datetime, copy, string
+
 from datetime import date
 
 logging.basicConfig(level=logging.DEBUG,
