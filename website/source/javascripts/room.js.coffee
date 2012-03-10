@@ -14,6 +14,9 @@ create_svg = (obj)-> document.createElementNS('http://www.w3.org/2000/svg', obj)
 
 SIZE = 80
 
+log = ()->
+    console.log arguments
+
 class Game extends Spine.Module
     @extend(Spine.Events)
 
@@ -36,10 +39,12 @@ class Game extends Spine.Module
         switch data.op
             when "info"
                 Game.trigger "info", data
+                log "info:", data
             when "add"
                 Game.trigger "add", data
             when  "map"
                 Game.trigger "map", data
+                log "map:", data
             else
                 if data.status != 'ok'
                   console.log(data)
@@ -53,10 +58,12 @@ class GameShower extends Spine.Controller
         @info = {}
         @map = {}
 
-        @scene = $('#scene')
-        @svg = @scene.svg()
-        @desc = $('#desc')
-        @status =  $('#status')
+        @div_scene = $('#board-scene')
+        @svg = @div_scene.svg()
+        @div_desc = $('#desc')
+        @div_status =  $('#game-status')
+        @div_round = $('#current-round')
+        @div_maxround = $('#max-round')
 
     show_planet_desc: (e)->
         id = $(e.target).attr('planet_id')
@@ -64,7 +71,7 @@ class GameShower extends Spine.Controller
         hold = @info.holds[id]
         side = hold[0]
         count = hold[1]
-        @desc.html(
+        @div_desc.html(
             "<div class=\"desc-planet\">the planet: #{id}<br/>
             <span>def<span> #{planet_info.def}<br/>
             <span>res<span> #{planet_info.res}<br/>
@@ -82,7 +89,7 @@ class GameShower extends Spine.Controller
         for move in @info.moves
             continue if move[1] != route[0] or move[2] != route[1]
             moves.push move
-        @desc.html(
+        @div_desc.html(
             "
             <div class=\"desc-route\">
                 step: #{route[2]}
@@ -92,11 +99,14 @@ class GameShower extends Spine.Controller
         )
 
     update_map: ()->
+        # info
+        @div_maxround.html(@map.max_round)
+
         @svg_planets = []
         @svg_routes = []
         # set board size
-        @scene.width(SIZE * @map.map_size[0])
-        @scene.height(SIZE * @map.map_size[1])
+        @div_scene.width(SIZE * @map.map_size[0])
+        @div_scene.height(SIZE * @map.map_size[1])
 
         # draw routes
         for route, i in @map.routes
@@ -118,7 +128,7 @@ class GameShower extends Spine.Controller
                 y2: pos2[1]*SIZE + SIZE/2
 
             svg_route.hover @proxy @show_route_desc
-            @scene.append(svg_route)
+            @div_scene.append(svg_route)
             @svg_planets.push(svg_route)
 
         # draw planets
@@ -133,7 +143,7 @@ class GameShower extends Spine.Controller
                 r: SIZE/4
                 fill: "white"
             svg_planet.hover @proxy @show_planet_desc
-            @scene.append(svg_planet)
+            @div_scene.append(svg_planet)
             @svg_routes.push(svg_planet)
 
             svg_planet_text = $ create_svg("text")
@@ -145,12 +155,16 @@ class GameShower extends Spine.Controller
                 y: planet.pos[1]*SIZE + SIZE/2
                 dx: -SIZE/4
                 dy: +SIZE/16
-            @scene.append(svg_planet_text)
+            @div_scene.append(svg_planet_text)
 
 
     update_info: ()->
+        @div_round.html(@info.round)
+        @update_players()
+        @update_logs()
+
         # game state
-        @status.html @info.status
+        @div_status.html @info.status
         # draw holds
         for hold, i in @info.holds
             $('circle#planet-'+i).attr
@@ -158,6 +172,23 @@ class GameShower extends Spine.Controller
             $('text#planet-text-'+i).text(hold[1])
         # draw moves
         # todo
+
+    update_players: ()->
+        data = []
+        for player in @info.players
+            player_data = [
+                "#{player.side} - #{player.name}",
+                "planets: #{player.planets}",
+                "unit: #{player.unit}",
+                "#{player.status}",
+            ]
+            data.push '<div class="player">' + player_data.join("<br/>") + '</div>'
+        $('#players').html(data.join("\n"))
+
+    update_logs: ()->
+        for log in @info.logs
+            #todo
+            true
 
 # export
 window.Game = Game

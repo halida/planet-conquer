@@ -17,14 +17,23 @@ DEFAULT_MAP = 'srcs/map/oneline.yml'
 MAX_LOST_TURN = 3
 
 class Player():
-    def __init__(self, game, name="", script='python'):
+    def __init__(self, game, name="", side='python'):
         """设置player
         """
         self.game = game
         self.name = name
-        self.script = script
+        self.side = side
         self.id = uuid.uuid4().hex
         self.alive = True
+
+    def get_info(self):
+        if self.alive:
+            self.status = "alive"
+        else:
+            self.status = "dead"
+        return dict(name=self.name,
+                    side=self.side,
+                    status=self.status)
 
 class Game():
     """游戏场景"""
@@ -80,9 +89,9 @@ class Game():
 
         self.holds = [(None, 0) for i in range(len(self.map.planets))]
         
-    def add_player(self, name="unknown", script='python'):
+    def add_player(self, name="unknown", side='python'):
         # 生成玩家
-        player = Player(self, name, script)
+        player = Player(self, name, side)
         self.players.append(player)
         self.player_ops.append(None)
         # 强制更新info
@@ -146,9 +155,9 @@ class Game():
         """
         scores = [[0, 0, i] for i in range(len(self.players))]
         for side, count in self.holds:
-            if side != None:
-                scores[side][0] += 1
-                scores[side][1] += count
+            if side == None: continue
+            scores[side][0] += 1
+            scores[side][1] += count
 
         maxid = max(scores)[2]
         winner = self.players[maxid]
@@ -170,9 +179,20 @@ class Game():
     def get_info(self):
         if self.info:
             return self.info
+
+        player_infos = [p.get_info() for p in self.players]
+        # count planets and units
+        for p in player_infos:
+            p["planets"] = 0
+            p["units"] = 0
+        for side, count in self.holds:
+            if side == None: continue
+            player_infos[side]["planets"] += 1
+            player_infos[side]["units"] += count
+        
         self.info = dict(round=self.round,
                          status=self.status,
-                         players=[dict(name=p.name) for p in self.players],
+                         players=player_infos,
                          moves=self.moves,
                          holds=self.holds,
                          logs=self.logs)

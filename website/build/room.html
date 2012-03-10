@@ -17,27 +17,37 @@
     <div id='main' role='main'>
       <h1>planet conquer</h1>
       <div id='board'>
-        <div id='board-right'>
+        <div id='board-head'>
+          <div id='round'>
+            round
+            <span id='current-round'>0</span>
+            /
+            <span id='max-round'>0</span>
+          </div>
+          <div id='game-status'></div>
+        </div>
+        <div id='board-side'>
+          <div id='players'></div>
           <div id='desc'></div>
         </div>
-        <svg id='scene' xmlns='http://www.w3.org/2000/svg'></svg>
+        <svg id='board-scene' xmlns='http://www.w3.org/2000/svg'></svg>
+        <div id='board-log'></div>
       </div>
-      <script type='text/javascript'>
-        //<![CDATA[
-          (function() {
-        var game, shower;
-      
-        game = new Game();
-      
-        shower = new GameShower(game);
-      
-        game.set_server("localhost:9999", 0);
-      
-      }).call(this);
-      
-        //]]>
-      </script>
     </div>
   </body>
+  <script type='text/javascript'>
+    //<![CDATA[
+      (function() {
+    var game, shower;
   
+    game = new Game();
+  
+    shower = new GameShower(game, "#board");
+  
+    game.set_server("localhost:9999", 0);
+  
+  }).call(this);
+  
+    //]]>
+  </script>
 </html>

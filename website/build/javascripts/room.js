@@ -1,5 +1,5 @@
 (function() {
-  var Game, GameShower, SIZE, WS, create_svg, draw_circle, side_color,
+  var Game, GameShower, SIZE, WS, create_svg, draw_circle, log, side_color,
     __hasProp = Object.prototype.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
@@ -22,6 +22,10 @@
   };
 
   SIZE = 80;
+
+  log = function() {
+    return console.log(arguments);
+  };
 
   Game = (function(_super) {
 
@@ -64,11 +68,13 @@
     Game.prototype.onmessage = function(data) {
       switch (data.op) {
         case "info":
-          return Game.trigger("info", data);
+          Game.trigger("info", data);
+          return log("info:", data);
         case "add":
           return Game.trigger("add", data);
         case "map":
-          return Game.trigger("map", data);
+          Game.trigger("map", data);
+          return log("map:", data);
         default:
           if (data.status !== 'ok') return console.log(data);
       }
@@ -95,9 +101,12 @@
       }));
       this.info = {};
       this.map = {};
-      this.scene = $('#scene');
-      this.svg = this.scene.svg();
-      this.desc = $('#desc');
+      this.div_scene = $('#board-scene');
+      this.svg = this.div_scene.svg();
+      this.div_desc = $('#desc');
+      this.div_status = $('#game-status');
+      this.div_round = $('#current-round');
+      this.div_maxround = $('#max-round');
     }
 
     GameShower.prototype.show_planet_desc = function(e) {
@@ -107,7 +116,7 @@
       hold = this.info.holds[id];
       side = hold[0];
       count = hold[1];
-      return this.desc.html("<div class=\"desc-planet\">the planet: " + id + "<br/>            <span>def<span> " + planet_info.def + "<br/>            <span>res<span> " + planet_info.res + "<br/>            <span>cos<span> " + planet_info.cos + "<br/>            <span>max<span> " + planet_info.max + "<br/>            </div>            <div class=\"desc-holds\">with side: " + side + "<br/>            <div class=\"desc-holds\">count: " + count + "<br/>                ");
+      return this.div_desc.html("<div class=\"desc-planet\">the planet: " + id + "<br/>            <span>def<span> " + planet_info.def + "<br/>            <span>res<span> " + planet_info.res + "<br/>            <span>cos<span> " + planet_info.cos + "<br/>            <span>max<span> " + planet_info.max + "<br/>            </div>            <div class=\"desc-holds\">with side: " + side + "<br/>            <div class=\"desc-holds\">count: " + count + "<br/>                ");
     };
 
     GameShower.prototype.show_route_desc = function(e) {
@@ -121,13 +130,16 @@
         if (move[1] !== route[0] || move[2] !== route[1]) continue;
         moves.push(move);
       }
-      return this.desc.html("            <div class=\"desc-route\">                step: " + route[2] + "                moves: " + moves + "            </div>            ");
+      return this.div_desc.html("            <div class=\"desc-route\">                step: " + route[2] + "                moves: " + moves + "            </div>            ");
     };
 
     GameShower.prototype.update_map = function() {
       var i, planet, pos1, pos2, route, step, svg_planet, svg_planet_text, svg_route, to, _from, _len, _len2, _ref, _ref2, _results;
+      this.div_maxround.html(this.map.max_round);
       this.svg_planets = [];
       this.svg_routes = [];
+      this.div_scene.width(SIZE * this.map.map_size[0]);
+      this.div_scene.height(SIZE * this.map.map_size[1]);
       _ref = this.map.routes;
       for (i = 0, _len = _ref.length; i < _len; i++) {
         route = _ref[i];
@@ -148,7 +160,7 @@
           y2: pos2[1] * SIZE + SIZE / 2
         });
         svg_route.hover(this.proxy(this.show_route_desc));
-        this.scene.append(svg_route);
+        this.div_scene.append(svg_route);
         this.svg_planets.push(svg_route);
       }
       _ref2 = this.map.planets;
@@ -166,7 +178,7 @@
           fill: "white"
         });
         svg_planet.hover(this.proxy(this.show_planet_desc));
-        this.scene.append(svg_planet);
+        this.div_scene.append(svg_planet);
         this.svg_routes.push(svg_planet);
         svg_planet_text = $(create_svg("text"));
         svg_planet_text.text('he');
@@ -178,13 +190,17 @@
           dx: -SIZE / 4,
           dy: +SIZE / 16
         });
-        _results.push(this.scene.append(svg_planet_text));
+        _results.push(this.div_scene.append(svg_planet_text));
       }
       return _results;
     };
 
     GameShower.prototype.update_info = function() {
       var hold, i, _len, _ref, _results;
+      this.div_round.html(this.info.round);
+      this.update_players();
+      this.update_logs();
+      this.div_status.html(this.info.status);
       _ref = this.info.holds;
       _results = [];
       for (i = 0, _len = _ref.length; i < _len; i++) {
@@ -193,6 +209,29 @@
           fill: side_color(hold[0])
         });
         _results.push($('text#planet-text-' + i).text(hold[1]));
+      }
+      return _results;
+    };
+
+    GameShower.prototype.update_players = function() {
+      var data, player, player_data, _i, _len, _ref;
+      data = [];
+      _ref = this.info.players;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        player = _ref[_i];
+        player_data = ["" + player.side + " - " + player.name, "planets: " + player.planets, "unit: " + player.unit, "" + player.status];
+        data.push('<div class="player">' + player_data.join("<br/>") + '</div>');
+      }
+      return $('#players').html(data.join("\n"));
+    };
+
+    GameShower.prototype.update_logs = function() {
+      var log, _i, _len, _ref, _results;
+      _ref = this.info.logs;
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        log = _ref[_i];
+        _results.push(true);
       }
       return _results;
     };
