@@ -1,0 +1,130 @@
+name: star
+desc: >-
+    star map
+author: flreey
+version: 0.1
+
+max_round: 8000
+max_player: 5
+start_unit: 100
+starts:
+  - A
+  - B
+  - C
+  - D
+  - E
+
+map: |
+  ........A........
+  .................
+  .....F.....G.....
+  .B.............E.
+  .....H.....J.....
+  ........I........
+  .C...........D...
+planets:
+  A:
+    def: 0.5
+    res: 1.5
+    cos: 10
+    max: 300
+  B:
+    def: 0.5
+    res: 1.5
+    cos: 10
+    max: 300
+  C:
+    def: 0.5
+    res: 1.5
+    cos: 10
+    max: 300
+  D:
+    def: 0.5
+    res: 1.5
+    cos: 10
+    max: 300
+
+  E:
+    def: 0.5
+    res: 1.5
+    cos: 10
+    max: 300
+  F:
+    def: 0.5
+    res: 1.5
+    cos: 10
+    max: 300
+
+  G:
+    def: 0.5
+    res: 1.5
+    cos: 10
+    max: 300
+  H:
+    def: 0.5
+    res: 1.5
+    cos: 10
+    max: 300
+  I:
+    def: 0.5
+    res: 1.5
+    cos: 10
+    max: 300
+  J:
+    def: 0.5
+    res: 1.5
+    cos: 10
+    max: 300
+
+routes:
+  - - A
+    - F
+    - 1
+  - - F
+    - B
+    - 1
+  - - B
+    - H
+    - 1
+  - - H
+    - C
+    - 1
+  - - C
+    - I
+    - 1
+  - - I
+    - D
+    - 1
+  - - D
+    - J
+    - 1
+  - - J
+    - E
+    - 1
+  - - E
+    - G
+    - 1
+  - - G
+    - A
+    - 1
+  - - H
+    - F
+    - 2
+  - - H
+    - I
+    - 2
+  - - I
+    - J
+    - 2
+  - - F
+    - G
+    - 2
+  - - G
+    - J
+    - 2
+  - - H
+    - G
+    - 3
+  - - F
+    - J
+    - 3

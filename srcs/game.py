@@ -12,7 +12,7 @@ WAITFORPLAYER='waitforplayer'
 RUNNING='running'
 FINISHED='finished'
 
-DEFAULT_MAP = 'srcs/map/fight_here.yml'
+DEFAULT_MAP = 'srcs/map/star.yml'
 
 MAX_LOST_TURN = 3
 
