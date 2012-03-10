@@ -34,7 +34,7 @@ class SimpleAI():
 
     def cmd_add(self):
         self.me = self.cmd("add",
-                           dict(name = "SimplePython", script='python'))
+                           dict(name = "SimplePython", side='python'))
         return self.me
     
     def cmd_map(self):

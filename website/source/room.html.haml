@@ -4,19 +4,28 @@
 
 %h1 planet conquer
 
-#board
 
+#board
+  #board-head
+    #round
+      round
+      %span#current-round= 0
+      = "/"
+      %span#max-round= 0
+    #game-status
+
+  #board-side
+    #players
+    #desc
+    #board-logs
+
+  %svg#board-scene{xmlns: "http://www.w3.org/2000/svg", version: "1.1"}
+
+- content_for :javascripts do
   - game_server = "localhost:9999"
   - room_id = 0
 
-  #board-side
-    #status= "??"
-    #desc
-  
-  %svg#scene{xmlns: "http://www.w3.org/2000/svg"}
-
-
-:coffeescript
-  game = new Game()
-  shower = new GameShower(game)
-  game.set_server("#{game_server}", #{room_id})
+  :coffeescript
+    game = new Game()
+    shower = new GameShower(game, "#board")
+    game.set_server("#{game_server}", #{room_id})

@@ -12,7 +12,8 @@ starts:
   - B
 
 map: |
-  A.C.D.E.B
+  A.......B
+  ..C.D.E..
 
 planets:
   A:
