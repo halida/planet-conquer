@@ -13,6 +13,7 @@ draw_circle = (ctx, x, y, r)->
 create_svg = (obj)-> document.createElementNS('http://www.w3.org/2000/svg', obj)
 
 SIZE = 80
+DUR = 30
 
 log = ()->
     console.log arguments
@@ -60,11 +61,26 @@ class GameShower extends Spine.Controller
 
         @div_scene = $('#board-scene')
         @svg = @div_scene.svg()
+        @svg_moves = []
+
         @div_desc = $('#desc')
         @div_status =  $('#game-status')
         @div_round = $('#current-round')
         @div_maxround = $('#max-round')
         @div_logs = $('#board-logs')
+
+    show_move_desc: (e)->
+        id = $(e.target).attr('move_id')
+        [side, _from, to, count, remain] = @info.moves[id]
+        @div_desc.html(
+            "<div class=\"desc-move\">
+            <span>player<span> #{side}<br/>
+            <span>from<span> #{_from}<br/>
+            <span>to<span> #{to}<br/>
+            <span>count<span> #{count}<br/>
+            <span>remain<span> #{remain}<br/>
+            </div>
+                ")
 
     show_planet_desc: (e)->
         id = $(e.target).attr('planet_id')
@@ -102,6 +118,7 @@ class GameShower extends Spine.Controller
     update_map: ()->
         # info
         @div_maxround.html(@map.max_round)
+        @count_route_pos()
 
         @svg_planets = []
         @svg_routes = []
@@ -111,9 +128,7 @@ class GameShower extends Spine.Controller
 
         # draw routes
         for route, i in @map.routes
-            _from = route[0]
-            to = route[1]
-            step = route[2]
+            [_from, to, step] = route
             pos1 = @map.planets[_from].pos
             pos2 = @map.planets[to].pos
 
@@ -128,7 +143,7 @@ class GameShower extends Spine.Controller
                 x2: pos2[0]*SIZE + SIZE/2
                 y2: pos2[1]*SIZE + SIZE/2
 
-            svg_route.hover @proxy @show_route_desc
+            # svg_route.hover @proxy @show_route_desc
             @div_scene.append(svg_route)
             @svg_routes.push(svg_route)
 
@@ -174,8 +189,61 @@ class GameShower extends Spine.Controller
             $('circle#planet-'+i).attr
                 fill: side_color(hold[0])
             $('text#planet-text-'+i).text(hold[1])
-        # draw moves
-        # todo
+        @update_moves()
+
+    update_moves: ()->
+        # remove old
+        for svg_move in @svg_moves
+            svg_move.remove()
+
+        # add new
+        for move, i in @info.moves
+            [side, _from, to, count, remain] = move
+            [pos, next] = @get_route_pos_and_next(_from, to, remain)
+            svg_move = $ create_svg("circle")
+            svg_move.attr
+                id: "move-"+i
+                class: "move"
+                move_id: i
+                cx: next[0]
+                cy: next[1]
+                r: SIZE/8
+                fill: side_color(side)
+            svg_move.hover @proxy @show_move_desc
+
+            # animation = '<animate attributeName="cx" begin="0s" dur="'+DUR+'s" fill="freeze" from="'+pos[0]+'" to="'+next[0]+'" repeatCount="indefinite"/>'
+            # animation += '<animate attributeName="cy" begin="0s" dur="'+DUR+'s" fill="freeze" from="'+pos[1]+'" to="'+next[1]+'" repeatCount="indefinite"/>'
+            # svg_move.append(animation)
+
+            @svg_moves.push svg_move
+            @div_scene.append svg_move
+
+    get_route_pos_and_next: (_from, to, remain)->
+        route = @route_move_pos[_from*1000 + to]
+        return [route[remain-1], route[remain]]
+
+    count_route_pos: ()->
+        @route_move_pos = {}
+
+        for route, i in @map.routes
+            [_from, to, step] = route
+            [fx, fy] = @map.planets[_from].pos
+            [tx, ty] = @map.planets[to].pos
+            tx = tx*SIZE + SIZE/2
+            ty = ty*SIZE + SIZE/2
+            fx = fx*SIZE + SIZE/2
+            fy = fy*SIZE + SIZE/2
+
+            dx = (tx - fx) / (step)
+            dy = (ty - fy) / (step)
+
+            move_step = []
+            for j in [0..step]
+                move_step.push [fx+dx*j, fy+dy*j]
+
+            @route_move_pos[to*1000+_from] = move_step
+            @route_move_pos[_from*1000+to] = move_step.slice(0).reverse()
+
 
     update_players: ()->
         data = []
@@ -196,7 +264,7 @@ class GameShower extends Spine.Controller
                 when "production" then @display_production(log)
                 when "battle" then @display_battle(log)
 
-        @div_logs.append @logs.join("\n")
+        @div_logs.prepend @logs.join("\n")
 
     display_battle: (data)->
         #todo
