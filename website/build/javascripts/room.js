@@ -107,6 +107,7 @@
       this.div_status = $('#game-status');
       this.div_round = $('#current-round');
       this.div_maxround = $('#max-round');
+      this.div_logs = $('#board-logs');
     }
 
     GameShower.prototype.show_planet_desc = function(e) {
@@ -161,7 +162,7 @@
         });
         svg_route.hover(this.proxy(this.show_route_desc));
         this.div_scene.append(svg_route);
-        this.svg_planets.push(svg_route);
+        this.svg_routes.push(svg_route);
       }
       _ref2 = this.map.planets;
       _results = [];
@@ -178,8 +179,6 @@
           fill: "white"
         });
         svg_planet.hover(this.proxy(this.show_planet_desc));
-        this.div_scene.append(svg_planet);
-        this.svg_routes.push(svg_planet);
         svg_planet_text = $(create_svg("text"));
         svg_planet_text.text('he');
         svg_planet_text.attr({
@@ -190,6 +189,7 @@
           dx: -SIZE / 4,
           dy: +SIZE / 16
         });
+        this.div_scene.append(svg_planet);
         _results.push(this.div_scene.append(svg_planet_text));
       }
       return _results;
@@ -226,14 +226,28 @@
     };
 
     GameShower.prototype.update_logs = function() {
-      var log, _i, _len, _ref, _results;
+      var log, _i, _len, _ref;
+      this.logs = ['<div class="log">round: ' + this.info.round + '</div>'];
       _ref = this.info.logs;
-      _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         log = _ref[_i];
-        _results.push(true);
+        switch (log.type) {
+          case "production":
+            this.display_production(log);
+            break;
+          case "battle":
+            this.display_battle(log);
+        }
       }
-      return _results;
+      return this.div_logs.append(this.logs.join("\n"));
+    };
+
+    GameShower.prototype.display_battle = function(data) {
+      return this.logs.push('<div class="log">' + ("planet: " + data.planet + ": player " + data.attack + " attack player " + data.defence + ".") + '</div>');
+    };
+
+    GameShower.prototype.display_production = function(data) {
+      return this.logs.push('<div class="log">' + ("planet " + data.planet + ": production to " + data.count + ".") + '</div>');
     };
 
     return GameShower;

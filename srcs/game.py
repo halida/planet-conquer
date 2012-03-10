@@ -53,7 +53,8 @@ class Game():
         self.start()
 
     def log(self, msg):
-        self.logs.append(msg)
+        self.logs.append(dict(type='msg', msg=msg))
+        # self.logs.append(msg)
 
     def user_set_map(self, data):
         if self.status != WAITFORPLAYER:
@@ -248,6 +249,10 @@ class Game():
                 side = None
                 next = 0
             self.holds[i] = [side, next]
+            self.logs.append(dict(type= "production",
+                                  planet=i,
+                                  side=side,
+                                  count=next))
             
         self.round += 1
         self.player_op = [None, ] * len(self.players)
@@ -310,9 +315,11 @@ class Game():
             # 如果星球没有驻军, 就占领
             planet_side = side
             planet_count = count
+            self.logs.append(dict(type= "occupy", side=side, count=count)) 
         elif side == planet_side:
             # 如果是己方, 就加入
             planet_count += count
+            self.logs.append(dict(type= "join", side=side, count=count))
         else:
             # 敌方战斗
             # 防守方加权
@@ -330,6 +337,13 @@ class Game():
                 planet_count = int(planet_count / _def)
                 
         self.holds[to] = [planet_side, planet_count]
+        self.logs.append(dict(type= "battle",
+                              planet=to,
+                              attack=side,
+                              defence=planet_side,
+                              atk_count=count,
+                              def_count=planet_count,
+                              winner=planet_side))
 
     def count_growth(self, planet_count, planet):
         max = planet['max']

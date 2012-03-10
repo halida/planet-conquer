@@ -13,6 +13,10 @@
   #board-side #players {
     background: #aaaaaa; }
 
+#board-logs {
+  height: 300px;
+  overflow: scroll; }
+
 .planet {
   position: absolute;
   width: 60px;

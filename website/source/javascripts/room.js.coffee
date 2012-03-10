@@ -64,6 +64,7 @@ class GameShower extends Spine.Controller
         @div_status =  $('#game-status')
         @div_round = $('#current-round')
         @div_maxround = $('#max-round')
+        @div_logs = $('#board-logs')
 
     show_planet_desc: (e)->
         id = $(e.target).attr('planet_id')
@@ -129,10 +130,11 @@ class GameShower extends Spine.Controller
 
             svg_route.hover @proxy @show_route_desc
             @div_scene.append(svg_route)
-            @svg_planets.push(svg_route)
+            @svg_routes.push(svg_route)
 
         # draw planets
         for planet, i in @map.planets
+            # planet
             svg_planet = $ create_svg("circle")
             svg_planet.attr
                 id: "planet-"+i
@@ -143,9 +145,8 @@ class GameShower extends Spine.Controller
                 r: SIZE/4
                 fill: "white"
             svg_planet.hover @proxy @show_planet_desc
-            @div_scene.append(svg_planet)
-            @svg_routes.push(svg_planet)
 
+            #planet text
             svg_planet_text = $ create_svg("text")
             svg_planet_text.text('he')
             svg_planet_text.attr
@@ -155,7 +156,10 @@ class GameShower extends Spine.Controller
                 y: planet.pos[1]*SIZE + SIZE/2
                 dx: -SIZE/4
                 dy: +SIZE/16
-            @div_scene.append(svg_planet_text)
+
+            #add them all
+            @div_scene.append svg_planet
+            @div_scene.append svg_planet_text
 
 
     update_info: ()->
@@ -186,9 +190,22 @@ class GameShower extends Spine.Controller
         $('#players').html(data.join("\n"))
 
     update_logs: ()->
+        @logs = ['<div class="log">round: '+@info.round+'</div>']
         for log in @info.logs
-            #todo
-            true
+            switch log.type
+                when "production" then @display_production(log)
+                when "battle" then @display_battle(log)
+
+        @div_logs.append @logs.join("\n")
+
+    display_battle: (data)->
+        #todo
+        @logs.push '<div class="log">'+ "planet: #{data.planet}: player #{data.attack} attack player #{data.defence}." + '</div>'
+
+    display_production: (data)->
+        #todo
+        @logs.push '<div class="log">'+ "planet #{data.planet}: production to #{data.count}." + '</div>'
+
 
 # export
 window.Game = Game
