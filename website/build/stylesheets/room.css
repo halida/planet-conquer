@@ -21,9 +21,10 @@
   position: absolute;
   width: 60px;
   height: 60px;
-  -webkit-border-radius: 30px;
   -moz-border-radius: 30px;
-  -ms-border-radius: 30px;
+  -webkit-border-radius: 30px;
   -o-border-radius: 30px;
+  -ms-border-radius: 30px;
+  -khtml-border-radius: 30px;
   border-radius: 30px;
   background: #cccccc; }

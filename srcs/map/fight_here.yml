@@ -9,14 +9,14 @@ max_player: 8
 start_unit: 100
 starts:
   - A
-  - B
   - C
+  - B
   - D
 
 map: |
   .A.............
-  ...........Hb.B
-  .a.....m.......
+  ...........H..B
+  .......m.......
   .E.............
   ....e..L..h....
   .....i...l.....
@@ -26,197 +26,165 @@ map: |
   .....j...k.....
   ....f..J..g....
   .............G.
-  .......o.....c.
-  D.dF...........
+  .......o.......
+  D..F...........
   .............C.
 
 planets:
   A:
-    def: 1.5
+    def: 1.2
     res: 1
-    cos: 5
-    max: 300
+    cos: 20
+    max: 1000
   B:
-    def: 1.5
+    def: 1.2
     res: 1
-    cos: 5
-    max: 300
+    cos: 20
+    max: 1000
   C:
-    def: 1.5
+    def: 1.2
     res: 1
-    cos: 5
-    max: 300
+    cos: 20
+    max: 1000
   D:
-    def: 1.5
+    def: 1.2
     res: 1
-    cos: 5
-    max: 300
+    cos: 20
+    max: 1000
   E:
-    def: 1.5
-    res: 1
+    def: 0.5
+    res: 1.5
     cos: 5
     max: 300
   F:
-    def: 1.5
-    res: 1
+    def: 0.5
+    res: 1.5
     cos: 5
     max: 300
   G:
-    def: 1.5
-    res: 1
+    def: 0.5
+    res: 1.5
     cos: 5
     max: 300
   H:
-    def: 1.5
-    res: 1
+    def: 0.5
+    res: 1.5
     cos: 5
     max: 300
   I:
-    def: 1.5
+    def: 1.2
     res: 1
     cos: 5
-    max: 300
+    max: 800
   J:
-    def: 1.5
+    def: 1.2
     res: 1
     cos: 5
-    max: 300
+    max: 800
   K:
-    def: 1.5
+    def: 1.2
     res: 1
     cos: 5
-    max: 300
+    max: 800
   L:
-    def: 1.5
+    def: 1.2
     res: 1
     cos: 5
-    max: 300
+    max: 800
   M:
-    def: 1.5
-    res: 1
+    def: 0.5
+    res: 1.5
     cos: 5
     max: 300
   N:
-    def: 1.5
-    res: 1
+    def: 0.5
+    res: 1.5
     cos: 5
     max: 300
   O:
-    def: 1.5
-    res: 1
+    def: 0.5
+    res: 1.5
     cos: 5
     max: 300
   P:
-    def: 1.5
-    res: 1
-    cos: 5
-    max: 300
-  a:
-    def: 1.5
-    res: 1
-    cos: 5
-    max: 300
-  b:
-    def: 1.5
-    res: 1
-    cos: 5
-    max: 300
-  c:
-    def: 1.5
-    res: 1
-    cos: 5
-    max: 300
-  d:
-    def: 1.5
-    res: 1
+    def: 0.5
+    res: 1.5
     cos: 5
     max: 300
   e:
-    def: 1.5
+    def: 1.2
     res: 1
     cos: 5
-    max: 300
+    max: 100
   f:
-    def: 1.5
+    def: 1.2
     res: 1
     cos: 5
-    max: 300
+    max: 100
   g:
-    def: 1.5
+    def: 1.2
     res: 1
     cos: 5
-    max: 300
+    max: 100
   h:
-    def: 1.5
+    def: 1.2
     res: 1
     cos: 5
-    max: 300
+    max: 100
   i:
-    def: 1.5
+    def: 1.2
     res: 1
     cos: 5
-    max: 300
+    max: 800
   j:
-    def: 1.5
+    def: 1.2
     res: 1
     cos: 5
-    max: 300
+    max: 800
   k:
-    def: 1.5
+    def: 1.2
     res: 1
     cos: 5
-    max: 300
+    max: 800
   l:
-    def: 1.5
+    def: 1.2
     res: 1
     cos: 5
-    max: 300
+    max: 800
   m:
-    def: 1.5
+    def: 1.2
     res: 1
     cos: 5
-    max: 300
+    max: 800
   n:
-    def: 1.5
+    def: 1.2
     res: 1
     cos: 5
-    max: 300
+    max: 800
   o:
-    def: 1.5
+    def: 1.2
     res: 1
     cos: 5
-    max: 300
+    max: 800
   p:
-    def: 1.5
+    def: 1.2
     res: 1
     cos: 5
-    max: 300
+    max: 800
 
 routes:
   - - A
-    - a
+    - E
     - 2
   - - B
-    - b
+    - H
     - 2
   - - C
-    - c
+    - G
     - 2
   - - D
-    - d
-    - 2
-  - - a
-    - E
-    - 1
-  - - d
     - F
-    - 1
-  - - c
-    - G
-    - 1
-  - - b
-    - H
-    - 1
+    - 2
   - - e
     - E
     - 2
@@ -255,28 +223,28 @@ routes:
     - 1
   - - L
     - M
-    - 3
+    - 2
   - - I
     - N
-    - 3
+    - 2
   - - O
     - J
-    - 3
+    - 2
   - - K
     - P
-    - 3
+    - 2
   - - N
     - M
-    - 2
+    - 1
   - - M
     - P
-    - 2
+    - 1
   - - P
     - O
-    - 2
+    - 1
   - - O
     - N
-    - 2
+    - 1
   - - e
     - m
     - 2
@@ -291,28 +259,79 @@ routes:
     - 2
   - - n
     - I
-    - 1
+    - 2
   - - m
     - L
-    - 1
+    - 2
   - - p
     - K
-    - 1
+    - 2
   - - o
     - J
-    - 1
+    - 2
   - - e
     - i
-    - 5
+    - 2
   - - h
     - l
-    - 5
+    - 2
   - - k
     - g
-    - 5
+    - 2
   - - f
     - j
-    - 5
+    - 2
+  - - i
+    - L
+    - 2
+  - - j
+    - I
+    - 2
+  - - k
+    - J
+    - 2
+  - - l
+    - K
+    - 2
+  - - i
+    - N
+    - 1
+  - - j
+    - O
+    - 1
+  - - k
+    - P
+    - 1
+  - - l
+    - M
+    - 1
+  - - i
+    - M
+    - 1
+  - - j
+    - N
+    - 1
+  - - k
+    - O
+    - 1
+  - - l
+    - P
+    - 1
+  - - e
+    - n
+    - 2
+  - - f
+    - o
+    - 2
+  - - m
+    - h
+    - 2
+  - - p
+    - g
+    - 2
+
+
+
 
 
 
