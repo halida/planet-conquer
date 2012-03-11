@@ -36,6 +36,21 @@ def count_growth_test():
     eq_( g.count_growth(12, dict(max=5, res=0.5, cos=3)), 9 )
     # grownth should not beyond max
     eq_( g.count_growth(12, dict(max=15, res=2, cos=10)), 15)
+
+def move_test():
+    g = Game(enable_no_resp_die = False, map = "srcs/map/test.yml")
+    yield check_game_empty, g, game.WAITFORPLAYER
+    
+    # add_player
+    player1 = g.add_player('player1')
+    eq_(player1['seq'], 0)
+    player2 = g.add_player('player2')
+    eq_(player2['seq'], 1)
+    
+    # add two action
+    eq_(g.set_player_op(player1['id'], dict(op='moves', moves=[[50, 0, 4],[50, 0, 2],])), "ok")
+    g.step()
+    eq_(g.holds, [(None, 0), [1, 110], (None, 0), (None, 0), [0, 75]])
     
 def play_game_case_test():
     # init game

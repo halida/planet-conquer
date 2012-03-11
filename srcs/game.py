@@ -127,9 +127,9 @@ class Game():
                     elif armies < count:
                         return 'no enough armies'
                     step = self.routes[(_from, to)]
-                moves.append([n, _from, to, count, step])
+                    moves.append([n, _from, to, count, step])
                 self.player_ops[n] = moves
-            
+                
                 return 'ok'
             else:
                 return 'wrong op: ' + kw['op']
@@ -137,6 +137,7 @@ class Game():
             return 'invalid command'
 
     def do_player_op(self, n):
+        print "opn=", self.player_ops[n]
         for move in self.player_ops[n]:
             # check count <= self.holds[_from]
             count, _from = move[3], move[1]
