@@ -87,6 +87,7 @@ class Server():
                     result = dict(status=error_msg, data=rc)
                     logging.debug(error_msg)
 
+                print 'result', result
                 oper.send(json.dumps(result))
 
             # 处理所有room的游戏id

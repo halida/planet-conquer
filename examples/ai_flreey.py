@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 #-*- coding:utf-8 -*-
 """
-module: ai_halida
+module: ai_flreey
 """
 import json, time
 import urllib, httplib, logging
@@ -154,7 +154,6 @@ class SimpleAI():
 def main():
     rs = SimpleAI()
     rs.cmd_map()
-    logging.debug(rs.cmd_add())
     rs.init_weight()
     rs.cmd_info()
     pre_round = rs.info['round']

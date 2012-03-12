@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 #-*- coding:utf-8 -*-
 """
-module: ai_halida
+module: ai_flreeyv2
 """
 import json, time
 import urllib, httplib, logging
@@ -75,7 +75,7 @@ class SimpleAI():
 
         for n, hold in enumerate(self.info['holds']):
             if hold[0] is None:
-                planets[n]['weight'] *= 10
+                planets[n]['weight'] *= 2
 
         return sorted(
                 [(n, p['weight']) for n, p in enumerate(planets)],
@@ -102,27 +102,34 @@ class SimpleAI():
                 pid = k
                 ad_info = adjacency_planets[k]
                 adjacency_pids = [p[0] for p in ad_info]
-                if colony_planet_id in adjacency_pids:
+                if (colony_planet_id in adjacency_pids and colony_planet_id not
+                in planets):
                     pairs.append([
                         pid, colony_planet_id,
                         ad_info[adjacency_pids.index(colony_planet_id)][1]
                         ])
                     #only get once in this step
-                    adjacency_planets.pop(pid)
+                    #adjacency_planets.pop(pid)
 
         #random to reinforece armies
         fighting_armies = [p[0] for p in pairs]
         idle_armies = set(planets).difference(fighting_armies)
 
         for idle in idle_armies:
-            for pid, ad_info in adjacency_planets_copy.iteritems():
-                adjacency_pids = [p[0] for p in ad_info]
-                planet_needed_help = set(fighting_armies).intersection(adjacency_pids)
-                if planet_needed_help:
-                    pairs.append(idle, planet_needed_help.pop(), -1)
-                else:
-                    pairs.append(idle, adjacency_pids[0], -1)
+            ad_info = adjacency_planets_copy[idle]
+            adjacency_pids = [p[0] for p in ad_info]
+            planet_needed_help = set(fighting_armies).intersection(adjacency_pids)
+            if planet_needed_help:
+                pairs.append([idle, planet_needed_help.pop(), -1])
+            else:
+                #get_nearest_planet(idle, fighting_armies)
+                #dijkstra(idle, fighting_armies
+                #TODO: get the paths to nearelest planet 
+                pairs.append([idle, adjacency_pids[0], -1])
 
+        #print 'pairs', pairs
+        #print 'holds', self.info['holds']
+        #print self.map['routes']
         return pairs
 
     def cal_new_acount(self, current, planet, round):
@@ -138,15 +145,25 @@ class SimpleAI():
         moves = []
         for me, anemy, round in pairs:
             my_armies = holds[me][1]
-            if round == -1:
-                moves.append([int(holds[me][1] * 2.0 / 3), me, anemy])
-                #print 'reinforece', moves
-                continue
 
-            enemy_armies = self.cal_new_acount(holds[anemy][1], planets[anemy],
-                    round)
-            if my_armies > enemy_armies:
-                send_armies = int(enemy_armies + (my_armies - enemy_armies) / 2.0)
+            #reinforece my planets
+            if round == -1:
+                send = int(my_armies * 2.0 / 3)
+                holds[me][1] -= send
+                moves.append([send, me, anemy])
+            #conquer planets
+            else:
+                send_armies = 0
+                if holds[anemy][0] is None:
+                    #TODO: replace 50 with suitable armies number
+                    if my_armies >= 50:
+                        send_armies = my_armies * 2.0 / 3
+                else:
+                    enemy_armies = self.cal_new_acount(holds[anemy][1], planets[anemy],
+                            round)
+                    if my_armies > enemy_armies:
+                        send_armies = int(enemy_armies + (my_armies - enemy_armies) / 2.0)
+
                 moves.append([send_armies, me, anemy])
                 holds[me][1] -= send_armies
 
