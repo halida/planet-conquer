@@ -18,8 +18,6 @@ class SimpleAI():
         self.conn = httplib.HTTPConnection(SERVER, PORT)
         self.room = 0
         self.d = 0
-        self.cmd_map()
-        self.cmd_add()
 
     def cmd(self, cmd, data={}):
         """
@@ -36,7 +34,7 @@ class SimpleAI():
 
     def cmd_add(self):
         self.me = self.cmd("add",
-                           dict(name = "Flreey", side='python'))
+                           dict(name = "Flreeyv2", side='python'))
         return self.me
     
     def cmd_map(self):
@@ -46,7 +44,7 @@ class SimpleAI():
         self.info = self.cmd("info")
 
     def cmd_moves(self, moves):
-        print self.me, moves
+        #print self.me, moves
         return self.cmd("moves",
                         dict(id = self.me["id"],
                              moves = moves))
@@ -76,12 +74,12 @@ class SimpleAI():
                     planet['def'] * 0.2 + planet['max'] * 0.2)
 
         for n, hold in enumerate(self.info['holds']):
-            if not hold[0]:
+            if hold[0] is None:
                 planets[n]['weight'] *= 10
 
         return sorted(
                 [(n, p['weight']) for n, p in enumerate(planets)],
-                key=lambda x:x[1])
+                key=lambda x:x[1], reverse=True)
 
     def get_best_planets(self, planets, weight):
         """
@@ -95,24 +93,35 @@ class SimpleAI():
             if r[0] in planets:
                 adjacency_planets[r[0]].append([r[1], r[2]])
 
+        adjacency_planets_copy = adjacency_planets.copy()
         pairs = []
-        #fight with enemy
-        for planet_id, planet_weight in weight:
-            for pid, ad_pids in adjacency_planets.iteritems():
-                pids = [p[0] for p in ad_pids]
-                if planet_id in pids:
+        #conquer planet
+        for colony_planet_id, planet_weight in weight:
+            keys = adjacency_planets.keys()
+            for k in keys:
+                pid = k
+                ad_info = adjacency_planets[k]
+                adjacency_pids = [p[0] for p in ad_info]
+                if colony_planet_id in adjacency_pids:
                     pairs.append([
-                        pid, planet_id,
-                        ad_pids[pids.index(planet_id)][1]
+                        pid, colony_planet_id,
+                        ad_info[adjacency_pids.index(colony_planet_id)][1]
                         ])
+                    #only get once in this step
+                    adjacency_planets.pop(pid)
 
         #random to reinforece armies
-        fight_armies = [p[0] for p in pairs]
-        idle_armies = set(planets).difference(fight_armies)
-        import random
+        fighting_armies = [p[0] for p in pairs]
+        idle_armies = set(planets).difference(fighting_armies)
+
         for idle in idle_armies:
-            pairs.append(idle,
-                    fight_armies[random.randint(0, len(fight_armies)-1)], -1)
+            for pid, ad_info in adjacency_planets_copy.iteritems():
+                adjacency_pids = [p[0] for p in ad_info]
+                planet_needed_help = set(fighting_armies).intersection(adjacency_pids)
+                if planet_needed_help:
+                    pairs.append(idle, planet_needed_help.pop(), -1)
+                else:
+                    pairs.append(idle, adjacency_pids[0], -1)
 
         return pairs
 
@@ -131,7 +140,7 @@ class SimpleAI():
             my_armies = holds[me][1]
             if round == -1:
                 moves.append([int(holds[me][1] * 2.0 / 3), me, anemy])
-                print 'reinforece', moves
+                #print 'reinforece', moves
                 continue
 
             enemy_armies = self.cal_new_acount(holds[anemy][1], planets[anemy],
@@ -141,7 +150,6 @@ class SimpleAI():
                 moves.append([send_armies, me, anemy])
                 holds[me][1] -= send_armies
 
-        print self.info, self.map, moves
         return moves
 
     def step(self):
@@ -173,3 +181,6 @@ def main():
 
 if __name__=="__main__":
     main()
+
+
+

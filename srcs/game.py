@@ -12,19 +12,28 @@ WAITFORPLAYER='waitforplayer'
 RUNNING='running'
 FINISHED='finished'
 
-DEFAULT_MAP = 'srcs/map/oneline.yml'
+DEFAULT_MAP = 'srcs/map/fight_here.yml'
 
 MAX_LOST_TURN = 3
 
 class Player():
-    def __init__(self, game, name="", script='python'):
+    def __init__(self, game, name="", side='python'):
         """设置player
         """
         self.game = game
         self.name = name
-        self.script = script
+        self.side = side
         self.id = uuid.uuid4().hex
         self.alive = True
+
+    def get_info(self):
+        if self.alive:
+            self.status = "alive"
+        else:
+            self.status = "dead"
+        return dict(name=self.name,
+                    side=self.side,
+                    status=self.status)
 
 class Game():
     """游戏场景"""
@@ -44,7 +53,8 @@ class Game():
         self.start()
 
     def log(self, msg):
-        self.logs.append(msg)
+        self.logs.append(dict(type='msg', msg=msg))
+        # self.logs.append(msg)
 
     def user_set_map(self, data):
         if self.status != WAITFORPLAYER:
@@ -80,9 +90,9 @@ class Game():
 
         self.holds = [(None, 0) for i in range(len(self.map.planets))]
         
-    def add_player(self, name="unknown", script='python'):
+    def add_player(self, name="unknown", side='python'):
         # 生成玩家
-        player = Player(self, name, script)
+        player = Player(self, name, side)
         self.players.append(player)
         self.player_ops.append(None)
         # 强制更新info
@@ -117,9 +127,9 @@ class Game():
                     elif armies < count:
                         return 'no enough armies'
                     step = self.routes[(_from, to)]
-                moves.append([n, _from, to, count, step])
+                    moves.append([n, _from, to, count, step])
                 self.player_ops[n] = moves
-            
+                
                 return 'ok'
             else:
                 return 'wrong op: ' + kw['op']
@@ -127,6 +137,7 @@ class Game():
             return 'invalid command'
 
     def do_player_op(self, n):
+        print "opn=", self.player_ops[n]
         for move in self.player_ops[n]:
             # check count <= self.holds[_from]
             count, _from = move[3], move[1]
@@ -146,9 +157,9 @@ class Game():
         """
         scores = [[0, 0, i] for i in range(len(self.players))]
         for side, count in self.holds:
-            if side != None:
-                scores[side][0] += 1
-                scores[side][1] += count
+            if side == None: continue
+            scores[side][0] += 1
+            scores[side][1] += count
 
         maxid = max(scores)[2]
         winner = self.players[maxid]
@@ -170,9 +181,20 @@ class Game():
     def get_info(self):
         if self.info:
             return self.info
+
+        player_infos = [p.get_info() for p in self.players]
+        # count planets and units
+        for p in player_infos:
+            p["planets"] = 0
+            p["units"] = 0
+        for side, count in self.holds:
+            if side == None: continue
+            player_infos[side]["planets"] += 1
+            player_infos[side]["units"] += count
+        
         self.info = dict(round=self.round,
                          status=self.status,
-                         players=[dict(name=p.name) for p in self.players],
+                         players=player_infos,
                          moves=self.moves,
                          holds=self.holds,
                          logs=self.logs)
@@ -228,6 +250,10 @@ class Game():
                 side = None
                 next = 0
             self.holds[i] = [side, next]
+            self.logs.append(dict(type= "production",
+                                  planet=i,
+                                  side=side,
+                                  count=next))
             
         self.round += 1
         self.player_op = [None, ] * len(self.players)
@@ -290,9 +316,11 @@ class Game():
             # 如果星球没有驻军, 就占领
             planet_side = side
             planet_count = count
+            self.logs.append(dict(type= "occupy", side=side, count=count)) 
         elif side == planet_side:
             # 如果是己方, 就加入
             planet_count += count
+            self.logs.append(dict(type= "join", side=side, count=count))
         else:
             # 敌方战斗
             # 防守方加权
@@ -310,6 +338,13 @@ class Game():
                 planet_count = int(planet_count / _def)
                 
         self.holds[to] = [planet_side, planet_count]
+        self.logs.append(dict(type= "battle",
+                              planet=to,
+                              attack=side,
+                              defence=planet_side,
+                              atk_count=count,
+                              def_count=planet_count,
+                              winner=planet_side))
 
     def count_growth(self, planet_count, planet):
         max = planet['max']
