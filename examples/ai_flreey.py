@@ -18,6 +18,8 @@ class SimpleAI():
         self.conn = httplib.HTTPConnection(SERVER, PORT)
         self.room = 0
         self.d = 0
+        self.cmd_map()
+        self.cmd_add()
 
     def cmd(self, cmd, data={}):
         """
@@ -49,6 +51,7 @@ class SimpleAI():
                              moves = moves))
 
     def step(self):
+        self.cmd_info()
         #anemy = filter(lambda x: x[0] != self.me['seq'], self.info['holds'])
         #print anemy, sorted(anemy)
         #moves = []
@@ -96,17 +99,14 @@ class SimpleAI():
                 moves.append([sended, _from, to])
                 count -= sended
 
+        print self.info, self.map, moves
         return moves
 
 def main():
     rs = SimpleAI()
-    rs.cmd_map()
-    logging.debug(rs.cmd_add())
     while True:
         time.sleep(1.0)
-        rs.cmd_info()
-        result = rs.step()
-        rs.cmd_moves(result)
+        rs.cmd_moves(rs.step())
     
 if __name__=="__main__":
     main()
