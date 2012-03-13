@@ -77,22 +77,26 @@ class SimpleAI():
             if hold[0] is None:
                 planets[n]['weight'] *= 2
 
+        #TODO: if planets near by high resources, acc it's weight
         return sorted(
                 [(n, p['weight']) for n, p in enumerate(planets)],
                 key=lambda x:x[1], reverse=True)
+
+    def get_adjacency_planets(self, planet_ids):
+        adjacency_planets = {}
+        [adjacency_planets.setdefault(p, [])  for p in planet_ids]
+
+        for r in self.map['routes']:
+            if r[0] in planet_ids and r[0] != r[1]:
+                adjacency_planets[r[0]].append([r[1], r[2]])
+        return adjacency_planets
 
     def get_best_planets(self, planets, weight):
         """
         return planets pairs, [(1, 2, 2)] means
         would move armies from planet 1 to 2 and round is 2
         """
-        adjacency_planets = {}
-        [adjacency_planets.setdefault(p, [])  for p in planets]
-
-        for r in self.map['routes']:
-            if r[0] in planets:
-                adjacency_planets[r[0]].append([r[1], r[2]])
-
+        adjacency_planets = self.get_adjacency_planets(planets)
         adjacency_planets_copy = adjacency_planets.copy()
         pairs = []
         #conquer planet
@@ -142,6 +146,7 @@ class SimpleAI():
     def move(self, pairs):
         holds = self.info['holds']
         planets = self.map['planets']
+        my_planets = self.get_myplanets()
         moves = []
         for me, anemy, round in pairs:
             my_armies = holds[me][1]
@@ -155,9 +160,16 @@ class SimpleAI():
             else:
                 send_armies = 0
                 if holds[anemy][0] is None:
-                    #TODO: replace 50 with suitable armies number
-                    if my_armies >= 50:
-                        send_armies = my_armies * 2.0 / 3
+                    #not conquer empty planets until enemy planets which is
+                    #near empyt planet less than 2
+                    adjacency_planets = self.get_adjacency_planets([anemy])
+                    r = filter(lambda x:holds[x][0] is not None and x not in
+                            my_planets, [v[0] for v in adjacency_planets[anemy]])
+                    if len(r) <= 2:
+                        #TODO: change percent of 1/2 to suitable percent
+                        send_armies = my_armies * 1.0 / 2
+                    #else:
+                        #send_armies = my_armies * 2.0 / 3
                 else:
                     enemy_armies = self.cal_new_acount(holds[anemy][1], planets[anemy],
                             round)
@@ -169,10 +181,12 @@ class SimpleAI():
 
         return moves
 
+    def get_myplanets(self):
+        return [n for n, h in enumerate(self.info['holds']) if h[0] ==
+                self.me['seq']]
     def step(self):
         weight = self.cal_weight()
-        my_planets = [n for n, h in enumerate(self.info['holds']) if h[0] ==
-                self.me['seq']]
+        my_planets = self.get_myplanets()
         plants_pair = self.get_best_planets(my_planets, weight)
         return self.move(plants_pair)
 
