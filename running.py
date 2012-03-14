@@ -53,9 +53,9 @@ def run_all():
     ps.append(Process(target=start_game))
     ps.append(Process(target=start_http))
     # ps.append(Process(target=start_brower))
-    #ps.append(Process(target=start_ai, args=(['ai_halida'])))
+    ps.append(Process(target=start_ai, args=(['ai_halida'])))
     ps.append(Process(target=start_ai, args=(['ai_flreey'])))
-    ps.append(Process(target=start_ai, args=(['ai_flreey'])))
+    #ps.append(Process(target=start_ai, args=(['ai_flreey'])))
 
     for p in ps:
         import time
