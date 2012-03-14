@@ -23,7 +23,7 @@ class Server():
     """
     def on_logic(self, g, ok):
         """判断定期更新的时间是否到了"""
-        min_waits = 2
+        min_waits = self.min_waits
         max_waits = self.max_waits
         if not hasattr(g, 'pre'):
             g.pre = time.time()
@@ -42,7 +42,8 @@ class Server():
         self.puber.send("room:%d "%i + json.dumps(info))
 
 
-    def run(self, max_waits=10.0, enable_no_resp_die=True):
+    def run(self, max_waits=10.0, enable_no_resp_die=True, min_waits=2.0):
+        self.min_waits = min_waits
         self.max_waits = max_waits
         self.games = [Game(enable_no_resp_die=enable_no_resp_die)
                       for i in range(ROOMS)]

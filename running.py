@@ -25,7 +25,7 @@ class Logger(object):
 def start_game():
     from srcs.zmq_game_server import Server
     sys.stdout = Logger('game.log')
-    Server().run(max_waits=1.0, enable_no_resp_die=True)
+    Server().run(max_waits=4.0, min_waits=4.0, enable_no_resp_die=True)
 
 def start_http():
     from srcs.web_server import main
@@ -52,9 +52,9 @@ def run_all():
     ps = []
     ps.append(Process(target=start_game))
     ps.append(Process(target=start_http))
-    ps.append(Process(target=start_brower))
+    # ps.append(Process(target=start_brower))
     #ps.append(Process(target=start_ai, args=(['ai_halida'])))
-    ps.append(Process(target=start_ai, args=(['ai_halida'])))
+    ps.append(Process(target=start_ai, args=(['ai_flreey'])))
     ps.append(Process(target=start_ai, args=(['ai_flreey'])))
 
     for p in ps:
