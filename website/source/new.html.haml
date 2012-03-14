@@ -1,0 +1,16 @@
+!!!
+%html
+  %head
+    %title New Room
+    = stylesheet_link_tag 'new'
+  %body
+    .navbar.navbar-fixed-top
+      .navbar-inner
+        .container
+          %a.brand(href="/new.html") New Room
+    .container
+      .hero-unit
+        %h1 歡迎來到 星球大戰！
+        %p 遊戲初始化中，請稍候
+        %table#map
+    = javascript_include_tag 'jquery', 'bootstrap.min', 'underscore-min', 'new'
