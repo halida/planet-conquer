@@ -64,15 +64,13 @@ class SimpleAI():
                 sended = count / 2
                 # 当前星球的路径, 并且对方星球不是自己的星球
                 _from, to, step = route
-                if _from != i or self.info['holds'][to] == self.me['seq']:
+                if _from != i or self.info['holds'][to][0] == self.me['seq']:
                     continue
+                
                 # 派兵!
                 moves.append([sended, _from, to])
                 count -= sended
 
-        print self.info
-        print self.map
-        print moves
         return moves
 
 
@@ -84,6 +82,7 @@ def main():
         time.sleep(1.0)
         rs.cmd_info()
         result = rs.step()
+        print result
         rs.cmd_moves(result)
     
 if __name__=="__main__":
