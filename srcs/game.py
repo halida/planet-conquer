@@ -88,7 +88,7 @@ class Game():
         self.player_ops = []
         self.status = WAITFORPLAYER
 
-        self.holds = [(None, 0) for i in range(len(self.map.planets))]
+        self.holds = [[None, 0] for i in range(len(self.map.planets))]
         
     def add_player(self, name="unknown", side='python'):
         # 生成玩家
@@ -120,6 +120,7 @@ class Game():
             if kw['op'] == 'moves':
                 moves = []
                 for count, _from, to in kw['moves']:
+                    if count == 0: continue
                     # 检查moves合法性
                     owner, armies = self.holds[_from]
                     if owner != n:
@@ -137,7 +138,6 @@ class Game():
             return 'invalid command'
 
     def do_player_op(self, n):
-        print "opn=", self.player_ops[n]
         for move in self.player_ops[n]:
             # check count <= self.holds[_from]
             count, _from = move[3], move[1]
@@ -147,7 +147,7 @@ class Game():
                 self.moves.append(move)
                 # if all my armies gone?
                 if self.holds[_from][1] <= 0:
-                    self.holds[_from] = (None, 0)
+                    self.holds[_from] = [None, 0]
         self.player_ops[n] = None
 
     def check_winner(self):
@@ -336,15 +336,14 @@ class Game():
                 # 防守方胜利                
                 planet_count -= int(count**2/float(planet_count))
                 planet_count = int(planet_count / _def)
-                
+            self.logs.append(dict(type= "battle",
+                                  planet=to,
+                                  attack=side,
+                                  defence=planet_side,
+                                  atk_count=count,
+                                  def_count=planet_count,
+                                  winner=planet_side))
         self.holds[to] = [planet_side, planet_count]
-        self.logs.append(dict(type= "battle",
-                              planet=to,
-                              attack=side,
-                              defence=planet_side,
-                              atk_count=count,
-                              def_count=planet_count,
-                              winner=planet_side))
 
     def count_growth(self, planet_count, planet):
         max = planet['max']

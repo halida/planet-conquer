@@ -30,6 +30,8 @@ require 'coffee-filter'
 # Page command
 ###
 
+page '/new.html', layout: false
+
 # Per-page layout changes:
 # 
 # With no layout

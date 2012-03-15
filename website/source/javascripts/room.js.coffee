@@ -60,8 +60,6 @@ class GameShower extends Spine.Controller
         @map = {}
 
         @div_scene = $('#board-scene')
-        @svg = @div_scene.svg()
-        @svg_moves = []
 
         @div_desc = $('#desc')
         @div_status =  $('#game-status')
@@ -120,62 +118,51 @@ class GameShower extends Spine.Controller
         @div_maxround.html(@map.max_round)
         @count_route_pos()
 
-        @svg_planets = []
-        @svg_routes = []
+        @div_planets = []
+        @div_routes = []
+        @div_moves = []
         # set board size
         @div_scene.width(SIZE * @map.map_size[0])
         @div_scene.height(SIZE * @map.map_size[1])
 
         # draw routes
-        for route, i in @map.routes
-            [_from, to, step] = route
-            pos1 = @map.planets[_from].pos
-            pos2 = @map.planets[to].pos
+        # for route, i in @map.routes
+        #     [_from, to, step] = route
+        #     pos1 = @map.planets[_from].pos
+        #     pos2 = @map.planets[to].pos
 
-            svg_route = $ create_svg("line")
-            svg_route.attr
-                id: "route-"+i
-                class: "route"
-                route_id: i
-                style: "stroke:rgb(0,0,255);stroke-width:3"
-                x1: pos1[0]*SIZE + SIZE/2
-                y1: pos1[1]*SIZE + SIZE/2
-                x2: pos2[0]*SIZE + SIZE/2
-                y2: pos2[1]*SIZE + SIZE/2
+        #     div_route = $ create_svg("line")
+        #     div_route.attr
+        #         id: "route-"+i
+        #         class: "route"
+        #         route_id: i
+        #         style: "stroke:rgb(0,0,255);stroke-width:3"
+        #         x1: pos1[0]*SIZE + SIZE/2
+        #         y1: pos1[1]*SIZE + SIZE/2
+        #         x2: pos2[0]*SIZE + SIZE/2
+        #         y2: pos2[1]*SIZE + SIZE/2
 
-            # svg_route.hover @proxy @show_route_desc
-            @div_scene.append(svg_route)
-            @svg_routes.push(svg_route)
+        #     div_route.hover @proxy @show_route_desc
+        #     @div_scene.append(div_route)
+        #     @svg_routes.push(div_route)
 
         # draw planets
         for planet, i in @map.planets
             # planet
-            svg_planet = $ create_svg("circle")
-            svg_planet.attr
+            div_planet = $("<div/>")
+            div_planet.attr
                 id: "planet-"+i
                 class: "planet"
                 planet_id: i
-                cx: planet.pos[0]*SIZE + SIZE/2
-                cy: planet.pos[1]*SIZE + SIZE/2
-                r: SIZE/4
-                fill: "white"
-            svg_planet.hover @proxy @show_planet_desc
+            div_planet.css
+                left: planet.pos[0]*SIZE + SIZE/2
+                top: planet.pos[1]*SIZE + SIZE/2
+                background: "white"
+            div_planet.html('?')
+            div_planet.hover @proxy @show_planet_desc
 
-            #planet text
-            svg_planet_text = $ create_svg("text")
-            svg_planet_text.text('he')
-            svg_planet_text.attr
-                id: "planet-text-"+i
-                class: "planet-text"
-                x: planet.pos[0]*SIZE + SIZE/2
-                y: planet.pos[1]*SIZE + SIZE/2
-                dx: -SIZE/4
-                dy: +SIZE/16
-
-            #add them all
-            @div_scene.append svg_planet
-            @div_scene.append svg_planet_text
-
+            @div_planets.push div_planet
+            @div_scene.append div_planet
 
     update_info: ()->
         @div_round.html(@info.round)
@@ -186,37 +173,36 @@ class GameShower extends Spine.Controller
         @div_status.html @info.status
         # draw holds
         for hold, i in @info.holds
-            $('circle#planet-'+i).attr
-                fill: side_color(hold[0])
-            $('text#planet-text-'+i).text(hold[1])
+            div_planet = @div_planets[i]
+            div_planet.css "background", side_color(hold[0])
+            div_planet.html(hold[1])
         @update_moves()
 
     update_moves: ()->
         # remove old
-        for svg_move in @svg_moves
-            svg_move.remove()
+        for div_move in @div_moves
+            div_move.remove()
 
         # add new
         for move, i in @info.moves
             [side, _from, to, count, remain] = move
             [pos, next] = @get_route_pos_and_next(_from, to, remain)
-            svg_move = $ create_svg("circle")
-            svg_move.attr
+            div_move = $("<div/>")
+            div_move.attr
                 id: "move-"+i
                 class: "move"
                 move_id: i
-                cx: next[0]
-                cy: next[1]
-                r: SIZE/8
-                fill: side_color(side)
-            svg_move.hover @proxy @show_move_desc
+            div_move.css
+                left: next[0]
+                top: next[1]
+                background: side_color(side)
+            div_move.html(count)
+            div_move.hover @proxy @show_move_desc
 
-            # animation = '<animate attributeName="cx" begin="0s" dur="'+DUR+'s" fill="freeze" from="'+pos[0]+'" to="'+next[0]+'" repeatCount="indefinite"/>'
-            # animation += '<animate attributeName="cy" begin="0s" dur="'+DUR+'s" fill="freeze" from="'+pos[1]+'" to="'+next[1]+'" repeatCount="indefinite"/>'
-            # svg_move.append(animation)
+            div_move.animate {left: pos[0], top: pos[1]}, 4000
 
-            @svg_moves.push svg_move
-            @div_scene.append svg_move
+            @div_moves.push div_move
+            @div_scene.append div_move
 
     get_route_pos_and_next: (_from, to, remain)->
         route = @route_move_pos[_from*1000 + to]
@@ -234,11 +220,11 @@ class GameShower extends Spine.Controller
             fx = fx*SIZE + SIZE/2
             fy = fy*SIZE + SIZE/2
 
-            dx = (tx - fx) / (step)
-            dy = (ty - fy) / (step)
+            dx = (tx - fx) / (step-1)
+            dy = (ty - fy) / (step-1)
 
             move_step = []
-            for j in [0..step]
+            for j in [0..step-1]
                 move_step.push [fx+dx*j, fy+dy*j]
 
             @route_move_pos[to*1000+_from] = move_step
@@ -251,7 +237,7 @@ class GameShower extends Spine.Controller
             player_data = [
                 "#{player.side} - #{player.name}",
                 "planets: #{player.planets}",
-                "unit: #{player.unit}",
+                "units: #{player.units}",
                 "#{player.status}",
             ]
             data.push '<div class="player">' + player_data.join("<br/>") + '</div>'
@@ -268,6 +254,8 @@ class GameShower extends Spine.Controller
 
     display_battle: (data)->
         #todo
+        if data.attack == data.defence
+            return
         @logs.push '<div class="log">'+ "planet: #{data.planet}: player #{data.attack} attack player #{data.defence}." + '</div>'
 
     display_production: (data)->

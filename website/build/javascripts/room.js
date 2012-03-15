@@ -104,8 +104,6 @@
       this.info = {};
       this.map = {};
       this.div_scene = $('#board-scene');
-      this.svg = this.div_scene.svg();
-      this.svg_moves = [];
       this.div_desc = $('#desc');
       this.div_status = $('#game-status');
       this.div_round = $('#current-round');
@@ -145,66 +143,39 @@
     };
 
     GameShower.prototype.update_map = function() {
-      var i, planet, pos1, pos2, route, step, svg_planet, svg_planet_text, svg_route, to, _from, _len, _len2, _ref, _ref2, _results;
+      var div_planet, i, planet, _len, _ref, _results;
       this.div_maxround.html(this.map.max_round);
       this.count_route_pos();
-      this.svg_planets = [];
-      this.svg_routes = [];
+      this.div_planets = [];
+      this.div_routes = [];
+      this.div_moves = [];
       this.div_scene.width(SIZE * this.map.map_size[0]);
       this.div_scene.height(SIZE * this.map.map_size[1]);
-      _ref = this.map.routes;
-      for (i = 0, _len = _ref.length; i < _len; i++) {
-        route = _ref[i];
-        _from = route[0], to = route[1], step = route[2];
-        pos1 = this.map.planets[_from].pos;
-        pos2 = this.map.planets[to].pos;
-        svg_route = $(create_svg("line"));
-        svg_route.attr({
-          id: "route-" + i,
-          "class": "route",
-          route_id: i,
-          style: "stroke:rgb(0,0,255);stroke-width:3",
-          x1: pos1[0] * SIZE + SIZE / 2,
-          y1: pos1[1] * SIZE + SIZE / 2,
-          x2: pos2[0] * SIZE + SIZE / 2,
-          y2: pos2[1] * SIZE + SIZE / 2
-        });
-        this.div_scene.append(svg_route);
-        this.svg_routes.push(svg_route);
-      }
-      _ref2 = this.map.planets;
+      _ref = this.map.planets;
       _results = [];
-      for (i = 0, _len2 = _ref2.length; i < _len2; i++) {
-        planet = _ref2[i];
-        svg_planet = $(create_svg("circle"));
-        svg_planet.attr({
+      for (i = 0, _len = _ref.length; i < _len; i++) {
+        planet = _ref[i];
+        div_planet = $("<div/>");
+        div_planet.attr({
           id: "planet-" + i,
           "class": "planet",
-          planet_id: i,
-          cx: planet.pos[0] * SIZE + SIZE / 2,
-          cy: planet.pos[1] * SIZE + SIZE / 2,
-          r: SIZE / 4,
-          fill: "white"
+          planet_id: i
         });
-        svg_planet.hover(this.proxy(this.show_planet_desc));
-        svg_planet_text = $(create_svg("text"));
-        svg_planet_text.text('he');
-        svg_planet_text.attr({
-          id: "planet-text-" + i,
-          "class": "planet-text",
-          x: planet.pos[0] * SIZE + SIZE / 2,
-          y: planet.pos[1] * SIZE + SIZE / 2,
-          dx: -SIZE / 4,
-          dy: +SIZE / 16
+        div_planet.css({
+          left: planet.pos[0] * SIZE + SIZE / 2,
+          top: planet.pos[1] * SIZE + SIZE / 2,
+          background: "white"
         });
-        this.div_scene.append(svg_planet);
-        _results.push(this.div_scene.append(svg_planet_text));
+        div_planet.html('?');
+        div_planet.hover(this.proxy(this.show_planet_desc));
+        this.div_planets.push(div_planet);
+        _results.push(this.div_scene.append(div_planet));
       }
       return _results;
     };
 
     GameShower.prototype.update_info = function() {
-      var hold, i, _len, _ref;
+      var div_planet, hold, i, _len, _ref;
       this.div_round.html(this.info.round);
       this.update_players();
       this.update_logs();
@@ -212,20 +183,19 @@
       _ref = this.info.holds;
       for (i = 0, _len = _ref.length; i < _len; i++) {
         hold = _ref[i];
-        $('circle#planet-' + i).attr({
-          fill: side_color(hold[0])
-        });
-        $('text#planet-text-' + i).text(hold[1]);
+        div_planet = this.div_planets[i];
+        div_planet.css("background", side_color(hold[0]));
+        div_planet.html(hold[1]);
       }
       return this.update_moves();
     };
 
     GameShower.prototype.update_moves = function() {
-      var count, i, move, next, pos, remain, side, svg_move, to, _from, _i, _len, _len2, _ref, _ref2, _ref3, _results;
-      _ref = this.svg_moves;
+      var count, div_move, i, move, next, pos, remain, side, to, _from, _i, _len, _len2, _ref, _ref2, _ref3, _results;
+      _ref = this.div_moves;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        svg_move = _ref[_i];
-        svg_move.remove();
+        div_move = _ref[_i];
+        div_move.remove();
       }
       _ref2 = this.info.moves;
       _results = [];
@@ -233,19 +203,25 @@
         move = _ref2[i];
         side = move[0], _from = move[1], to = move[2], count = move[3], remain = move[4];
         _ref3 = this.get_route_pos_and_next(_from, to, remain), pos = _ref3[0], next = _ref3[1];
-        svg_move = $(create_svg("circle"));
-        svg_move.attr({
+        div_move = $("<div/>");
+        div_move.attr({
           id: "move-" + i,
           "class": "move",
-          move_id: i,
-          cx: next[0],
-          cy: next[1],
-          r: SIZE / 8,
-          fill: side_color(side)
+          move_id: i
         });
-        svg_move.hover(this.proxy(this.show_move_desc));
-        this.svg_moves.push(svg_move);
-        _results.push(this.div_scene.append(svg_move));
+        div_move.css({
+          left: next[0],
+          top: next[1],
+          background: side_color(side)
+        });
+        div_move.html(count);
+        div_move.hover(this.proxy(this.show_move_desc));
+        div_move.animate({
+          left: pos[0],
+          top: pos[1]
+        }, 4000);
+        this.div_moves.push(div_move);
+        _results.push(this.div_scene.append(div_move));
       }
       return _results;
     };
@@ -257,7 +233,7 @@
     };
 
     GameShower.prototype.count_route_pos = function() {
-      var dx, dy, fx, fy, i, j, move_step, route, step, to, tx, ty, _from, _len, _ref, _ref2, _ref3, _results;
+      var dx, dy, fx, fy, i, j, move_step, route, step, to, tx, ty, _from, _len, _ref, _ref2, _ref3, _ref4, _results;
       this.route_move_pos = {};
       _ref = this.map.routes;
       _results = [];
@@ -270,10 +246,10 @@
         ty = ty * SIZE + SIZE / 2;
         fx = fx * SIZE + SIZE / 2;
         fy = fy * SIZE + SIZE / 2;
-        dx = (tx - fx) / step;
-        dy = (ty - fy) / step;
+        dx = (tx - fx) / (step - 1);
+        dy = (ty - fy) / (step - 1);
         move_step = [];
-        for (j = 0; 0 <= step ? j <= step : j >= step; 0 <= step ? j++ : j--) {
+        for (j = 0, _ref4 = step - 1; 0 <= _ref4 ? j <= _ref4 : j >= _ref4; 0 <= _ref4 ? j++ : j--) {
           move_step.push([fx + dx * j, fy + dy * j]);
         }
         this.route_move_pos[to * 1000 + _from] = move_step;
@@ -288,7 +264,7 @@
       _ref = this.info.players;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         player = _ref[_i];
-        player_data = ["" + player.side + " - " + player.name, "planets: " + player.planets, "unit: " + player.unit, "" + player.status];
+        player_data = ["" + player.side + " - " + player.name, "planets: " + player.planets, "units: " + player.units, "" + player.status];
         data.push('<div class="player">' + player_data.join("<br/>") + '</div>');
       }
       return $('#players').html(data.join("\n"));
@@ -312,6 +288,7 @@
     };
 
     GameShower.prototype.display_battle = function(data) {
+      if (data.attack === data.defence) return;
       return this.logs.push('<div class="log">' + ("planet: " + data.planet + ": player " + data.attack + " attack player " + data.defence + ".") + '</div>');
     };
 

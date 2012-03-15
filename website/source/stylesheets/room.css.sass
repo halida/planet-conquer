@@ -1,6 +1,8 @@
 @import "compass"
 
-$PLANET_SIZE: 30px
+$SIZE: 80px
+$PLANET_SIZE: 20px
+$MOVE_SIZE: 10px
 
 #board
 
@@ -23,11 +25,22 @@ $PLANET_SIZE: 30px
   height: 300px
   overflow: scroll
     
-.planet
+.planet, .move
   position: absolute
-  width: $PLANET_SIZE * 2
-  height: $PLANET_SIZE * 2
+
+.move
+  width: $MOVE_SIZE * 2 - 4
+  height: $MOVE_SIZE * 2 - 4
+  padding: 2px
+  text-align:center
+  background: #ccc
+
+.planet
+  width: $PLANET_SIZE * 2 - 10
+  height: $PLANET_SIZE * 2 - 10
+  padding: 5px
   +border-radius($PLANET_SIZE)
 
+  text-align:center
   background: #ccc
   

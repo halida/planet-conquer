@@ -17,14 +17,22 @@
   height: 300px;
   overflow: scroll; }
 
+.planet, .move {
+  position: absolute; }
+
+.move {
+  width: 16px;
+  height: 16px;
+  padding: 2px;
+  background: #cccccc; }
+
 .planet {
-  position: absolute;
-  width: 60px;
-  height: 60px;
-  -moz-border-radius: 30px;
-  -webkit-border-radius: 30px;
-  -o-border-radius: 30px;
-  -ms-border-radius: 30px;
-  -khtml-border-radius: 30px;
-  border-radius: 30px;
+  width: 30px;
+  height: 30px;
+  padding: 5px;
+  -webkit-border-radius: 20px;
+  -moz-border-radius: 20px;
+  -ms-border-radius: 20px;
+  -o-border-radius: 20px;
+  border-radius: 20px;
   background: #cccccc; }
