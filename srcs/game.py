@@ -12,7 +12,8 @@ WAITFORPLAYER='waitforplayer'
 RUNNING='running'
 FINISHED='finished'
 
-DEFAULT_MAP = 'srcs/map/fight_here.yml'
+# DEFAULT_MAP = 'srcs/map/fight_here.yml'
+DEFAULT_MAP = 'srcs/map/oneline.yml'
 
 MAX_LOST_TURN = 3
 
@@ -155,11 +156,10 @@ class Game():
         胜利判断按照: 星球总数, 单位数量, 玩家顺序 依个判断数值哪个玩家最高来算. (不会出现平局)
         同时计算最高分, 保存到历史中
         """
-        scores = [[0, 0, i] for i in range(len(self.players))]
-        for side, count in self.holds:
-            if side == None: continue
-            scores[side][0] += 1
-            scores[side][1] += count
+        scores = [
+            [p['planets'], p['units'], i]
+            for i, p in enumerate(self.get_player_infos())
+            ]
 
         maxid = max(scores)[2]
         winner = self.players[maxid]
@@ -178,10 +178,7 @@ class Game():
                     map_size = self.map.map_size,
                     )
 
-    def get_info(self):
-        if self.info:
-            return self.info
-
+    def get_player_infos(self):
         player_infos = [p.get_info() for p in self.players]
         # count planets and units
         for p in player_infos:
@@ -191,10 +188,19 @@ class Game():
             if side == None: continue
             player_infos[side]["planets"] += 1
             player_infos[side]["units"] += count
+        for move in self.moves:
+            side = move[0]
+            count = move[3]
+            player_infos[side]["units"] += count
+        return player_infos
+
+    def get_info(self):
+        if self.info:
+            return self.info
         
         self.info = dict(round=self.round,
                          status=self.status,
-                         players=player_infos,
+                         players=self.get_player_infos(),
                          moves=self.moves,
                          holds=self.holds,
                          logs=self.logs)
@@ -208,11 +214,10 @@ class Game():
         if self.round > self.max_round:
             return True
 
-        players = set()
-        for side, count in self.holds:
-            if side != None:
-                players.add(side)
-        if len(players) == 1: 
+        alives = [True
+                  for p in self.get_player_infos()
+                  if p['units'] > 0]
+        if sum(alives) <= 1:
             return True
 
     def move_stage(self):
