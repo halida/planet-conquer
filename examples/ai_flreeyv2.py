@@ -148,9 +148,6 @@ class SimpleAI():
                 #TODO: get the paths to nearelest planet 
                 pairs.append([idle, sorted(adjacency_pids, reverse=True)[0], -1])
 
-        #print 'pairs', pairs
-        #print 'holds', self.info['holds']
-        #print self.map['routes']
         return pairs
 
     def cal_new_acount(self, current, planet, round):
