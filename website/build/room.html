@@ -13,25 +13,34 @@
     </meta>
   </head>
   <body class='room'>
-    <div id='main' role='main'>
-      <h1>planet conquer</h1>
-      <div id='board'>
-        <div id='board-head'>
-          <div id='round'>
-            round
-            <span id='current-round'>0</span>
-            /
-            <span id='max-round'>0</span>
-          </div>
-          <div id='game-status'></div>
+    <div id='board-head-outter'>
+      <div id='board-head'>
+        <h1>planet conquer</h1>
+        <div id='round'>
+          round
+          <span id='current-round'>0</span>
+          /
+          <span id='max-round'>0</span>
         </div>
-        <div id='board-side'>
-          <div id='players'></div>
-          <div id='desc'></div>
-          <div id='board-logs'></div>
-        </div>
-        <div id='board-scene'></div>
+        <div id='game-status'></div>
       </div>
+    </div>
+    <div id='board-scene'></div>
+    <div id='board-side-left'>
+      <div class='side-block' id='players'></div>
+      <div class='side-block' id='desc'></div>
+    </div>
+    <div id='board-side-right'>
+      <div class='side-block' id='recorder'>
+        <input class='btn record-record' type='button' value='record' />
+        <input class='btn record-replay' type='button' value='replay' />
+        <span class='record-display'>
+          <span class='replay-on'>0</span>
+          /
+          <span class='record-count'>0</span>
+        </span>
+      </div>
+      <div class='side-block' id='logs'></div>
     </div>
   </body>
   <script type='text/javascript'>
@@ -42,6 +51,8 @@
     game = new Game();
   
     shower = new GameShower(game, "#board");
+  
+    window.recorder = new Recorder(game, "#recorder");
   
     game.set_server("localhost:9999", 0);
   

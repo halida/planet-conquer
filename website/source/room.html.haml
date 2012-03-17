@@ -2,11 +2,9 @@
   = stylesheet_link_tag "room"
   = javascript_include_tag "room"
 
-%h1 planet conquer
-
-
-#board
+#board-head-outter
   #board-head
+    %h1 planet conquer
     #round
       round
       %span#current-round= 0
@@ -14,12 +12,21 @@
       %span#max-round= 0
     #game-status
 
-  #board-side
-    #players
-    #desc
-    #board-logs
+#board-scene
 
-  #board-scene
+#board-side-left
+  #players.side-block
+  #desc.side-block
+
+#board-side-right
+  #recorder.side-block
+    %input.btn.record-record{type: "button", value: "record"}
+    %input.btn.record-replay{type: "button", value: "replay"}
+    %span.record-display  
+      %span.replay-on= 0
+      = "/"
+      %span.record-count= 0  
+  #logs.side-block
 
 - content_for :javascripts do
   - game_server = "localhost:9999"
@@ -28,4 +35,5 @@
   :coffeescript
     game = new Game()
     shower = new GameShower(game, "#board")
+    window.recorder = new Recorder(game, "#recorder")
     game.set_server("#{game_server}", #{room_id})

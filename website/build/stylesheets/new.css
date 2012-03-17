@@ -1,0 +1,28 @@
+@import url(bootstrap.min.css);
+.hero-unit {
+  margin-top: 20px; }
+
+#map {
+  width: 100%;
+  overflow: hidden;
+  margin-top: 20px; }
+  #map .cell {
+    float: left;
+    display: block;
+    margin: 2px;
+    background: white;
+    overflow: hidden; }
+  #map .planet {
+    background: green;
+    color: white; }
+  #map .move {
+    position: absolute;
+    color: red; }
+
+#sidebar {
+  position: fixed;
+  width: 200px;
+  padding: 10px;
+  background: #eeeeee;
+  top: 60px;
+  left: 0; }

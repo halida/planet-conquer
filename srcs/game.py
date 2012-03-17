@@ -12,8 +12,8 @@ WAITFORPLAYER='waitforplayer'
 RUNNING='running'
 FINISHED='finished'
 
-# DEFAULT_MAP = 'srcs/map/fight_here.yml'
-DEFAULT_MAP = 'srcs/map/oneline.yml'
+DEFAULT_MAP = 'srcs/map/fight_here.yml'
+# DEFAULT_MAP = 'srcs/map/oneline.yml'
 
 MAX_LOST_TURN = 3
 
