@@ -35,19 +35,20 @@ body
     display: block
     font-size: 14px
     text-align: center
-    color: #fff
+    color: #000
     margin: 2px
-    padding: 16px 0
     width: #{$cell}px
-    height: #{$cell - 32}px
+    height: #{$cell}px
+    line-height: #{$cell}px
     border: 2px solid transparent
     &.planet, &.player_0, &.player_1, &.player_2, &.player_3
-      +border-radius(#{$cell/2}px)
+      +border-radius(#{$cell/2 + 2}px)
       @each $name in webkit, moz, ms
         -#{$name}-animation: planet 3s infinite
 
   .planet
     border-color: #fff
+    color: #fff
 
   .move
     position: absolute
@@ -55,30 +56,31 @@ body
     font-size: 12px
     text-align: center
     color: #fff
-    padding: 6px 0
     width: #{$cell/2}px
-    height: #{$cell/2 - 12}px
+    height: #{$cell/2}px
+    line-height: #{$cell/2}px
     border: 2px solid transparent
-    +border-radius(#{$cell/4}px)
+    +border-radius(#{$cell/4 + 2}px)
     @each $name in webkit, moz, ms
-      -#{$name}-animation: move 3s infinite
+      -#{$name}-animation: move 1s infinite
+    pointer-events: none
   
-  .player_0
-    background: #EE2C44
+.player_0
+  background: #EE2C44
+
+.player_1
+  background: #42C3D9
+
+.player_2
+  background: #E96FA9
   
-  .player_1
-    background: #42C3D9
-  
-  .player_2
-    background: #E96FA9
-    
-  .player_3
-    background: #A5CF4E
+.player_3
+  background: #A5CF4E
 
 #sidebar
   position: fixed
-  width: 200px
+  width: 180px
   padding: 10px
   background: #EEE
-  top: 60px
+  top: 0
   left: 0
