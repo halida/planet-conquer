@@ -34,10 +34,9 @@ ws.onmessage = (e)->
       window.map = data
       map.dom = $('#map')
       i = 0
-      td_width = 820/data.map_size[0] - 4
       html = []
       _(data.map_size[1] * data.map_size[0]).times(->
-        html.push "<div class='cell' style='width:#{td_width}px;height:#{td_width}px' id='#{i}'>&nbsp;</div>"
+        html.push "<div class='cell' id='#{i}'>&nbsp;</div>"
         i = i + 1
       )
       map.dom.html(html.join(''))
@@ -52,16 +51,18 @@ ws.onmessage = (e)->
         planet = map.planets[planet_id]
         planet.hold = hold[0]
         if hold[0] isnt null
-          planet.dom.html(data.players[hold[0]].name + ' ' + hold[1])
+          planet.dom.html(hold[1])[0].className = 'cell player_' + hold[0]
         else
-          planet.dom.html('')
+          planet.dom.html('')[0].className = 'cell planet'
       for move in data.moves
         ((move)->
-          from = map.planets[move[1]].dom.position()
-          to = map.planets[move[2]].dom.position()
-          dom = $("<div class='move' style='left:#{from.left}px;top:#{from.top}px'>#{data.players[move[0]].name} #{move[3]}</div>")
+          from = map.planets[move[1]].dom
+          from_xy = from.position()
+          to = map.planets[move[2]].dom
+          to_xy = to.position()
+          dom = $("<div class='move player_#{move[0]}' style='left:#{from_xy.left + from.width()/3}px;top:#{from_xy.top + from.height()/2}px'>#{move[3]}</div>")
           map.dom.append(dom)
-          dom.animate({left: to.left, top: to.top}, 4000, ->
+          dom.animate({left: to_xy.left + to.width()/3, top: to_xy.top + to.height()/2}, 4000, ->
             dom.remove()
           )
         )(move)

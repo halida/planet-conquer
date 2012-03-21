@@ -1,8 +1,28 @@
 @import "bootstrap.min.css"
 @import "compass"
 
-.hero-unit
-  margin-top: 20px
+$bg: #13131F
+$cell: floor((940 / 15) - 8)
+
+@each $name in webkit, moz, ms
+  @-#{$name}-keyframes planet
+    0%
+      opacity: 0.6
+    50%
+      opacity: 1
+    100%
+      opacity: 0.6
+
+  @-#{$name}-keyframes move
+    0%
+      opacity: 1
+    50%
+      opacity: 0.6
+    100%
+      opacity: 1
+
+body
+  background: $bg
 
 #map
   width: 100%
@@ -10,19 +30,50 @@
   margin-top: 20px
 
   .cell
+    overflow: hidden
     float: left
     display: block
-    margin: 2px
-    background: #fff
-    overflow: hidden
-  
-  .planet
-    background: green
+    font-size: 14px
+    text-align: center
     color: #fff
-  
+    margin: 2px
+    padding: 16px 0
+    width: #{$cell}px
+    height: #{$cell - 32}px
+    border: 2px solid transparent
+    &.planet, &.player_0, &.player_1, &.player_2, &.player_3
+      +border-radius(#{$cell/2}px)
+      @each $name in webkit, moz, ms
+        -#{$name}-animation: planet 3s infinite
+
+  .planet
+    border-color: #fff
+
   .move
     position: absolute
-    color: red
+    overflow: hidden
+    font-size: 12px
+    text-align: center
+    color: #fff
+    padding: 6px 0
+    width: #{$cell/2}px
+    height: #{$cell/2 - 12}px
+    border: 2px solid transparent
+    +border-radius(#{$cell/4}px)
+    @each $name in webkit, moz, ms
+      -#{$name}-animation: move 3s infinite
+  
+  .player_0
+    background: #EE2C44
+  
+  .player_1
+    background: #42C3D9
+  
+  .player_2
+    background: #E96FA9
+    
+  .player_3
+    background: #A5CF4E
 
 #sidebar
   position: fixed
