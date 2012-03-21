@@ -1,6 +1,9 @@
 #-*- coding:utf-8 -*-
 PYTHON?=python
 
+all:
+	$(PYTHON) running.py
+
 unittest:
 	$(PYTHON) srcs/map/map.py
 	$(PYTHON) srcs/game.py
@@ -43,5 +46,3 @@ record:
 replay:
 	$(PYTHON) srcs/zmq_replayer.py test.log
 
-all:
-	$(PYTHON) running.py
