@@ -33,18 +33,22 @@ ws.onmessage = (e)->
     when 'map'
       window.map = data
       map.dom = $('#map')
-      i = 0
-      html = []
-      _(data.map_size[1] * data.map_size[0]).times(->
-        html.push "<div class='cell' id='#{i}'>&nbsp;</div>"
-        i = i + 1
-      )
-      map.dom.html(html.join(''))
-      for planet, i in map.planets
-        planet.id = i
-        planet.dom = $('#' + (planet.pos[0] + (planet.pos[1] * data.map_size[0]))).addClass('planet').data('planet', i)
-        map.planets[i] = planet
+      cell = Math.floor(940/map.map_size[0])
+      for p, i in map.planets
+        p.id = i
+        p.dom = $("<div id='planet_#{i}' class='cell planet' style='margin:#{p.pos[1] * cell}px 0 0 #{p.pos[0] * cell}px'>#{i}</div>").appendTo(map.dom)
+        p.dom.data('planet', i)
+        map.planets[i] = p
+      map.offest_size = $('#planet_0').width();
       
+      html = ["<svg style='width:100%;height:#{cell * map.map_size[1]}px;position:absolute'>"]
+      for r in map.routes
+        from = $('#planet_' + r[0]).offset()
+        to = $('#planet_' + r[1]).offset()
+        html.push("<line id='route_#{r[0]}_#{r[1]}' x1='#{from.left + (map.offest_size / 2)}' y1='#{from.top + (map.offest_size / 2)}' x2='#{to.left + (map.offest_size / 2)}' y2='#{to.top + (map.offest_size / 2)}' style='stroke:#444;stroke-width:1px' />")
+      html.push('</svg>')
+      $('body').prepend(html.join(''))
+    
     when 'info'
       window.players = data.players
       players[0].color = '#EE2C44' if players[0]
@@ -57,24 +61,24 @@ ws.onmessage = (e)->
         if hold[0] isnt null
           planet.dom.html(hold[1])[0].className = 'cell player_' + hold[0]
         else
-          planet.dom.html('')[0].className = 'cell planet'
+          planet.dom.html(planet.id)[0].className = 'cell planet'
       
       for move in data.moves
         ((move)->
           from = map.planets[move[1]].dom
-          from_xy = from.position()
+          from_xy = from.offset()
           to = map.planets[move[2]].dom
-          to_xy = to.position()
-          dom = $("<div class='move player_#{move[0]}' style='left:#{from_xy.left + from.width()/3.2}px;top:#{from_xy.top + from.height()/3.2}px'>#{move[3]}</div>")
+          to_xy = to.offset()
+          dom = $("<div class='move player_#{move[0]}' style='left:#{from_xy.left + map.offest_size/3.7}px;top:#{from_xy.top + map.offest_size/3.7}px'>#{move[3]}</div>")
           map.dom.append(dom)
-          dom.animate({left: to_xy.left + to.width()/3.2, top: to_xy.top + to.height()/3.2}, 1700, ->
+          dom.animate({left: to_xy.left + map.offest_size/3.7, top: to_xy.top + map.offest_size/3.7}, 1800, ->
             dom.remove()
           )
         )(move)
       
       top = []
-      for t, i in _.sortBy(players, (player)->
-        -player.planets
+      for t, i in _.sortBy(players, (p)->
+        -(p.planets*10000 + p.units)
       )
         top.push("<p style='color:#{t.color}'>No.#{i + 1} #{t.name} #{t.planets}/#{t.units}</p>")
       $('#top').html(top.join(''))
@@ -82,14 +86,10 @@ ws.onmessage = (e)->
 ws.onerror = (e)->
   console.log e if config.debug
 
-$('#map').on('mouseenter', '.cell.planet,.cell.player_0,.cell.player_1,.cell.player_2,.cell.player_3', ->
+$('#map').on('mouseenter', '.cell', ->
   data = $.data(this)
   planet = map.planets[data.planet]
-  if planet.hold is null
-    hold = '無'
-  else
-    hold = "#{players[planet.hold].name} (#{players[planet.hold].planets})"
-  $('#planet').html("<hr /><p>DEF：X#{planet.def}</p><p>RES：X#{planet.res} +#{planet.cos}</p><p>MAX：#{planet.max}</p><p>OWNER：#{hold}</p>")
-).on('mouseleave', '.cell.planet,.cell.player_0,.cell.player_1,.cell.player_2,.cell.player_3', ->
+  $('#planet').html("<hr /><h3>No.#{data.planet}</h3><p>DEF：X#{planet.def}</p><p>RES：X#{planet.res} +#{planet.cos}</p><p>MAX：#{planet.max}</p>")
+).on('mouseleave', '.cell', ->
   $('#planet').html('')
 )

@@ -2,16 +2,16 @@
 @import "compass"
 
 $bg: #13131F
-$cell: floor((940 / 15) - 8)
+$cell: floor((940 / 15) - 4)
 
 @each $name in webkit, moz, ms
   @-#{$name}-keyframes planet
     0%
-      opacity: 0.6
+      opacity: 0.4
     50%
       opacity: 1
     100%
-      opacity: 0.6
+      opacity: 0.4
 
   @-#{$name}-keyframes move
     0%
@@ -31,24 +31,22 @@ body
 
   .cell
     overflow: hidden
-    float: left
+    position: absolute
     display: block
     font-size: 14px
     text-align: center
     color: #000
-    margin: 2px
     width: #{$cell}px
     height: #{$cell}px
     line-height: #{$cell}px
     border: 2px solid transparent
     &.planet, &.player_0, &.player_1, &.player_2, &.player_3
       +border-radius(#{$cell/2 + 2}px)
-      @each $name in webkit, moz, ms
-        -#{$name}-animation: planet 3s infinite
 
   .planet
     border-color: #fff
     color: #fff
+    background: $bg
 
   .move
     position: absolute
@@ -67,15 +65,19 @@ body
   
 .player_0
   background: #EE2C44
+  border-color: lighten(#EE2C44, 20%)
 
 .player_1
   background: #42C3D9
+  border-color: lighten(#42C3D9, 20%)
 
 .player_2
   background: #E96FA9
+  border-color: lighten(#E96FA9, 20%)
   
 .player_3
   background: #A5CF4E
+  border-color: lighten(#A5CF4E, 20%)
 
 #sidebar
   position: fixed
