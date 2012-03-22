@@ -176,6 +176,7 @@ class Game():
                     name=self.map.name,
                     author=self.map.author,
                     map_size = self.map.map_size,
+                    step = GEME_STEP_TIME,
                     )
 
     def get_player_infos(self):

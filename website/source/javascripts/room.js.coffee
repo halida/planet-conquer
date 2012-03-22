@@ -14,7 +14,6 @@ create_svg = (obj)-> document.createElementNS('http://www.w3.org/2000/svg', obj)
 
 SIZE = 60
 DUR = 30
-ANIMATE_TIME = 2000
 
 log = ()->
     console.log arguments
@@ -65,6 +64,10 @@ class GameShower extends Spine.Controller
         @div_round = $('#current-round')
         @div_maxround = $('#max-round')
         @div_logs = $('#logs')
+
+        @div_map_name = $('#map-name')
+        @div_map_author = $('#map-author')
+        @div_map_desc = $('#map-desc')
 
     show_move_desc: (e)->
         id = $(e.target).attr('move_id')
@@ -127,11 +130,15 @@ class GameShower extends Spine.Controller
                   console.log(data)
 
     update_map: ()->
+        @animate_time = @map.step * 1000
         # clear all
         @div_scene.find('.planet').remove()
         @div_scene.find('.move').remove()
         # info
         @div_maxround.html(@map.max_round)
+        @div_map_name.html(@map.name)
+        @div_map_author.html(@map.author)
+        @div_map_desc.html(@map.desc)
         @count_route_pos()
 
         @div_planets = []
@@ -214,7 +221,7 @@ class GameShower extends Spine.Controller
             div_move.html(count)
             div_move.hover @proxy @show_move_desc
 
-            div_move.animate {left: pos[0], top: pos[1]}, ANIMATE_TIME
+            div_move.animate {left: pos[0], top: pos[1]}, @animate_time
 
             @div_moves.push div_move
             @div_scene.append div_move
@@ -248,9 +255,14 @@ class GameShower extends Spine.Controller
 
     update_players: ()->
         data = []
-        for player in @info.players
+        list = @info.players.slice()
+        # list.sort (a, b)->
+        #     a.planets - b.planets
+        # list.reverse()
+        for player, i in list
+            console.log player.planets
             player_data = [
-                "#{player.side} - #{player.name}",
+                "#{player.side} - #{player.name} <div style='background: #{side_color(i)}' class='side-mark'/>",
                 "planets: #{player.planets}",
                 "units: #{player.units}",
                 "#{player.status}",
@@ -294,7 +306,9 @@ class Recorder extends Spine.Controller
         @on_record = false
         @data_list = []
         @replay_on = 0
+        @animate_time = 2000 # fixed replay time
         Game.bind "data", @proxy(@save_data)
+
 
     on_record: ()->
         @on_record = not @on_record
@@ -308,7 +322,7 @@ class Recorder extends Spine.Controller
         @on_replay = not @on_replay
         @div_replay.toggleClass('on')
         @game.on_get_message = not @on_replay # enable/disable game message
-        setTimeout(@proxy(@replay_timer), ANIMATE_TIME)
+        setTimeout(@proxy(@replay_timer), @animate_time)
 
     replay_timer: ()->
         # console.log "on replay timer: ", @on_replay, @data_list
@@ -318,7 +332,7 @@ class Recorder extends Spine.Controller
         @div_replay_on.html @replay_on
         @replay_on += 1
         @replay_on %= @data_list.length
-        setTimeout(@proxy(@replay_timer), ANIMATE_TIME)
+        setTimeout(@proxy(@replay_timer), @animate_time)
 
     save_data: (data)->
         return unless @on_record
