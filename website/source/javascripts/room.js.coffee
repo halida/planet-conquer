@@ -201,12 +201,18 @@ class GameShower extends Spine.Controller
 
         # game state
         @div_status.html @info.status
-        # draw holds
-        for hold, i in @info.holds
+        @update_moves()
+        # draw holds after animate_time
+        # info = @info
+        # setTimeout( @proxy(()-> @update_holds(info))
+        # , @animate_time)
+        @update_holds(@info)
+
+    update_holds: (info)->
+        for hold, i in info.holds
             div_planet = @div_planets[i]
             div_planet.css "background", side_color(hold[0])
             div_planet.html(hold[1])
-        @update_moves()
 
     update_moves: ()->
         # remove old
@@ -228,7 +234,8 @@ class GameShower extends Spine.Controller
             div_move.html(count)
             div_move.hover @proxy @show_move_desc
 
-            div_move.animate {left: pos[0], top: pos[1]}, @animate_time
+            # div_move.animate {left: pos[0], top: pos[1]}, @animate_time
+            div_move.transition {left: pos[0], top: pos[1]}, @animate_time
 
             @div_moves.push div_move
             @div_scene.append div_move
@@ -271,7 +278,6 @@ class GameShower extends Spine.Controller
         list.reverse()
 
         for player, i in list
-            console.log player.planets
             player_data = [
                 "#{player.side} - #{player.name} <div style='background: #{player.color}' class='side-mark'/>",
                 "planets: #{player.planets}",

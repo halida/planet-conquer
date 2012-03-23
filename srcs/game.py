@@ -234,10 +234,13 @@ class Game():
                 self.do_player_op(i)
 
     def arrive_stage(self):
+        # time steps
         for move in self.moves:
             move[-1] -= 1
+        # find arrived units
         arrives = [move for move in self.moves
-                   if move[-1]<=0]
+                   if move[-1]==0]
+        # remove arrived moves
         self.moves = [move for move in self.moves
                       if move[-1]>0]
         return arrives

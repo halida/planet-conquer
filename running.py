@@ -1,5 +1,4 @@
-import os
-import sys
+import os, sys, time
 from multiprocessing import Process
 
 class Logger(object):
@@ -52,22 +51,21 @@ def start_brower():
     webbrowser.GenericBrowser('google-chrome').open('./website/build/room.html')
 
 def run_all():
-    ps = []
-    ps.append(Process(target=start_game))
-    ps.append(Process(target=start_http))
-    ps.append(Process(target=start_brower))
-
-    # ps.append(Process(target=start_ai, args=(['ai_halida'])))
-    # ps.append(Process(target=start_ai, args=(['ai_tutorial'])))
-    ps.append(Process(target=start_ai, args=(['ai_flreey'])))
-    ps.append(Process(target=start_ai, args=(['ai_flreey'])))
-    ps.append(Process(target=start_ai, args=(['ai_flreey'])))
-    ps.append(Process(target=start_ai, args=(['ai_flreey'])))
-    # ps.append(Process(target=start_ai, args=(['ai_flreeyv2'])))
+    ps = [
+        Process(target=start_game),
+        Process(target=start_http),
+        # Process(target=start_brower),
+        # Process(target=start_ai, args=(['ai_halida'])),
+        # Process(target=start_ai, args=(['ai_tutorial'])),
+        Process(target=start_ai, args=(['ai_flreey'])),
+        Process(target=start_ai, args=(['ai_flreey'])),
+        Process(target=start_ai, args=(['ai_flreey'])),
+        Process(target=start_ai, args=(['ai_flreey'])),
+        # Process(target=start_ai, args=(['ai_flreeyv2'])),
+        ]
 
     for p in ps:
-        import time
-        time.sleep(0.5)
+        time.sleep(1)
         p.start()
 
     for p in ps:
