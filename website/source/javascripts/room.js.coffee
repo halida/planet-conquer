@@ -88,16 +88,23 @@ class GameShower extends Spine.Controller
         hold = @info.holds[id]
         side = hold[0]
         count = hold[1]
-        @div_desc.html(
-            "<div class=\"desc-planet\">the planet: #{id}<br/>
+
+        text = "<div class=\"desc-planet\">the planet: #{id}<br/>
             <span>def<span> #{planet_info.def}<br/>
             <span>res<span> #{planet_info.res}<br/>
             <span>cos<span> #{planet_info.cos}<br/>
             <span>max<span> #{planet_info.max}<br/>
             </div>
-            <div class=\"desc-holds\">with side: #{side}<br/>
-            <div class=\"desc-holds\">count: #{count}<br/>
-                ")
+                "
+
+        if @info? and side != null
+            player = @info.players[side]
+            text += "<div class=\"desc-holds\">with player: #{player.name}
+            <div style='background: #{player.color}' class='side-mark'/>
+                </div>
+            <div class=\"desc-holds\">count: #{count}</div>
+                "
+        @div_desc.html(text)
 
     show_route_desc: (e)->
         id = $(e.target).attr('route_id')
@@ -256,13 +263,17 @@ class GameShower extends Spine.Controller
     update_players: ()->
         data = []
         list = @info.players.slice()
-        # list.sort (a, b)->
-        #     a.planets - b.planets
-        # list.reverse()
+        for player, i in list
+            player.color = side_color(i)
+
+        list.sort (a, b)->
+            a.planets - b.planets
+        list.reverse()
+
         for player, i in list
             console.log player.planets
             player_data = [
-                "#{player.side} - #{player.name} <div style='background: #{side_color(i)}' class='side-mark'/>",
+                "#{player.side} - #{player.name} <div style='background: #{player.color}' class='side-mark'/>",
                 "planets: #{player.planets}",
                 "units: #{player.units}",
                 "#{player.status}",
