@@ -18,8 +18,11 @@ class SimpleAI():
         self.conn = httplib.HTTPConnection(SERVER, PORT)
         self.room = 0
         self.d = 0
+        #加入房间
         self.cmd_add(ai_name, side)
+        #获取地图
         self.cmd_map()
+        #更新地图信息
         self.cmd_info()
 
         #得到当前的回合
@@ -89,7 +92,9 @@ class SimpleAI():
         return moves
 
 def main():
-    rs = SimpleAI('tutorial', 'python')
+    player_nickname = 'tutorial'
+    language = 'python' #ruby or python
+    rs = SimpleAI(player_nickname, language)
     while True:
         #服务器每三秒执行一次，所以没必要重复发送消息
         time.sleep(1)

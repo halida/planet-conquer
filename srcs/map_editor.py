@@ -3,7 +3,6 @@
 """
  MapEditor for Planet-Conquer
 """
-
 from lib import *
 import yaml
 import pygame
@@ -14,7 +13,6 @@ SIZE=40
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 DES = ['def', 'res', 'cos', 'max']
-
 class Editor:
     
     def __init__(self, filename=None):
@@ -65,7 +63,6 @@ class EditorView:
         self.h = len(map)
         self.w = len(map[0])
         self.selected_i = -1
-        self.selected_j = -1
         
         print map
         print self.h, self.w

@@ -14,10 +14,29 @@ PORT = 9999
 DIRS = [[-1, 0], [0, -1], [1, 0], [0, 1]]
 
 class SimpleAI():
-    def __init__(self):
+    def __init__(self, ai_name, side='python'):
         self.conn = httplib.HTTPConnection(SERVER, PORT)
         self.room = 0
         self.d = 0
+        #加入房间
+        self.cmd_add(ai_name, side)
+        #获取地图
+        self.cmd_map()
+        #更新地图信息
+        self.cmd_info()
+
+        #得到当前的回合
+        self.round = self.info['round']
+        self.init_weight()
+
+    def is_next_round(self):
+        self.cmd_info()
+        current_round = self.info['round']
+        next_round = False
+        if current_round > self.round:
+            self.round = current_round
+            next_round = True
+        return next_round
 
     def cmd(self, cmd, data={}):
         """
@@ -32,9 +51,9 @@ class SimpleAI():
         result = self.conn.getresponse().read()
         return json.loads(result)
 
-    def cmd_add(self):
+    def cmd_add(self, nick, side):
         self.me = self.cmd("add",
-                           dict(name = "Flreeyv2", side='python'))
+                           dict(name = nick, side=side))
         return self.me
     
     def cmd_map(self):
@@ -237,24 +256,17 @@ class SimpleAI():
         return self.move(plants_pair)
 
 def main():
-    rs = SimpleAI()
-    rs.cmd_map()
-    logging.debug(rs.cmd_add())
+    rs = SimpleAI('flreeyv2', 'python')
     rs.init_weight()
-    rs.cmd_info()
-    pre_round = rs.info['round']
 
     while True:
+        #服务器每三秒执行一次，所以没必要重复发送消息
         time.sleep(1)
-        rs.cmd_info()
-        current_round = rs.info['round']
-        if current_round <= pre_round:
-            continue
-        else:
-            pre_round = current_round
-
-        result = rs.step()
-        rs.cmd_moves(result)
+        if rs.is_next_round():
+            #计算自己要执行的操作
+            result = rs.step()
+            #把操作发给服务器
+            rs.cmd_moves(result)
 
 if __name__=="__main__":
     main()
