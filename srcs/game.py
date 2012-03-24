@@ -13,6 +13,7 @@ RUNNING='running'
 FINISHED='finished'
 
 DEFAULT_MAP = 'srcs/map/fight_here.yml'
+# DEFAULT_MAP = 'srcs/map/oneline.yml'
 
 MAX_LOST_TURN = 3
 
@@ -124,17 +125,19 @@ class Game():
                     # 检查moves合法性
                     owner, armies = self.holds[_from]
                     if owner != n:
-                        return 'not your planet'
+                        self.log('not your planet, round=%s, move=[%s, %s, %s]') % (self.round, armies, _from, to)
+                        continue
                     elif armies < count:
-                        return 'no enough armies'
+                        self.log('not enuough armies, round=%s, move=[%s, %s, %s]') % (self.round, armies, _from, to)
+                        continue
                     step = self.routes[(_from, to)]
                     moves.append([n, _from, to, count, step])
                 self.player_ops[n] = moves
-                
+                #print 'set_player_op id:%s'% n, self.round, self.player_ops, moves
                 return 'ok'
             else:
                 return 'wrong op: ' + kw['op']
-        except:
+        except Exception:
             return 'invalid command'
 
     def do_player_op(self, n):
@@ -155,11 +158,10 @@ class Game():
         胜利判断按照: 星球总数, 单位数量, 玩家顺序 依个判断数值哪个玩家最高来算. (不会出现平局)
         同时计算最高分, 保存到历史中
         """
-        scores = [[0, 0, i] for i in range(len(self.players))]
-        for side, count in self.holds:
-            if side == None: continue
-            scores[side][0] += 1
-            scores[side][1] += count
+        scores = [
+            [p['planets'], p['units'], i]
+            for i, p in enumerate(self.get_player_infos())
+            ]
 
         maxid = max(scores)[2]
         winner = self.players[maxid]
@@ -176,12 +178,10 @@ class Game():
                     name=self.map.name,
                     author=self.map.author,
                     map_size = self.map.map_size,
+                    step = GEME_STEP_TIME,
                     )
 
-    def get_info(self):
-        if self.info:
-            return self.info
-
+    def get_player_infos(self):
         player_infos = [p.get_info() for p in self.players]
         # count planets and units
         for p in player_infos:
@@ -191,10 +191,19 @@ class Game():
             if side == None: continue
             player_infos[side]["planets"] += 1
             player_infos[side]["units"] += count
+        for move in self.moves:
+            side = move[0]
+            count = move[3]
+            player_infos[side]["units"] += count
+        return player_infos
+
+    def get_info(self):
+        if self.info:
+            return self.info
         
         self.info = dict(round=self.round,
                          status=self.status,
-                         players=player_infos,
+                         players=self.get_player_infos(),
                          moves=self.moves,
                          holds=self.holds,
                          logs=self.logs)
@@ -208,11 +217,10 @@ class Game():
         if self.round > self.max_round:
             return True
 
-        players = set()
-        for side, count in self.holds:
-            if side != None:
-                players.add(side)
-        if len(players) == 1: 
+        alives = [True
+                  for p in self.get_player_infos()
+                  if p['units'] > 0]
+        if sum(alives) <= 1:
             return True
 
     def move_stage(self):
@@ -228,10 +236,13 @@ class Game():
                 self.do_player_op(i)
 
     def arrive_stage(self):
+        # time steps
         for move in self.moves:
             move[-1] -= 1
+        # find arrived units
         arrives = [move for move in self.moves
-                   if move[-1]<=0]
+                   if move[-1]==0]
+        # remove arrived moves
         self.moves = [move for move in self.moves
                       if move[-1]>0]
         return arrives
@@ -380,13 +391,13 @@ class Game():
             return
         # 次数更新
         player.no_resp_time += 1
-        player.no_resp_round = round            
+        player.no_resp_round = round
         # 判断是否没有响应时间过长
         if player.no_resp_time >= MAX_LOST_TURN:
             player.alive = False
             logging.debug('kill no response player: %d' % \
                          self.players.index(player))
-            self.log('kill player for no response: '+player.name)
+            self.log('kill player for no response %s: , round is %s, time is %s' % (player.name, round, player.no_resp_time))
 
 
 def test():

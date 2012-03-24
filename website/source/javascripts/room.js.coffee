@@ -12,7 +12,7 @@ draw_circle = (ctx, x, y, r)->
 
 create_svg = (obj)-> document.createElementNS('http://www.w3.org/2000/svg', obj)
 
-SIZE = 80
+SIZE = 60
 DUR = 30
 
 log = ()->
@@ -22,40 +22,38 @@ class Game extends Spine.Module
     @extend(Spine.Events)
 
     constructor: ()->
+        super
+        @on_get_message = true
 
     set_server: (@addr, @room)->
         console.log('set server:', @addr, "with room: ", @room)
 
         @ws = new WS("ws://#{addr}/info")
 
-        @ws.onmessage = @proxy (e)-> @onmessage($.parseJSON(e.data))
+        @ws.onmessage = @proxy (e)->
+            # log e.data
+            return unless @on_get_message
+            Game.trigger "data", $.parseJSON(e.data)
         @ws.onerror = (e)-> console.log e
         @ws.onclose = (e)-> console.log "connection closed, refresh please.."
         @ws.onopen = @proxy ()->
-            @ws.send JSON.stringify(op: 'setroom', room: @room)
-            @ws.send JSON.stringify(op: 'map', room: @room)
-            @ws.send JSON.stringify(op: 'info', room: @room)
+            @set_room()
+            @get_map()
+            @get_info()
 
-    onmessage: (data)->
-        switch data.op
-            when "info"
-                Game.trigger "info", data
-                log "info:", data
-            when "add"
-                Game.trigger "add", data
-            when  "map"
-                Game.trigger "map", data
-                log "map:", data
-            else
-                if data.status != 'ok'
-                  console.log(data)
+    set_room: ()->
+        @ws.send JSON.stringify(op: 'setroom', room: @room)
+    get_info: ()->
+        @ws.send JSON.stringify(op: 'info', room: @room)
+    get_map: ()->
+        @ws.send JSON.stringify(op: 'map', room: @room)
+
 
 class GameShower extends Spine.Controller
 
     constructor: (@game)->
         super
-        Game.bind "map", @proxy((@map)-> @update_map())
-        Game.bind "info", @proxy((@info)-> @update_info())
+        Game.bind "data", @proxy(@update_data)
         @info = {}
         @map = {}
 
@@ -65,7 +63,11 @@ class GameShower extends Spine.Controller
         @div_status =  $('#game-status')
         @div_round = $('#current-round')
         @div_maxround = $('#max-round')
-        @div_logs = $('#board-logs')
+        @div_logs = $('#logs')
+
+        @div_map_name = $('#map-name')
+        @div_map_author = $('#map-author')
+        @div_map_desc = $('#map-desc')
 
     show_move_desc: (e)->
         id = $(e.target).attr('move_id')
@@ -86,16 +88,23 @@ class GameShower extends Spine.Controller
         hold = @info.holds[id]
         side = hold[0]
         count = hold[1]
-        @div_desc.html(
-            "<div class=\"desc-planet\">the planet: #{id}<br/>
+
+        text = "<div class=\"desc-planet\">the planet: #{id}<br/>
             <span>def<span> #{planet_info.def}<br/>
             <span>res<span> #{planet_info.res}<br/>
             <span>cos<span> #{planet_info.cos}<br/>
             <span>max<span> #{planet_info.max}<br/>
             </div>
-            <div class=\"desc-holds\">with side: #{side}<br/>
-            <div class=\"desc-holds\">count: #{count}<br/>
-                ")
+                "
+
+        if @info? and side != null
+            player = @info.players[side]
+            text += "<div class=\"desc-holds\">with player: #{player.name}
+            <div style='background: #{player.color}' class='side-mark'/>
+                </div>
+            <div class=\"desc-holds\">count: #{count}</div>
+                "
+        @div_desc.html(text)
 
     show_route_desc: (e)->
         id = $(e.target).attr('route_id')
@@ -113,9 +122,30 @@ class GameShower extends Spine.Controller
             "
         )
 
+    update_data: (data)->
+        switch data.op
+            when "info"
+                @info = data
+                @update_info()
+            when "add"
+                false
+            when  "map"
+                @map = data
+                @update_map()
+            else
+                if data.status != 'ok'
+                  console.log(data)
+
     update_map: ()->
+        @animate_time = @map.step * 1000
+        # clear all
+        @div_scene.find('.planet').remove()
+        @div_scene.find('.move').remove()
         # info
         @div_maxround.html(@map.max_round)
+        @div_map_name.html(@map.name)
+        @div_map_author.html(@map.author)
+        @div_map_desc.html(@map.desc)
         @count_route_pos()
 
         @div_planets = []
@@ -171,17 +201,22 @@ class GameShower extends Spine.Controller
 
         # game state
         @div_status.html @info.status
-        # draw holds
-        for hold, i in @info.holds
+        @update_moves()
+        # draw holds after animate_time
+        # info = @info
+        # setTimeout( @proxy(()-> @update_holds(info))
+        # , @animate_time)
+        @update_holds(@info)
+
+    update_holds: (info)->
+        for hold, i in info.holds
             div_planet = @div_planets[i]
             div_planet.css "background", side_color(hold[0])
             div_planet.html(hold[1])
-        @update_moves()
 
     update_moves: ()->
         # remove old
-        for div_move in @div_moves
-            div_move.remove()
+        @div_scene.find('.move').remove()
 
         # add new
         for move, i in @info.moves
@@ -199,7 +234,8 @@ class GameShower extends Spine.Controller
             div_move.html(count)
             div_move.hover @proxy @show_move_desc
 
-            div_move.animate {left: pos[0], top: pos[1]}, 4000
+            # div_move.animate {left: pos[0], top: pos[1]}, @animate_time
+            div_move.transition {left: pos[0], top: pos[1]}, @animate_time
 
             @div_moves.push div_move
             @div_scene.append div_move
@@ -233,9 +269,17 @@ class GameShower extends Spine.Controller
 
     update_players: ()->
         data = []
-        for player in @info.players
+        list = @info.players.slice()
+        for player, i in list
+            player.color = side_color(i)
+
+        list.sort (a, b)->
+            a.planets - b.planets
+        list.reverse()
+
+        for player, i in list
             player_data = [
-                "#{player.side} - #{player.name}",
+                "#{player.side} - #{player.name} <div style='background: #{player.color}' class='side-mark'/>",
                 "planets: #{player.planets}",
                 "units: #{player.units}",
                 "#{player.status}",
@@ -244,7 +288,7 @@ class GameShower extends Spine.Controller
         $('#players').html(data.join("\n"))
 
     update_logs: ()->
-        @logs = ['<div class="log">round: '+@info.round+'</div>']
+        @logs = ['<div class="log">------------ round: '+@info.round+'</div>']
         for log in @info.logs
             switch log.type
                 when "production" then @display_production(log)
@@ -263,6 +307,56 @@ class GameShower extends Spine.Controller
         @logs.push '<div class="log">'+ "planet #{data.planet}: production to #{data.count}." + '</div>'
 
 
+class Recorder extends Spine.Controller
+
+    constructor: (@game, div)->
+        super
+        @div = $(div)
+        @div_record = @div.find('.record-record')
+        @div_replay = @div.find('.record-replay')
+        @div_record_count = @div.find('.record-count')
+        @div_replay_on = @div.find('.replay-on')
+
+        @div.on 'click', '.record-record', @proxy(@on_record)
+        @div.on 'click', '.record-replay', @proxy(@on_replay)
+        @on_replay = false
+        @on_record = false
+        @data_list = []
+        @replay_on = 0
+        @animate_time = 2000 # fixed replay time
+        Game.bind "data", @proxy(@save_data)
+
+
+    on_record: ()->
+        @on_record = not @on_record
+        @div_record.toggleClass('on')
+        if @on_record
+            @data_list = []
+            @replay_on = 0
+            @game.get_map() #force game get map again
+
+    on_replay: ()->
+        @on_replay = not @on_replay
+        @div_replay.toggleClass('on')
+        @game.on_get_message = not @on_replay # enable/disable game message
+        setTimeout(@proxy(@replay_timer), @animate_time)
+
+    replay_timer: ()->
+        # console.log "on replay timer: ", @on_replay, @data_list
+        return unless @on_replay
+        return if @data_list.length <= 0
+        Game.trigger "data", @data_list[@replay_on]
+        @div_replay_on.html @replay_on
+        @replay_on += 1
+        @replay_on %= @data_list.length
+        setTimeout(@proxy(@replay_timer), @animate_time)
+
+    save_data: (data)->
+        return unless @on_record
+        @data_list.push data
+        @div_record_count.html @data_list.length
+
 # export
 window.Game = Game
+window.Recorder = Recorder
 window.GameShower = GameShower

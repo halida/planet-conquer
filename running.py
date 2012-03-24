@@ -1,5 +1,4 @@
-import os
-import sys
+import os, sys, time
 from multiprocessing import Process
 
 class Logger(object):
@@ -25,7 +24,10 @@ class Logger(object):
 def start_game():
     from srcs.zmq_game_server import Server
     sys.stdout = Logger('game.log')
-    Server().run(max_waits=4.0, min_waits=4.0, enable_no_resp_die=True)
+    from srcs.lib import GEME_STEP_TIME
+    Server().run(max_waits=GEME_STEP_TIME,
+                 min_waits=GEME_STEP_TIME,
+                 enable_no_resp_die=True)
 
 def start_http():
     from srcs.web_server import main
@@ -57,11 +59,23 @@ def run_all():
     ps.append(Process(target=start_ai, args=(['ai_flreeyv2'])))
     ps.append(Process(target=start_ai, args=(['ai_halida'])))
     ps.append(Process(target=start_ai, args=(['ai_flreey'])))
-    ps.append(Process(target=start_ai, args=(['ai_tutorial'])))
+    ps.append(Process(target=start_ai, args=(['ai_flreey'])))
+    #ps.append(Process(target=start_ai, args=(['ai_tutorial'])))
+    #ps = [
+        #Process(target=start_game),
+        #Process(target=start_http),
+        ## Process(target=start_brower),
+        ## Process(target=start_ai, args=(['ai_halida'])),
+        ## Process(target=start_ai, args=(['ai_tutorial'])),
+        #Process(target=start_ai, args=(['ai_flreey'])),
+        #Process(target=start_ai, args=(['ai_flreey'])),
+        #Process(target=start_ai, args=(['ai_flreey'])),
+        #Process(target=start_ai, args=(['ai_flreey'])),
+        ## Process(target=start_ai, args=(['ai_flreeyv2'])),
+        #]
 
     for p in ps:
-        import time
-        time.sleep(0.5)
+        time.sleep(1)
         p.start()
 
     for p in ps:

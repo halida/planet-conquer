@@ -11,6 +11,8 @@ from datetime import date
 logging.basicConfig(level=logging.DEBUG,
                     format="%(asctime)s - %(levelname)s - %(message)s")
 
+GEME_STEP_TIME = 2.0
+
 
 class Clock():
     """一个分时器，限制刷新率

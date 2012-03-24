@@ -9,7 +9,6 @@
         = yield_content :head
 
   %body{:class => page_classes}
-    #main{:role => "main"}
-      = yield
+    = yield
 
   = yield_content :javascripts

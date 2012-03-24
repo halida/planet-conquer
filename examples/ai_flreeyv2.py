@@ -202,7 +202,7 @@ class SimpleAI():
                                 self.get_round(me, x)) >
                             holds[x][1], enemy_planets_nearby_my_planet)
                     if enemy_planets_nearby_my_planet:
-                        print 'enemy_planets_nearby_my_planet', enemy_planets_nearby_my_planet, armies_less_than_my_planets
+                        #print 'enemy_planets_nearby_my_planet', enemy_planets_nearby_my_planet, armies_less_than_my_planets
                         if armies_less_than_my_planets:
                             anemy = armies_less_than_my_planets[0]
                             send_armies = int(holds[anemy][1] + (my_armies -
@@ -257,14 +257,16 @@ class SimpleAI():
 
 def main():
     rs = SimpleAI('flreeyv2', 'python')
-    rs.init_weight()
 
     while True:
         #服务器每三秒执行一次，所以没必要重复发送消息
-        time.sleep(1)
+        time.sleep(0.1)
         if rs.is_next_round():
+            start = time.time()
             #计算自己要执行的操作
+            #print timeit.timeit(rs.step)
             result = rs.step()
+            print time.time() - start, rs.info['round'], result
             #把操作发给服务器
             rs.cmd_moves(result)
 

@@ -1,32 +1,62 @@
 @import "compass"
 
-$SIZE: 80px
-$PLANET_SIZE: 20px
+$PLANET_SIZE: 18px
 $MOVE_SIZE: 10px
 
-#board
+$MIDDLE_SIZE: 800px
+
+$PANEL_COLOR: #aaa
+
+#board-head-outter
+  position: fixed
+  top: 0px
+  width: 100%
+  #board-head
+    width: $MIDDLE_SIZE
+    height: 60px
+    margin: auto
+    background: $PANEL_COLOR
+    padding: 0px 10px 10px
+    +border-bottom-radius(5px)
+    line-height: 20px
+  z-index: 100
 
 #board-scene
-  float: left
-  width: 400px
-  height: 400px
-  background: #444
+  margin: 100px auto 20px
+  padding: 20px
+  min-width: 400px
+  min-height: 400px
+  background: #13131F
   position: relative
+  +border-top-radius(5px)
+  z-index: 30
 
-#board-side
-  float: left
+#board-side-left
+  left: 0px
+  .side-block
+    +border-right-radius(5px)
+#board-side-right
+  right: 0px
+  .side-block
+    +border-left-radius(5px)
+
+#board-side-left, #board-side-right
+  position: fixed
+  top: 100px  
   width: 300px
-  min-height: 600px 
-  background: yellow
-  #players
-    background: #aaa
-
-#board-logs
-  height: 300px
-  overflow: scroll
+  .side-block
+    background: $PANEL_COLOR
+    padding: 10px
+    line-height: 20px
+    margin-bottom: 20px
+  
+  #logs
+    overflow-y: scroll
+    height: 200px
     
 .planet, .move
   position: absolute
+  font-size: 10px
 
 .move
   width: $MOVE_SIZE * 2 - 4
@@ -34,13 +64,38 @@ $MOVE_SIZE: 10px
   padding: 2px
   text-align:center
   background: #ccc
+  text-align: center
 
 .planet
   width: $PLANET_SIZE * 2 - 10
-  height: $PLANET_SIZE * 2 - 10
-  padding: 5px
+  height: $PLANET_SIZE * 2 - 15
+  padding: 10px 5px 5px
+  text-align: center
   +border-radius($PLANET_SIZE)
 
   text-align:center
   background: #ccc
   
+
+.btn
+  font-size: 12px
+  cursor: pointer
+  background-color: #17191A
+  color: white
+  padding: 6px 16px
+  border: 0px
+  +border-radius(5px)
+  +opacity(0.8)
+  font-weight: bold
+  border: 3px solid #62626B
+  &:hover, &.on
+    +opacity(1.0)
+  &.on  
+    border: 3px solid #F10606
+
+
+.player, .desc-holds
+  .side-mark
+    float: right
+    width: 10px
+    height: 10px

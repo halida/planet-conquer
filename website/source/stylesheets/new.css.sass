@@ -1,8 +1,28 @@
 @import "bootstrap.min.css"
 @import "compass"
 
-.hero-unit
-  margin-top: 20px
+$bg: #13131F
+$cell: floor((940 / 15) - 4)
+
+@each $name in webkit, moz, ms
+  @-#{$name}-keyframes planet
+    0%
+      opacity: 0.4
+    50%
+      opacity: 1
+    100%
+      opacity: 0.4
+
+  @-#{$name}-keyframes move
+    0%
+      opacity: 1
+    50%
+      opacity: 0.6
+    100%
+      opacity: 1
+
+body
+  background: $bg
 
 #map
   width: 100%
@@ -10,24 +30,59 @@
   margin-top: 20px
 
   .cell
-    float: left
-    display: block
-    margin: 2px
-    background: #fff
     overflow: hidden
-  
+    position: absolute
+    display: block
+    font-size: 14px
+    text-align: center
+    color: #000
+    width: #{$cell}px
+    height: #{$cell}px
+    line-height: #{$cell}px
+    border: 2px solid transparent
+    &.planet, &.player_0, &.player_1, &.player_2, &.player_3
+      +border-radius(#{$cell/2 + 2}px)
+
   .planet
-    background: green
+    border-color: #fff
     color: #fff
-  
+    background: $bg
+
   .move
     position: absolute
-    color: red
+    overflow: hidden
+    font-size: 12px
+    text-align: center
+    color: #fff
+    width: #{$cell/2}px
+    height: #{$cell/2}px
+    line-height: #{$cell/2}px
+    border: 2px solid transparent
+    +border-radius(#{$cell/4 + 2}px)
+    @each $name in webkit, moz, ms
+      -#{$name}-animation: move 1s infinite
+    pointer-events: none
+  
+.player_0
+  background: #EE2C44
+  border-color: lighten(#EE2C44, 20%)
+
+.player_1
+  background: #42C3D9
+  border-color: lighten(#42C3D9, 20%)
+
+.player_2
+  background: #E96FA9
+  border-color: lighten(#E96FA9, 20%)
+  
+.player_3
+  background: #A5CF4E
+  border-color: lighten(#A5CF4E, 20%)
 
 #sidebar
   position: fixed
-  width: 200px
+  width: 180px
   padding: 10px
   background: #EEE
-  top: 60px
+  top: 0
   left: 0

@@ -1,5 +1,5 @@
 (function() {
-  var DUR, Game, GameShower, SIZE, WS, create_svg, draw_circle, log, side_color,
+  var ANIMATE_TIME, DUR, Game, GameShower, Recorder, SIZE, WS, create_svg, draw_circle, log, side_color,
     __hasProp = Object.prototype.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
@@ -21,9 +21,11 @@
     return document.createElementNS('http://www.w3.org/2000/svg', obj);
   };
 
-  SIZE = 80;
+  SIZE = 60;
 
   DUR = 30;
+
+  ANIMATE_TIME = 2000;
 
   log = function() {
     return console.log(arguments);
@@ -35,7 +37,10 @@
 
     Game.extend(Spine.Events);
 
-    function Game() {}
+    function Game() {
+      Game.__super__.constructor.apply(this, arguments);
+      this.on_get_message = true;
+    }
 
     Game.prototype.set_server = function(addr, room) {
       this.addr = addr;
@@ -43,7 +48,8 @@
       console.log('set server:', this.addr, "with room: ", this.room);
       this.ws = new WS("ws://" + addr + "/info");
       this.ws.onmessage = this.proxy(function(e) {
-        return this.onmessage($.parseJSON(e.data));
+        if (!this.on_get_message) return;
+        return Game.trigger("data", $.parseJSON(e.data));
       });
       this.ws.onerror = function(e) {
         return console.log(e);
@@ -52,34 +58,31 @@
         return console.log("connection closed, refresh please..");
       };
       return this.ws.onopen = this.proxy(function() {
-        this.ws.send(JSON.stringify({
-          op: 'setroom',
-          room: this.room
-        }));
-        this.ws.send(JSON.stringify({
-          op: 'map',
-          room: this.room
-        }));
-        return this.ws.send(JSON.stringify({
-          op: 'info',
-          room: this.room
-        }));
+        this.set_room();
+        this.get_map();
+        return this.get_info();
       });
     };
 
-    Game.prototype.onmessage = function(data) {
-      switch (data.op) {
-        case "info":
-          Game.trigger("info", data);
-          return log("info:", data);
-        case "add":
-          return Game.trigger("add", data);
-        case "map":
-          Game.trigger("map", data);
-          return log("map:", data);
-        default:
-          if (data.status !== 'ok') return console.log(data);
-      }
+    Game.prototype.set_room = function() {
+      return this.ws.send(JSON.stringify({
+        op: 'setroom',
+        room: this.room
+      }));
+    };
+
+    Game.prototype.get_info = function() {
+      return this.ws.send(JSON.stringify({
+        op: 'info',
+        room: this.room
+      }));
+    };
+
+    Game.prototype.get_map = function() {
+      return this.ws.send(JSON.stringify({
+        op: 'map',
+        room: this.room
+      }));
     };
 
     return Game;
@@ -93,14 +96,7 @@
     function GameShower(game) {
       this.game = game;
       GameShower.__super__.constructor.apply(this, arguments);
-      Game.bind("map", this.proxy(function(map) {
-        this.map = map;
-        return this.update_map();
-      }));
-      Game.bind("info", this.proxy(function(info) {
-        this.info = info;
-        return this.update_info();
-      }));
+      Game.bind("data", this.proxy(this.update_data));
       this.info = {};
       this.map = {};
       this.div_scene = $('#board-scene');
@@ -108,7 +104,7 @@
       this.div_status = $('#game-status');
       this.div_round = $('#current-round');
       this.div_maxround = $('#max-round');
-      this.div_logs = $('#board-logs');
+      this.div_logs = $('#logs');
     }
 
     GameShower.prototype.show_move_desc = function(e) {
@@ -142,8 +138,25 @@
       return this.div_desc.html("            <div class=\"desc-route\">                step: " + route[2] + "                moves: " + moves + "            </div>            ");
     };
 
+    GameShower.prototype.update_data = function(data) {
+      switch (data.op) {
+        case "info":
+          this.info = data;
+          return this.update_info();
+        case "add":
+          return false;
+        case "map":
+          this.map = data;
+          return this.update_map();
+        default:
+          if (data.status !== 'ok') return console.log(data);
+      }
+    };
+
     GameShower.prototype.update_map = function() {
       var div_planet, i, planet, _len, _ref, _results;
+      this.div_scene.find('.planet').remove();
+      this.div_scene.find('.move').remove();
       this.div_maxround.html(this.map.max_round);
       this.count_route_pos();
       this.div_planets = [];
@@ -191,18 +204,14 @@
     };
 
     GameShower.prototype.update_moves = function() {
-      var count, div_move, i, move, next, pos, remain, side, to, _from, _i, _len, _len2, _ref, _ref2, _ref3, _results;
-      _ref = this.div_moves;
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        div_move = _ref[_i];
-        div_move.remove();
-      }
-      _ref2 = this.info.moves;
+      var count, div_move, i, move, next, pos, remain, side, to, _from, _len, _ref, _ref2, _results;
+      this.div_scene.find('.move').remove();
+      _ref = this.info.moves;
       _results = [];
-      for (i = 0, _len2 = _ref2.length; i < _len2; i++) {
-        move = _ref2[i];
+      for (i = 0, _len = _ref.length; i < _len; i++) {
+        move = _ref[i];
         side = move[0], _from = move[1], to = move[2], count = move[3], remain = move[4];
-        _ref3 = this.get_route_pos_and_next(_from, to, remain), pos = _ref3[0], next = _ref3[1];
+        _ref2 = this.get_route_pos_and_next(_from, to, remain), pos = _ref2[0], next = _ref2[1];
         div_move = $("<div/>");
         div_move.attr({
           id: "move-" + i,
@@ -219,7 +228,7 @@
         div_move.animate({
           left: pos[0],
           top: pos[1]
-        }, 4000);
+        }, ANIMATE_TIME);
         this.div_moves.push(div_move);
         _results.push(this.div_scene.append(div_move));
       }
@@ -272,7 +281,7 @@
 
     GameShower.prototype.update_logs = function() {
       var log, _i, _len, _ref;
-      this.logs = ['<div class="log">round: ' + this.info.round + '</div>'];
+      this.logs = ['<div class="log">------------ round: ' + this.info.round + '</div>'];
       _ref = this.info.logs;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         log = _ref[_i];
@@ -300,7 +309,67 @@
 
   })(Spine.Controller);
 
+  Recorder = (function(_super) {
+
+    __extends(Recorder, _super);
+
+    function Recorder(game, div) {
+      this.game = game;
+      Recorder.__super__.constructor.apply(this, arguments);
+      this.div = $(div);
+      this.div_record = this.div.find('.record-record');
+      this.div_replay = this.div.find('.record-replay');
+      this.div_record_count = this.div.find('.record-count');
+      this.div_replay_on = this.div.find('.replay-on');
+      this.div.on('click', '.record-record', this.proxy(this.on_record));
+      this.div.on('click', '.record-replay', this.proxy(this.on_replay));
+      this.on_replay = false;
+      this.on_record = false;
+      this.data_list = [];
+      this.replay_on = 0;
+      Game.bind("data", this.proxy(this.save_data));
+    }
+
+    Recorder.prototype.on_record = function() {
+      this.on_record = !this.on_record;
+      this.div_record.toggleClass('on');
+      if (this.on_record) {
+        this.data_list = [];
+        this.replay_on = 0;
+        return this.game.get_map();
+      }
+    };
+
+    Recorder.prototype.on_replay = function() {
+      this.on_replay = !this.on_replay;
+      this.div_replay.toggleClass('on');
+      this.game.on_get_message = !this.on_replay;
+      return setTimeout(this.proxy(this.replay_timer), ANIMATE_TIME);
+    };
+
+    Recorder.prototype.replay_timer = function() {
+      if (!this.on_replay) return;
+      if (this.data_list.length <= 0) return;
+      Game.trigger("data", this.data_list[this.replay_on]);
+      this.div_replay_on.html(this.replay_on);
+      this.replay_on += 1;
+      this.replay_on %= this.data_list.length;
+      return setTimeout(this.proxy(this.replay_timer), ANIMATE_TIME);
+    };
+
+    Recorder.prototype.save_data = function(data) {
+      if (!this.on_record) return;
+      this.data_list.push(data);
+      return this.div_record_count.html(this.data_list.length);
+    };
+
+    return Recorder;
+
+  })(Spine.Controller);
+
   window.Game = Game;
+
+  window.Recorder = Recorder;
 
   window.GameShower = GameShower;
 
