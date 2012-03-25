@@ -43,9 +43,10 @@ ws.onmessage = (e)->
       
       html = ["<svg style='width:100%;height:#{cell * map.map_size[1]}px;position:absolute'>"]
       for r in map.routes
+        continue if r[0] > r[1]
         from = $('#planet_' + r[0]).offset()
         to = $('#planet_' + r[1]).offset()
-        html.push("<line id='route_#{r[0]}_#{r[1]}' x1='#{from.left + (map.offest_size / 2)}' y1='#{from.top + (map.offest_size / 2)}' x2='#{to.left + (map.offest_size / 2)}' y2='#{to.top + (map.offest_size / 2)}' style='stroke:#444;stroke-width:1px' />")
+        html.push("<line x1='#{from.left + (map.offest_size / 2)}' y1='#{from.top + (map.offest_size / 2)}' x2='#{to.left + (map.offest_size / 2)}' y2='#{to.top + (map.offest_size / 2)}' style='stroke:#444;stroke-width:2px' stroke-dasharray='3,3' />")
       html.push('</svg>')
       $('body').prepend(html.join(''))
     
