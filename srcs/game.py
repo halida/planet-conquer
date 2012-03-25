@@ -125,17 +125,19 @@ class Game():
                     # 检查moves合法性
                     owner, armies = self.holds[_from]
                     if owner != n:
-                        return 'not your planet'
+                        self.log('not your planet, round=%s, move=[%s, %s, %s]') % (self.round, armies, _from, to)
+                        continue
                     elif armies < count:
-                        return 'no enough armies'
+                        self.log('not enuough armies, round=%s, move=[%s, %s, %s]') % (self.round, armies, _from, to)
+                        continue
                     step = self.routes[(_from, to)]
                     moves.append([n, _from, to, count, step])
                 self.player_ops[n] = moves
-                
+                #print 'set_player_op id:%s'% n, self.round, self.player_ops, moves
                 return 'ok'
             else:
                 return 'wrong op: ' + kw['op']
-        except:
+        except Exception:
             return 'invalid command'
 
     def do_player_op(self, n):
@@ -389,13 +391,13 @@ class Game():
             return
         # 次数更新
         player.no_resp_time += 1
-        player.no_resp_round = round            
+        player.no_resp_round = round
         # 判断是否没有响应时间过长
         if player.no_resp_time >= MAX_LOST_TURN:
             player.alive = False
             logging.debug('kill no response player: %d' % \
                          self.players.index(player))
-            self.log('kill player for no response: '+player.name)
+            self.log('kill player for no response %s: , round is %s, time is %s' % (player.name, round, player.no_resp_time))
 
 
 def test():

@@ -77,7 +77,7 @@ class SimpleAI():
 def main():
     rs = SimpleAI()
     rs.cmd_map()
-    logging.debug(rs.cmd_add())
+    rs.cmd_add()
     while True:
         time.sleep(1.0)
         rs.cmd_info()

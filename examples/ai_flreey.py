@@ -159,7 +159,7 @@ def main():
     pre_round = rs.info['round']
 
     while True:
-        time.sleep(1)
+        time.sleep(0.1)
         rs.cmd_info()
         current_round = rs.info['round']
         if current_round <= pre_round:

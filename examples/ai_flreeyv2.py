@@ -14,10 +14,29 @@ PORT = 9999
 DIRS = [[-1, 0], [0, -1], [1, 0], [0, 1]]
 
 class SimpleAI():
-    def __init__(self):
+    def __init__(self, ai_name, side='python'):
         self.conn = httplib.HTTPConnection(SERVER, PORT)
         self.room = 0
         self.d = 0
+        #加入房间
+        self.cmd_add(ai_name, side)
+        #获取地图
+        self.cmd_map()
+        #更新地图信息
+        self.cmd_info()
+
+        #得到当前的回合
+        self.round = self.info['round']
+        self.init_weight()
+
+    def is_next_round(self):
+        self.cmd_info()
+        current_round = self.info['round']
+        next_round = False
+        if current_round > self.round:
+            self.round = current_round
+            next_round = True
+        return next_round
 
     def cmd(self, cmd, data={}):
         """
@@ -32,9 +51,9 @@ class SimpleAI():
         result = self.conn.getresponse().read()
         return json.loads(result)
 
-    def cmd_add(self):
+    def cmd_add(self, nick, side):
         self.me = self.cmd("add",
-                           dict(name = "Flreeyv2", side='python'))
+                           dict(name = nick, side=side))
         return self.me
     
     def cmd_map(self):
@@ -183,7 +202,7 @@ class SimpleAI():
                                 self.get_round(me, x)) >
                             holds[x][1], enemy_planets_nearby_my_planet)
                     if enemy_planets_nearby_my_planet:
-                        print 'enemy_planets_nearby_my_planet', enemy_planets_nearby_my_planet, armies_less_than_my_planets
+                        #print 'enemy_planets_nearby_my_planet', enemy_planets_nearby_my_planet, armies_less_than_my_planets
                         if armies_less_than_my_planets:
                             anemy = armies_less_than_my_planets[0]
                             send_armies = int(holds[anemy][1] + (my_armies -
@@ -237,24 +256,19 @@ class SimpleAI():
         return self.move(plants_pair)
 
 def main():
-    rs = SimpleAI()
-    rs.cmd_map()
-    logging.debug(rs.cmd_add())
-    rs.init_weight()
-    rs.cmd_info()
-    pre_round = rs.info['round']
+    rs = SimpleAI('flreeyv2', 'python')
 
     while True:
-        time.sleep(1)
-        rs.cmd_info()
-        current_round = rs.info['round']
-        if current_round <= pre_round:
-            continue
-        else:
-            pre_round = current_round
-
-        result = rs.step()
-        rs.cmd_moves(result)
+        #服务器每三秒执行一次，所以没必要重复发送消息
+        time.sleep(0.1)
+        if rs.is_next_round():
+            start = time.time()
+            #计算自己要执行的操作
+            #print timeit.timeit(rs.step)
+            result = rs.step()
+            print time.time() - start, rs.info['round'], result
+            #把操作发给服务器
+            rs.cmd_moves(result)
 
 if __name__=="__main__":
     main()
