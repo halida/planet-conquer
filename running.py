@@ -27,7 +27,7 @@ def start_game():
     from srcs.lib import GEME_STEP_TIME
     Server().run(max_waits=GEME_STEP_TIME,
                  min_waits=GEME_STEP_TIME,
-                 enable_no_resp_die=True)
+                 enable_no_resp_die=False)
 
 def start_http():
     from srcs.web_server import main
@@ -54,25 +54,9 @@ def run_all():
     ps = []
     ps.append(Process(target=start_game))
     ps.append(Process(target=start_http))
-    ps.append(Process(target=start_brower))
 
     ps.append(Process(target=start_ai, args=(['ai_flreeyv2'])))
-    ps.append(Process(target=start_ai, args=(['ai_halida'])))
-    ps.append(Process(target=start_ai, args=(['ai_flreey'])))
-    ps.append(Process(target=start_ai, args=(['ai_flreey'])))
-    #ps.append(Process(target=start_ai, args=(['ai_tutorial'])))
-    #ps = [
-        #Process(target=start_game),
-        #Process(target=start_http),
-        ## Process(target=start_brower),
-        ## Process(target=start_ai, args=(['ai_halida'])),
-        ## Process(target=start_ai, args=(['ai_tutorial'])),
-        #Process(target=start_ai, args=(['ai_flreey'])),
-        #Process(target=start_ai, args=(['ai_flreey'])),
-        #Process(target=start_ai, args=(['ai_flreey'])),
-        #Process(target=start_ai, args=(['ai_flreey'])),
-        ## Process(target=start_ai, args=(['ai_flreeyv2'])),
-        #]
+    ps.append(Process(target=start_ai, args=(['ai_flreeyv2'])))
 
     for p in ps:
         time.sleep(1)

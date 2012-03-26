@@ -18,8 +18,11 @@ class SimpleAI():
         self.conn = httplib.HTTPConnection(SERVER, PORT)
         self.room = 0
         self.d = 0
-        #加入房间
-        self.cmd_add(ai_name, side)
+        self.name = ai_name
+        self.side = side
+        self.me = None
+
+    def init(self):
         #获取地图
         self.cmd_map()
         #更新地图信息
@@ -51,10 +54,12 @@ class SimpleAI():
         result = self.conn.getresponse().read()
         return json.loads(result)
 
-    def cmd_add(self, nick, side):
-        self.me = self.cmd("add",
-                           dict(name = nick, side=side))
-        return self.me
+    def cmd_add(self):
+        result = self.cmd("add",
+                          dict(name = self.name, side=self.side))
+        if result.has_key('id'):
+            self.me = result
+            return self.me
     
     def cmd_map(self):
         self.map = self.cmd("map")
@@ -250,6 +255,9 @@ class SimpleAI():
         return [n for n, h in enumerate(self.info['holds']) if h[0] ==
                 self.me['seq']]
     def step(self):
+        if self.info['status'] == 'finished' or self.info['status'] == 'waitforplayer':
+            self.me = None
+            return
         weight = self.cal_weight()
         my_planets = self.get_myplanets()
         plants_pair = self.get_best_planets(my_planets, weight)
@@ -260,15 +268,28 @@ def main():
 
     while True:
         #服务器每三秒执行一次，所以没必要重复发送消息
-        time.sleep(0.1)
+        time.sleep(0.7)
+        #加入房间
+        if not rs.me:
+            rs.init()
+            rs.cmd_add()
+        
         if rs.is_next_round():
             start = time.time()
             #计算自己要执行的操作
             #print timeit.timeit(rs.step)
             result = rs.step()
+            if not result: continue
+
             print time.time() - start, rs.info['round'], result
             #把操作发给服务器
             rs.cmd_moves(result)
+        else:
+            #加入房间
+            if not rs.me:
+                rs.init()
+                rs.cmd_add()
+
 
 if __name__=="__main__":
     main()

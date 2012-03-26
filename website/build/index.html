@@ -1,20 +1,165 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html>
   <head>
+    <title>Ruby VS Python Official Site</title>
+    <link href='/assets/favicon.ico' rel='shortcut icon' type='image/x-icon' />
     <meta charset='utf-8'>
       <!-- Always force latest IE rendering engine (even in intranet) & Chrome Frame -->
       <meta content='IE=edge,chrome=1' http-equiv='X-UA-Compatible'>
         <link href="stylesheets/site.css" media="screen" rel="stylesheet" type="text/css" />
         <script src="javascripts/jquery.js" type="text/javascript"></script>
         <script src="javascripts/spine.js" type="text/javascript"></script>
-        <title>The Middleman!</title>
+        
       </meta>
     </meta>
   </head>
   <body class='index'>
-    <h1>
-      <a href="room.html">room</a>
-    </h1>
+    <div class='hide-all'></div>
+    <link href="stylesheets/index.css" media="screen" rel="stylesheet" type="text/css" />
+    <header>
+      <a href='/' title='Go home'><img id="python-vs-ruby-img" style="width: 220px" src="images/rubyvspythonlogo.png" /></a>
+    </header>
+    <div id='main'>
+      <div id='content'>
+        <div id='place'>
+          <div class='right_nav'>
+            <div class='title_bar_r'>
+              <h1>Play Planet Conquer Online</h1>
+            </div>
+            <div id='room_icons'>
+              <a class='room_icon' href='/room_0.html' id='room-0'>
+                <div class='number'>00</div>
+                <div class='room'>
+                  <div>GAME</div>
+                  <div>ROOM</div>
+                </div>
+              </a>
+              <a class='room_icon' href='/room_1.html' id='room-1'>
+                <div class='number'>01</div>
+                <div class='room'>
+                  <div>GAME</div>
+                  <div>ROOM</div>
+                </div>
+              </a>
+            </div>
+            <div class='title_bar_r'>
+              <h1>Sponsors</h1>
+            </div>
+            <div id='sponsor_icon'>
+              <a href='http://gurudigger.com' target='_blank'>
+                <img id="sponsor" src="images/gurudigger.png" />
+              </a>
+            </div>
+            <div id='follow'>
+              <a href='http://twitter.com/rubyvspython' target='_blank'>
+                <img id="twitter" src="images/follow_us.png" />
+              </a>
+            </div>
+          </div>
+          <div class='left_content'>
+            <a target="_blank" href="http://gurudigger.com/products/20888"><img class="brainstorming" src="images/brainstorming.png" /></a>
+            <div class='mini_title'>
+              <h1>
+                Lu Jun who represent RUBY win the final contest of year 2011! <br/>
+              </h1>
+              <p>
+                We will name ourselves as RubyVSPython in year of 2012!
+              </p>
+            </div>
+            <div class='challenge_info'>
+              <h1>About Us</h1>
+              <p>
+                PythonVSRuby (Or RubyVSPython) is an organization who concentrate on better technical commnucation between Pythoners and Rubyiests.
+              </p>
+              <p>
+                Every year we will organize 3 events.
+                <br />
+                On April - New Platform "Celebrating" Contest
+                <br />
+                On August - Hackathon to make a sprint of the platform.
+                <br />
+                On December - Final Contest to decide the name will be "RubyVSPython" or "PythonVSRuby" for next year.
+                <br />
+                <br />
+              </p>
+              <h1>What We Will Do Next</h1>
+              <p>
+                We are on the way of developing the contest platform for 2012 and we need more volunteers. If you are interested in that, please contact mike[at]gurudigger[dot]com.
+              </p>
+              <h1>Contest Platform</h1>
+              <div class='platform' platform_id='1'>
+                <img class="platform-img" src="images/Planet_Conquer_thumbnail.jpg" />
+                <div class='platform-desc'>
+                  <p>Planet Conquer</p>
+                  <p>Year: 2012</p>
+                  <p>Launch Date: Mar 28th, 2012</p>
+                </div>
+              </div>
+              <div class='platform' platform_id='2'>
+                <img class="platform-img" src="images/Snake_Challenge_thumbnail.jpg" />
+                <div class='platform-desc'>
+                  <p><a target="_blank" href="https://github.com/halida/snake-challenge/wiki">Snake Challege</a></p>
+                  <p>Year: 2011</p>
+                  <p>Winner: Lu Jun</p>
+                </div>
+              </div>
+              <div class='clearfix'></div>
+            </div>
+            <div class='clearfix'></div>
+          </div>
+        </div>
+      </div>
+    </div>
   </body>
+  <div class='platform-img-dialog' platform_id='1'>
+    <img class="dlg-close" src="images/close.png" />
+    <img class="platform-img-big" src="images/Planet_Conquer_Big.jpg" />
+  </div>
+  <div class='platform-img-dialog' platform_id='2'>
+    <img class="dlg-close" src="images/close.png" />
+    <img class="platform-img-big" src="images/Snake_Challenge_Big.jpg" />
+  </div>
+  <script type='text/javascript'>
+    //<![CDATA[
+      (function() {
+    var close_all;
   
+    $('.platform-img').click(function() {
+      var parent, platform_id;
+      parent = $($(this).parent());
+      platform_id = parent.attr('platform_id');
+      $(".platform-img-dialog[platform_id=" + platform_id + "]").toggleClass('on');
+      return $('.hide-all').toggleClass('on');
+    });
+  
+    $('.platform-img-dialog').click(function() {
+      $(this).toggleClass('on');
+      return $('.hide-all').toggleClass('on');
+    });
+  
+    close_all = function(e) {
+      $('.hide-all').removeClass('on');
+      $('.platform-img-dialog').removeClass('on');
+      return e.preventDefault();
+    };
+  
+    $('.hide-all').click(close_all);
+  
+  }).call(this);
+  
+    //]]>
+  </script>
+  <script type='text/javascript'>
+    //<![CDATA[
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-22394366-1']);
+      _gaq.push(['_trackPageview']);
+      
+      (function() {
+       var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+       ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+       var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+       })();
+    //]]>
+  </script>
 </html>

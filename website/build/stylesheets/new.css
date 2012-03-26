@@ -1,28 +1,102 @@
 @import url(bootstrap.min.css);
-.hero-unit {
-  margin-top: 20px; }
+@-webkit-keyframes move {
+  0% {
+    opacity: 1; }
+
+  50% {
+    opacity: 0.6; }
+
+  100% {
+    opacity: 1; } }
+
+@-moz-keyframes move {
+  0% {
+    opacity: 1; }
+
+  50% {
+    opacity: 0.6; }
+
+  100% {
+    opacity: 1; } }
+
+@-ms-keyframes move {
+  0% {
+    opacity: 1; }
+
+  50% {
+    opacity: 0.6; }
+
+  100% {
+    opacity: 1; } }
+
+body {
+  background: #13131f; }
 
 #map {
   width: 100%;
   overflow: hidden;
   margin-top: 20px; }
   #map .cell {
-    float: left;
+    overflow: hidden;
+    position: absolute;
     display: block;
-    margin: 2px;
-    background: white;
-    overflow: hidden; }
+    font-size: 14px;
+    text-align: center;
+    color: black;
+    width: 58px;
+    height: 58px;
+    line-height: 58px;
+    border: 2px solid transparent; }
+    #map .cell.planet, #map .cell.player_0, #map .cell.player_1, #map .cell.player_2, #map .cell.player_3 {
+      -webkit-border-radius: 31px;
+      -moz-border-radius: 31px;
+      -ms-border-radius: 31px;
+      -o-border-radius: 31px;
+      border-radius: 31px; }
   #map .planet {
-    background: green;
-    color: white; }
+    border-color: white;
+    color: white;
+    background: #13131f; }
   #map .move {
     position: absolute;
-    color: red; }
+    overflow: hidden;
+    font-size: 12px;
+    text-align: center;
+    color: white;
+    width: 29px;
+    height: 29px;
+    line-height: 29px;
+    border: 2px solid transparent;
+    -webkit-border-radius: 16.5px;
+    -moz-border-radius: 16.5px;
+    -ms-border-radius: 16.5px;
+    -o-border-radius: 16.5px;
+    border-radius: 16.5px;
+    -webkit-animation: move 1s infinite;
+    -moz-animation: move 1s infinite;
+    -ms-animation: move 1s infinite;
+    pointer-events: none; }
+
+.player_0 {
+  background: #ee2c44;
+  border-color: #f68a98; }
+
+.player_1 {
+  background: #42c3d9;
+  border-color: #97deea; }
+
+.player_2 {
+  background: #e96fa9;
+  border-color: #f7c7de; }
+
+.player_3 {
+  background: #a5cf4e;
+  border-color: #cee59e; }
 
 #sidebar {
   position: fixed;
-  width: 200px;
+  width: 180px;
   padding: 10px;
   background: #eeeeee;
-  top: 60px;
+  top: 0;
   left: 0; }
