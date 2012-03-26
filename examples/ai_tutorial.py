@@ -69,6 +69,7 @@ class SimpleAI():
     def step(self):
         moves = []
         small_hold = 50
+
         for i, s in enumerate(self.info['holds']):
             side, count = s
             # 寻找自己的星球
@@ -91,6 +92,10 @@ class SimpleAI():
 
         return moves
 
+    def is_restart(self):
+        current_round = self.info['round']
+        return True if current_round < 0 else False
+
 def main():
     player_nickname = 'tutorial'
     language = 'python' #ruby or python
@@ -98,6 +103,7 @@ def main():
     while True:
         #服务器每三秒执行一次，所以没必要重复发送消息
         time.sleep(1)
+        rs = SimpleAI()
         if rs.is_next_round():
             #计算自己要执行的操作
             result = rs.step()

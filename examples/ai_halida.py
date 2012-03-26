@@ -73,6 +73,9 @@ class SimpleAI():
 
         return moves
 
+    def is_restart(self):
+        current_round = self.info['round']
+        return True if current_round < 0 else False
 
 def main():
     rs = SimpleAI()
@@ -80,6 +83,7 @@ def main():
     rs.cmd_add()
     while True:
         time.sleep(1.0)
+        rs = SimpleAI()
         rs.cmd_info()
         result = rs.step()
         print result

@@ -151,6 +151,10 @@ class SimpleAI():
         plants_pair = self.get_best_planets(my_planets, weight)
         return self.move(plants_pair)
 
+    def is_restart(self):
+        current_round = self.info['round']
+        return True if current_round < 0 else False
+
 def main():
     rs = SimpleAI()
     rs.cmd_map()
@@ -160,6 +164,7 @@ def main():
 
     while True:
         time.sleep(0.1)
+        rs = SimpleAI()
         rs.cmd_info()
         current_round = rs.info['round']
         if current_round <= pre_round:

@@ -38,6 +38,11 @@ class SimpleAI():
             next_round = True
         return next_round
 
+    def is_restart(self):
+        current_round = self.info['round']
+        return True if current_round < 0 else False
+
+
     def cmd(self, cmd, data={}):
         """
         发送命令给服务器
@@ -261,14 +266,14 @@ def main():
     while True:
         #服务器每三秒执行一次，所以没必要重复发送消息
         time.sleep(0.1)
-        if rs.is_next_round():
-            start = time.time()
-            #计算自己要执行的操作
-            #print timeit.timeit(rs.step)
-            result = rs.step()
-            print time.time() - start, rs.info['round'], result
-            #把操作发给服务器
-            rs.cmd_moves(result)
+        rs = SimpleAI('flreeyv2', 'python')
+        start = time.time()
+        #计算自己要执行的操作
+        #print timeit.timeit(rs.step)
+        result = rs.step()
+        print time.time() - start, rs.info['round'], result
+        #把操作发给服务器
+        rs.cmd_moves(result)
 
 if __name__=="__main__":
     main()
