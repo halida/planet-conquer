@@ -1,0 +1,6 @@
+source 'http://rubygems.org'
+
+gem 'middleman'
+gem 'coffee-filter'
+gem 'uglifier'
+gem 'therubyracer'
