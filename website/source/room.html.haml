@@ -37,11 +37,8 @@
   #logs.side-block
 
 - content_for :javascripts do
-  - game_server = "localhost:9999"
-  - room_id = 0
-
   :coffeescript
     game = new Game()
     shower = new GameShower(game, "#board")
     window.recorder = new Recorder(game, "#recorder")
-    game.set_server("#{game_server}", #{room_id})
+    game.set_server("#{@game_server}", #{@room_id})
