@@ -48,12 +48,13 @@ def start_ai(name):
 
 def start_brower():
     import webbrowser
-    webbrowser.GenericBrowser('google-chrome').open('./website/build/room.html')
+    webbrowser.GenericBrowser('google-chrome').open('./website/build/room_0.html')
 
 def run_all():
     ps = []
     ps.append(Process(target=start_game))
     ps.append(Process(target=start_http))
+    ps.append(Process(target=start_brower))
 
     ps.append(Process(target=start_ai, args=(['ai_flreeyv2'])))
     ps.append(Process(target=start_ai, args=(['ai_flreeyv2'])))
