@@ -14,9 +14,9 @@ PORT = 9999
 DIRS = [[-1, 0], [0, -1], [1, 0], [0, 1]]
 
 class SimpleAI():
-    def __init__(self, ai_name, side='python'):
+    def __init__(self, ai_name, side='python', room=0):
         self.conn = httplib.HTTPConnection(SERVER, PORT)
-        self.room = 0
+        self.room = room
         self.d = 0
         self.name = ai_name
         self.side = side
@@ -268,8 +268,8 @@ class SimpleAI():
         plants_pair = self.get_best_planets(my_planets, weight)
         return self.move(plants_pair)
 
-def main():
-    rs = SimpleAI('flreeyv2', 'python')
+def main(room):
+    rs = SimpleAI('flreeyv2', 'python', room=0)
 
     while True:
         #服务器每三秒执行一次，所以没必要重复发送消息

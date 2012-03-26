@@ -113,6 +113,8 @@ class Server():
                 if updated:
                     logging.debug("room %d updated: %s" % (i, g.status))
                     self.pub_info(i)
+                elif g.status == 'finished':
+                    msg_queue.put(i)
 
 usage = """\
     $ zmq_game_server.py [type]

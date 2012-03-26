@@ -280,9 +280,9 @@ class Game():
         self.logs = []
         self.info = None
         # 如果游戏结束, 等待一会继续开始
-        if self.loop_count <= 10 and self.status in [FINISHED]:
-            self.loop_count += 1
-            return
+        #if self.loop_count <= 10 and self.status in [FINISHED]:
+            #self.loop_count += 1
+            #return
 
         if self.status == FINISHED:
             self.loop_count = 0
@@ -298,9 +298,8 @@ class Game():
         # 游戏结束判断
         if self.check_finished():
             self.status = FINISHED
-            self.loop_count = 0
             self.check_winner()
-            return True
+            self.loop_count = 0
 
         # move stage
         self.move_stage()
