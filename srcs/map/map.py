@@ -17,6 +17,7 @@ class Map:
             version = 1.0,
             max_round = 3000,
             start_unit = 100,
+            max_player = 4,
             )
         
     @staticmethod

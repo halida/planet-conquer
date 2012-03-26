@@ -211,7 +211,10 @@ class GameShower extends Spine.Controller
     update_holds: (info)->
         for hold, i in info.holds
             div_planet = @div_planets[i]
-            div_planet.css "background", side_color(hold[0])
+            if hold[0] != null
+                div_planet.css "background", side_color(hold[0])
+            else
+                div_planet.css "background", "#ccc"
             div_planet.html(hold[1])
 
     update_moves: ()->

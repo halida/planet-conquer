@@ -12,8 +12,8 @@ WAITFORPLAYER='waitforplayer'
 RUNNING='running'
 FINISHED='finished'
 
-DEFAULT_MAP = 'srcs/map/fight_here.yml'
-# DEFAULT_MAP = 'srcs/map/oneline.yml'
+# DEFAULT_MAP = 'srcs/map/fight_here.yml'
+DEFAULT_MAP = 'srcs/map/test.yml'
 
 MAX_LOST_TURN = 3
 
@@ -92,6 +92,9 @@ class Game():
         self.holds = [[None, 0] for i in range(len(self.map.planets))]
         
     def add_player(self, name="unknown", side='python'):
+        # 限制人数
+        if len(self.players) >= self.map.max_player:
+            return dict(status="full")
         # 生成玩家
         player = Player(self, name, side)
         self.players.append(player)
@@ -277,7 +280,7 @@ class Game():
         self.logs = []
         self.info = None
         # 如果游戏结束, 等待一会继续开始
-        if self.loop_count <= 50 and self.status in [FINISHED]:
+        if self.loop_count <= 10 and self.status in [FINISHED]:
             self.loop_count += 1
             return
 

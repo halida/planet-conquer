@@ -34,63 +34,80 @@
   };
 
   ws.onmessage = function(e) {
-    var data, hold, html, i, move, planet, planet_id, td_width, _i, _len, _len2, _len3, _ref, _ref2, _ref3, _results, _results2;
+    var cell, data, from, hold, html, i, move, p, planet, planet_id, r, t, to, top, _fn, _i, _j, _len, _len2, _len3, _len4, _len5, _ref, _ref2, _ref3, _ref4, _ref5;
     data = $.parseJSON(e.data);
     if (config.debug) console.log(data);
     switch (data.op) {
       case 'map':
         window.map = data;
         map.dom = $('#map');
-        i = 0;
-        td_width = 820 / data.map_size[0] - 4;
-        html = [];
-        _(data.map_size[1] * data.map_size[0]).times(function() {
-          html.push("<div class='cell' style='width:" + td_width + "px;height:" + td_width + "px' id='" + i + "'>&nbsp;</div>");
-          return i = i + 1;
-        });
-        map.dom.html(html.join(''));
+        cell = Math.floor(940 / map.map_size[0]);
         _ref = map.planets;
-        _results = [];
         for (i = 0, _len = _ref.length; i < _len; i++) {
-          planet = _ref[i];
-          planet.id = i;
-          planet.dom = $('#' + (planet.pos[0] + (planet.pos[1] * data.map_size[0]))).addClass('planet').data('planet', i);
-          _results.push(map.planets[i] = planet);
+          p = _ref[i];
+          p.id = i;
+          p.dom = $("<div id='planet_" + i + "' class='cell planet' style='margin:" + (p.pos[1] * cell) + "px 0 0 " + (p.pos[0] * cell) + "px'>" + i + "</div>").appendTo(map.dom);
+          p.dom.data('planet', i);
+          map.planets[i] = p;
         }
-        return _results;
-        break;
+        map.offest_size = $('#planet_0').width();
+        html = ["<svg style='width:100%;height:" + (cell * map.map_size[1]) + "px;position:absolute'>"];
+        _ref2 = map.routes;
+        for (_i = 0, _len2 = _ref2.length; _i < _len2; _i++) {
+          r = _ref2[_i];
+          if (r[0] > r[1]) continue;
+          from = $('#planet_' + r[0]).offset();
+          to = $('#planet_' + r[1]).offset();
+          html.push("<line x1='" + (from.left + (map.offest_size / 2)) + "' y1='" + (from.top + (map.offest_size / 2)) + "' x2='" + (to.left + (map.offest_size / 2)) + "' y2='" + (to.top + (map.offest_size / 2)) + "' style='stroke:#444;stroke-width:2px' stroke-dasharray='3,3' />");
+        }
+        html.push('</svg>');
+        return $('body').prepend(html.join(''));
       case 'info':
         window.players = data.players;
-        _ref2 = data.holds;
-        for (planet_id = 0, _len2 = _ref2.length; planet_id < _len2; planet_id++) {
-          hold = _ref2[planet_id];
+        if (players[0]) players[0].color = '#EE2C44';
+        if (players[1]) players[1].color = '#42C3D9';
+        if (players[2]) players[2].color = '#E96FA9';
+        if (players[3]) players[3].color = '#A5CF4E';
+        _ref3 = data.holds;
+        for (planet_id = 0, _len3 = _ref3.length; planet_id < _len3; planet_id++) {
+          hold = _ref3[planet_id];
           planet = map.planets[planet_id];
           planet.hold = hold[0];
           if (hold[0] !== null) {
-            planet.dom.html(data.players[hold[0]].name + ' ' + hold[1]);
+            planet.dom.html(hold[1])[0].className = 'cell player_' + hold[0];
           } else {
-            planet.dom.html('');
+            planet.dom.html(planet.id)[0].className = 'cell planet';
           }
         }
-        _ref3 = data.moves;
-        _results2 = [];
-        for (_i = 0, _len3 = _ref3.length; _i < _len3; _i++) {
-          move = _ref3[_i];
-          _results2.push((function(move) {
-            var dom, from, to;
-            from = map.planets[move[1]].dom.position();
-            to = map.planets[move[2]].dom.position();
-            dom = $("<div class='move' style='left:" + from.left + "px;top:" + from.top + "px'>" + data.players[move[0]].name + " " + move[3] + "</div>");
-            map.dom.append(dom);
-            return dom.animate({
-              left: to.left,
-              top: to.top
-            }, 4000, function() {
-              return dom.remove();
-            });
-          })(move));
+        _ref4 = data.moves;
+        _fn = function(move) {
+          var dom, from_xy, to_xy;
+          from = map.planets[move[1]].dom;
+          from_xy = from.offset();
+          to = map.planets[move[2]].dom;
+          to_xy = to.offset();
+          dom = $("<div class='move player_" + move[0] + "' style='left:" + (from_xy.left + map.offest_size / 3.7) + "px;top:" + (from_xy.top + map.offest_size / 3.7) + "px'>" + move[3] + "</div>");
+          map.dom.append(dom);
+          return dom.animate({
+            left: to_xy.left + map.offest_size / 3.7,
+            top: to_xy.top + map.offest_size / 3.7
+          }, 1800, function() {
+            return dom.remove();
+          });
+        };
+        for (_j = 0, _len4 = _ref4.length; _j < _len4; _j++) {
+          move = _ref4[_j];
+          _fn(move);
         }
-        return _results2;
+        top = [];
+        _ref5 = _.sortBy(players, function(p) {
+          return -(p.planets * 10000 + p.units);
+        });
+        for (i = 0, _len5 = _ref5.length; i < _len5; i++) {
+          t = _ref5[i];
+          top.push("<p style='color:" + t.color + "'>No." + (i + 1) + " " + t.name + " " + t.planets + "/" + t.units + "</p>");
+        }
+        return $('#top').html(top.join(''));
     }
   };
 
@@ -98,20 +115,13 @@
     if (config.debug) return console.log(e);
   };
 
-  $('#map').on('hover click', '.cell', function() {
-    var data, hold, planet;
+  $('#map').on('mouseenter', '.cell', function() {
+    var data, planet;
     data = $.data(this);
-    if (typeof data.planet !== 'undefined') {
-      planet = map.planets[data.planet];
-      if (planet.hold === null) {
-        hold = '無';
-      } else {
-        hold = "" + players[planet.hold].name + " (" + players[planet.hold].planets + ")";
-      }
-      return $('#cell').html("<h3>No." + this.id + "</h3><p>類型：星球</p><p>防御系数：X" + planet.def + "</p><p>资源系数：X" + planet.res + " +" + planet.cos + "</p><p>最大生产量：" + planet.max + "</p><p>佔領者：" + hold + "</p>");
-    } else {
-      return $('#cell').html("<h3>No." + this.id + "</h3><p>類型：無</p>");
-    }
+    planet = map.planets[data.planet];
+    return $('#planet').html("<hr /><h3>No." + data.planet + "</h3><p>DEF：X" + planet.def + "</p><p>RES：X" + planet.res + " +" + planet.cos + "</p><p>MAX：" + planet.max + "</p>");
+  }).on('mouseleave', '.cell', function() {
+    return $('#planet').html('');
   });
 
 }).call(this);

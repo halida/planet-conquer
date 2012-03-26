@@ -32,6 +32,7 @@ ws.onmessage = (e)->
   switch data.op
     when 'map'
       window.map = data
+      map.step = map.step * 1000 - (map.step * 100)
       map.dom = $('#map')
       cell = Math.floor(940/map.map_size[0])
       for p, i in map.planets
@@ -39,7 +40,7 @@ ws.onmessage = (e)->
         p.dom = $("<div id='planet_#{i}' class='cell planet' style='margin:#{p.pos[1] * cell}px 0 0 #{p.pos[0] * cell}px'>#{i}</div>").appendTo(map.dom)
         p.dom.data('planet', i)
         map.planets[i] = p
-      map.offest_size = $('#planet_0').width();
+      map.offest_size = $('#planet_0').width()
       
       html = ["<svg style='width:100%;height:#{cell * map.map_size[1]}px;position:absolute'>"]
       for r in map.routes
@@ -72,7 +73,7 @@ ws.onmessage = (e)->
           to_xy = to.offset()
           dom = $("<div class='move player_#{move[0]}' style='left:#{from_xy.left + map.offest_size/3.7}px;top:#{from_xy.top + map.offest_size/3.7}px'>#{move[3]}</div>")
           map.dom.append(dom)
-          dom.animate({left: to_xy.left + map.offest_size/3.7, top: to_xy.top + map.offest_size/3.7}, 1800, ->
+          dom.animate({left: to_xy.left + map.offest_size/3.7, top: to_xy.top + map.offest_size/3.7}, map.step, ->
             dom.remove()
           )
         )(move)
@@ -81,8 +82,10 @@ ws.onmessage = (e)->
       for t, i in _.sortBy(players, (p)->
         -(p.planets*10000 + p.units)
       )
-        top.push("<p style='color:#{t.color}'>No.#{i + 1} #{t.name} #{t.planets}/#{t.units}</p>")
+        top.push("<div class='top_#{i}' style='color:#{t.color}'><span>#{i+1}</span><p>#{t.name}<br />Planets: #{t.planets}<br />Units: #{t.units}</p></div>")
       $('#top').html(top.join(''))
+      $('#round').html("Round #{data.round}/#{map.max_round}")
+      $('#status').html(data.status)
 
 ws.onerror = (e)->
   console.log e if config.debug

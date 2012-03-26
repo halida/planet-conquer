@@ -1,4 +1,35 @@
-- content_for :head do
-  %title The Middleman!
-%h1 
-  = link_to "room", "room.html"
+= stylesheet_link_tag "index"
+
+%header
+  %a{:href => "/", :title => "Go home"}= image_tag("rubyvspythonlogo.png", id:"python-vs-ruby-img", style:"width: 220px")
+#main
+  #content
+
+    #place
+      .right_nav
+        .title_bar_r
+          %h1 Play Planet Conquer Online
+
+        #room_icons
+          - for i in 0..1
+            %a.room_icon{href: "/room_#{i}.html", id:"room-#{i}"}
+              .number= "%02d" % i
+              .room
+                %div GAME
+                %div ROOM
+    
+        .title_bar_r
+          %h1 Sponsors
+
+        #sponsor_icon
+          %a{:href => "http://gurudigger.com", :target => "_blank"}
+            = image_tag "gurudigger.png", id: "sponsor"
+    
+        #follow
+          %a{:href => "http://twitter.com/rubyvspython", :target => "_blank"}
+            = image_tag "follow_us.png", id: "twitter"   
+
+      .left_content
+        = link_to image_tag("brainstorming.png", class: "brainstorming"), "http://gurudigger.com/products/20888", target: "_blank"
+        = partial "event3"
+        .clearfix

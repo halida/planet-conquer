@@ -164,7 +164,6 @@ def main():
 
     while True:
         time.sleep(0.1)
-        rs = SimpleAI()
         rs.cmd_info()
         current_round = rs.info['round']
         if current_round <= pre_round:

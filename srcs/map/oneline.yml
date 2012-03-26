@@ -17,11 +17,13 @@ map: |
 
 planets:
   A:
+    type: base
     def: 2
     res: 1
     cos: 10
     max: 100
   B:
+    type: base
     def: 2
     res: 1
     cos: 10

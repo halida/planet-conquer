@@ -21,27 +21,32 @@ map: |
   C...D
 planets:
   A:
+    type: base
     def: 2
     res: 1.1
     cos: 10
     max: 1000
   B:
+    type: base
     def: 2
     res: 1
     cos: 10
     max: 1000
   C:
+    type: base
     def: 2
     res: 1
     cos: 10
     max: 1000
   D:
+    type: base
     def: 2
     res: 1
     cos: 10
     max: 1000
 
   E:
+    type: base
     def: 0.5
     res: 1.5
     cos: 0
@@ -51,25 +56,25 @@ planets:
 routes:
   - - A
     - B
-    - 2
+    - 3
   - - A
     - C
-    - 2
+    - 3
   - - D
     - B
-    - 2
+    - 3
   - - C
     - D
-    - 2
+    - 3
   - - A
     - E
-    - 1
+    - 3
   - - B
     - E
-    - 1
+    - 3
   - - C
     - E
-    - 1
+    - 3
   - - D
     - E
-    - 1
+    - 3

@@ -1,3 +1,4 @@
+GAME_SERVER = "localhost:9999"
 ### 
 # Compass
 ###
@@ -49,6 +50,13 @@ page '/new.html', layout: false
 # page "/this-page-has-no-template.html", :proxy => "/template-file.html" do
 #   @which_fake_page = "Rendering a fake page with a variable"
 # end
+(0..1).each do |room_id|
+  page "/room_#{room_id}.html", proxy: "room.html" do
+    @room_id = room_id
+    @game_server = GAME_SERVER
+  end
+end
+
 
 ###
 # Helpers

@@ -1,5 +1,5 @@
 import os, sys, time
-from multiprocessing import Process
+from multiprocessing import Process, Queue
 
 class Logger(object):
     def __init__(self, name):
@@ -21,13 +21,14 @@ class Logger(object):
     def flush(self):
         self.f.flush()
 
-def start_game():
+def start_game(q):
     from srcs.zmq_game_server import Server
     sys.stdout = Logger('game.log')
     from srcs.lib import GEME_STEP_TIME
     Server().run(max_waits=GEME_STEP_TIME,
                  min_waits=GEME_STEP_TIME,
-                 enable_no_resp_die=True)
+                 enable_no_resp_die=False,
+                 msg_queue=q)
 
 def start_http():
     from srcs.web_server import main
@@ -48,31 +49,17 @@ def start_ai(name):
 
 def start_brower():
     import webbrowser
-    webbrowser.GenericBrowser('google-chrome').open('./website/build/room.html')
+    webbrowser.GenericBrowser('google-chrome').open('./website/build/index.html')
 
 def run_all():
     ps = []
-    ps.append(Process(target=start_game))
+    q = Queue()
+    ps.append(Process(target=start_game, args=(q,)))
     ps.append(Process(target=start_http))
-    ps.append(Process(target=start_brower))
+    #ps.append(Process(target=start_brower))
 
+    ps.append(Process(target=start_ai, args=('ai_flreeyv2')))
     ps.append(Process(target=start_ai, args=(['ai_flreeyv2'])))
-    ps.append(Process(target=start_ai, args=(['ai_halida'])))
-    ps.append(Process(target=start_ai, args=(['ai_flreey'])))
-    ps.append(Process(target=start_ai, args=(['ai_flreey'])))
-    #ps.append(Process(target=start_ai, args=(['ai_tutorial'])))
-    #ps = [
-        #Process(target=start_game),
-        #Process(target=start_http),
-        ## Process(target=start_brower),
-        ## Process(target=start_ai, args=(['ai_halida'])),
-        ## Process(target=start_ai, args=(['ai_tutorial'])),
-        #Process(target=start_ai, args=(['ai_flreey'])),
-        #Process(target=start_ai, args=(['ai_flreey'])),
-        #Process(target=start_ai, args=(['ai_flreey'])),
-        #Process(target=start_ai, args=(['ai_flreey'])),
-        ## Process(target=start_ai, args=(['ai_flreeyv2'])),
-        #]
 
     for p in ps:
         time.sleep(1)

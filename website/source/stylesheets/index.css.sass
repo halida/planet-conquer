@@ -1,0 +1,462 @@
+@import "base"
+
+html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video
+  margin: 0
+  padding: 0
+  border: 0
+  font-size: 100%
+  font: inherit
+  vertical-align: baseline
+  font-size: 12px
+
+/* HTML5 display-role reset for older browsers
+article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section
+  display: block
+
+/* new font
+@font-face
+  font-family: 'electronica Nine'
+  src: url('/assets/electronica_nine.ttf')
+
+@font-face
+  font-family: '04B'
+  src: url('/assets/04B.ttf')
+
+html
+  min-width: 300px
+
+body
+  line-height: 1
+  /* color: #0A667D
+  color: #99cccc
+
+p
+  margin: 6px 0px
+
+em
+  font-weight: bold
+
+a
+  text-decoration: none
+  color: #0A667D
+  cursor: pointer
+  &:hover
+    color: #37D8F9
+
+ol, ul
+  list-style: none
+
+blockquote, q
+  quotes: none
+
+blockquote
+  &:before, &:after
+    content: ''
+    content: none
+
+q
+  &:before, &:after
+    content: ''
+    content: none
+
+table
+  border-collapse: collapse
+  border-spacing: 0
+
+
+/*html
+
+body
+  background: #172137 url(../images/bg.gif)
+  font-family: Arial, Helvetica, sans-serif
+  text-align: center
+
+header
+  /* background: url(/assets/header_bg.png) repeat-x center
+  padding: 30px 0 0
+
+#logo
+  display: block
+  height: 116px
+  margin: 0 auto
+  padding-top: 25px
+  width: 413px
+
+#main
+  background: url(../images/main_bg.png)
+  padding-top: 10px
+  width: 100%
+  text-align: left
+
+#user_bar
+  max-width: 930px
+  margin: 0 auto 10px auto
+  text-align: right
+  padding-right: 10px
+  color: #0A667D
+
+#content
+  margin: 0 auto
+  width: 1068px
+  padding-bottom: 20px
+  display: table
+
+h1
+  font-family: 'Lucida Grande', 'Lucida Sans Unicode', Helvetica, Arial, Verdana, sans-serif
+  font-size: 13px
+  color: #99cccc
+  /* color: #37D8F9
+  padding-bottom: 5px
+
+.info
+  -webkit-font-smoothing: antialiased
+  font-family: 'Lucida Grande', 'Lucida Sans Unicode', Helvetica, Arial, Verdana, sans-serif
+  font-size: 12px
+  color: #0a667d
+  line-height: 1.5em
+
+#place
+  margin: 0 auto
+  border-style: solid
+  border-width: 2px
+  border-color: #0A3D5B
+  border-radius: 5px
+  background: #040A19
+  width: 930px
+  opacity: 0.8
+
+  .left_content
+    width: 659px
+    padding: 20px
+
+    border-style: solid
+    border-right: thick solid #07243A
+    border-right-width: 1px
+    a
+      &:link, &:visited
+        color: #008ABF
+        text-decoration: none
+      &:hover
+        color: #00B4F7
+        text-decoration: underline
+      &:active
+        color: #008ABF
+        text-decoration: none
+  .mini_title
+    border-style: solid
+    border-bottom: thick solid #07243A
+    border-bottom-width: 1px
+    padding-bottom: 10px
+  .challenge_info
+    padding-top: 10px
+    font-size: 12px
+    line-height: 1.5em
+    h1
+      color: white
+  .title_bar_l
+    height: 42px
+    border-style: solid
+    border-bottom: thick solid #07243A
+    border-bottom-width: 1px
+    width: 692px
+  .right_nav
+    width: 100%
+    max-width: 230px
+    float: right
+    height: 100%
+    .title_bar_r
+      border-style: solid
+      border-bottom: thick solid #07243A
+      border-bottom-width: 1px
+      width: 232px
+  .title_bar_r h1
+    margin: 12px 0px 12px 12px
+ 
+#room_icons
+  border-style: solid
+  border-bottom: thick solid #07243A
+  border-bottom-width: 1px
+  padding: 33px 3px 20px
+  .room_icon
+    margin-left: 20px
+    margin-bottom: 20px
+    display: inline-block
+    width: 72px
+    height: 72px
+    +border-radius(36px)
+    background-color: #11b734
+    text-align: center
+    color: white
+    &:hover
+      color: black
+    .number, .room
+      text-align: center
+
+    .number
+      font-size: 26px
+      font-weight: bold
+      padding-top: 10px  
+    .room
+      font-size: 10px
+      font-weight: bold
+
+  #room-0  
+    background-color: #11b734
+  #room-1
+    background-color: #7f1995
+  #room-2  
+    background-color: #219fef
+  #room-3  
+    background-color: #f2590d
+
+#game_replay
+  border-bottom: thick solid #07243A
+  border-bottom-width: 1px
+  ul
+    margin: 10px
+    list-style: square inside
+    li
+      line-height: 140%
+      &.more
+        text-align: right
+        list-style: none
+
+#schedule
+  border: 1px solid
+  padding: 2px
+  text-align: center
+  td
+    border: 1px solid
+    padding: 2px
+    text-align: center
+
+#sponsor_icon
+  border-style: solid
+  border-bottom: thick solid #07243A
+  border-bottom-width: 1px
+  .img
+    margin: 18px 0px 0px 25px
+
+#sponsor, #follow .img, #twitter
+  margin: 18px 0px 18px 25px
+
+#member_icon
+  margin: 10px auto 10px auto
+  width: 60px
+  img
+    padding-right: 10px
+    display: block
+    margin: 0 auto
+    width: 11px
+
+footer
+  margin: 10px auto 0px auto
+  #footer-desc
+    color: #6dcff6
+    font-family: '04B', Arial, Helvetica, sans-serif
+    font-weight: bold
+    font-size: 8px
+    line-height: 15px
+    text-align: center
+
+.flash
+  z-index: 888
+  position: fixed
+  top: 0px
+  width: 100%
+  padding: 10px
+  border-bottom: thick solid #0A3D5B
+  border-width: 2px
+  font-weight: bold
+  +opacity(0.9)
+
+#flash_error
+  background: red
+  color: white
+  
+#flash_notice
+  background: yellow
+  color: black
+
+ul#maps
+  color: #FFF
+
+/*clear
+
+.clear
+  clear: both
+
+#scoreboard-link
+  margin: 6px 0px
+  a
+    margin-left: 23px
+    display: inline-block
+    cursor: pointer
+    background-color: #0F9FBC
+    color: white
+    padding: 6px
+    border: 0px
+    +border-radius(4px)
+    text-shadow: 0 -1px 0 #0F9FBC
+    min-width: 80px
+    text-align: center
+    width: 150px
+    &:active
+      +box-shadow(black 2px 2px 10px inset)
+    &:hover
+      color: black
+    font-size: 12px
+    font-weight: bold
+
+#replays
+  margin: 20px
+
+#scoreboard
+  margin: 20px auto
+  display: table
+  .daily, .weekly, .monthly
+    display: inline-block
+    min-width: 250px
+    float: left
+    vertical-align: top
+    margin-bottom: 10px
+    th
+      min-width: 100px
+      height: 50px
+      font-size: 30px
+      text-align: center
+    td
+      min-width: 100px
+      font-size: 20px
+    td.name
+      color: #88DB99
+      text-align: left
+    td.score
+      color: #A5C9E7
+      text-align: right
+
+#logo-img
+  width: 100%
+  max-width: 413px
+  
+input[type=submit]
+  font-size: 12px
+  font-weight: bold
+  cursor: pointer
+  background-color: #0F9FBC
+  color: white
+  padding: 6px
+  border: 0px
+  +border-radius(4px)
+  text-shadow: 0 -1px 0 #0F9FBC
+  min-width: 80px
+  text-align: center
+  +opacity(0.8)
+  &:hover
+    +opacity(1.0)
+  &:active
+    +box-shadow(black 2px 2px 10px inset)
+
+input[type=submit].on
+  +box-shadow(black 2px 2px 10px inset)
+
+select
+  font-size: 12px
+  cursor: pointer
+  background-color: #0F9FBC
+  color: white
+  padding: 6px
+  border: 0px
+  +border-radius(4px)
+  text-shadow: 0 -1px 0 #0F9FBC
+  min-width: 200px
+  text-align: left
+  +opacity(0.8)
+  &:hover
+    +opacity(1.0)
+  option
+    padding: 6px
+    background-color: #0F9FBC
+    
+
+select#maps, select#snake-type
+  min-width: 221px
+
+input[type=text], input[type=password], input[type=email]
+  height: 24px
+  min-width: 200px
+  border: 1px solid #0F9FBC
+  +border-radius(4px)
+  padding-left: 4px
+
+textarea
+  border: 1px solid #0F9FBC
+  +border-radius(4px)
+  padding-left: 4px
+
+.clearfix
+  clear: both
+
+
+.platform
+  float: left
+
+  .platform-img
+    float: left
+    width: 160px
+    +border-radius(5px)
+    border: 2px solid #0A3D5B
+    &:hover
+      border: 2px solid #00B4F7
+  .platform-desc
+    padding-left: 180px
+    padding-right: 10px
+
+.platform-img-dialog
+  display: none
+  position: fixed
+  top: 30%
+  left: 35%
+  margin: auto
+  +border-radius(5px)
+  border: 2px solid #0A3D5B
+  background: #040A19
+  z-index: 1000 
+  &.on
+    display: block
+    z-index: 500
+  .platform-img-big
+    padding: 0px
+    width: 600px
+
+.dlg-close
+  position: absolute
+  right: 0px
+  margin: 10px
+  cursor: pointer
+  width: 9px
+  height: 9px
+
+.hide-all
+  position: fixed
+  top: 0
+  left: 0
+  width: 100%
+  height: 100%
+  background: #000
+  display: none
+  z-index: -3
+  &.on
+    z-index: 100 
+    +opacity(0.5)
+    display: block
+
+
+.left_content
+  overflow: hidden
+  position: relative
+.brainstorming
+  width: 132px
+  position: absolute
+  right: -22px
+  top: -22px

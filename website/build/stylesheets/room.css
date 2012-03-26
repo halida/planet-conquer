@@ -26,7 +26,7 @@
   padding: 20px;
   min-width: 400px;
   min-height: 400px;
-  background: #111111;
+  background: #13131f;
   position: relative;
   -moz-border-radius-topleft: 5px;
   -webkit-border-top-left-radius: 5px;
@@ -125,3 +125,8 @@
     opacity: 1; }
   .btn.on {
     border: 3px solid #f10606; }
+
+.player .side-mark, .desc-holds .side-mark {
+  float: right;
+  width: 10px;
+  height: 10px; }

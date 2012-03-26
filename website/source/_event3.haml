@@ -1,0 +1,70 @@
+.mini_title
+  %h1
+    Lu Jun who represent RUBY win the final contest of year 2011! <br/>
+  %p
+    We will name ourselves as RubyVSPython in year of 2012!
+
+.challenge_info
+  %h1 About Us
+  %p
+    PythonVSRuby (Or RubyVSPython) is an organization who concentrate on better technical commnucation between Pythoners and Rubyiests.
+  %p
+    Every year we will organize 3 events. 
+    %br/
+    On April - New Platform "Celebrating" Contest
+    %br/
+    On August - Hackathon to make a sprint of the platform.
+    %br/
+    On December - Final Contest to decide the name will be "RubyVSPython" or "PythonVSRuby" for next year.
+    %br/
+    %br/
+
+
+  %h1 What We Will Do Next
+  %p
+    We are on the way of developing the contest platform for 2012 and we need more volunteers. If you are interested in that, please contact mike[at]gurudigger[dot]com.
+
+  %h1 Contest Platform
+
+  .platform{platform_id: 1}
+    = image_tag "Planet_Conquer_thumbnail.jpg", class: "platform-img"
+    .platform-desc
+      %p Planet Conquer
+      %p Year: 2012
+      %p Launch Date: Mar 28th, 2012
+
+  .platform{platform_id: 2}
+    = image_tag "Snake_Challenge_thumbnail.jpg", class: "platform-img"
+    .platform-desc
+      %p= link_to "Snake Challege", "https://github.com/halida/snake-challenge/wiki", target: "_blank"
+      %p Year: 2011
+      %p Winner: Lu Jun
+
+  .clearfix  
+
+- content_for :javascripts do
+  .platform-img-dialog{platform_id: 1}
+    = image_tag "close.png", class: "dlg-close"
+    = image_tag "Planet_Conquer_Big.jpg", class: "platform-img-big"      
+  .platform-img-dialog{platform_id: 2}
+    = image_tag "close.png", class: "dlg-close"
+    = image_tag "Snake_Challenge_Big.jpg", class: "platform-img-big"      
+
+  :coffeescript
+    $('.platform-img').click ()->
+      parent = $($(this).parent())
+      platform_id = parent.attr('platform_id')
+      $(".platform-img-dialog[platform_id="+platform_id+"]").toggleClass('on')
+      $('.hide-all').toggleClass('on')
+  
+    $('.platform-img-dialog').click ()->
+      $(this).toggleClass('on')
+      $('.hide-all').toggleClass('on')
+  
+    close_all = (e)->
+      $('.hide-all').removeClass('on')
+      $('.platform-img-dialog').removeClass('on')
+      e.preventDefault()
+
+    $('.hide-all').click close_all
+  

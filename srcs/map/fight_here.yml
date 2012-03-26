@@ -32,41 +32,49 @@ map: |
 
 planets:
   A:
+    type: base
     def: 1.2
     res: 1
     cos: 20
     max: 1000
   B:
+    type: base
     def: 1.2
     res: 1
     cos: 20
     max: 1000
   C:
+    type: base
     def: 1.2
     res: 1
     cos: 20
     max: 1000
   D:
+    type: base
     def: 1.2
     res: 1
     cos: 20
     max: 1000
   E:
+    type: resource
     def: 0.5
     res: 1.5
     cos: 5
     max: 300
   F:
+    type: resource
     def: 0.5
     res: 1.5
     cos: 5
     max: 300
   G:
+    type: resource
     def: 0.5
     res: 1.5
     cos: 5
     max: 300
   H:
+    type: resource
     def: 0.5
     res: 1.5
     cos: 5
@@ -92,21 +100,25 @@ planets:
     cos: 5
     max: 800
   M:
+    type: resource
     def: 0.5
     res: 1.5
     cos: 5
     max: 300
   N:
+    type: resource
     def: 0.5
     res: 1.5
     cos: 5
     max: 300
   O:
+    type: resource
     def: 0.5
     res: 1.5
     cos: 5
     max: 300
   P:
+    type: resource
     def: 0.5
     res: 1.5
     cos: 5

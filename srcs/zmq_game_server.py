@@ -42,7 +42,8 @@ class Server():
         self.puber.send("room:%d "%i + json.dumps(info))
 
 
-    def run(self, max_waits=10.0, enable_no_resp_die=True, min_waits=2.0):
+    def run(self, max_waits=10.0, enable_no_resp_die=True, min_waits=2.0,
+            msg_queue=None):
         self.min_waits = min_waits
         self.max_waits = max_waits
         self.games = [Game(enable_no_resp_die=enable_no_resp_die)

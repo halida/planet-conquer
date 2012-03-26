@@ -1,5 +1,5 @@
 (function() {
-  var ANIMATE_TIME, DUR, Game, GameShower, Recorder, SIZE, WS, create_svg, draw_circle, log, side_color,
+  var DUR, Game, GameShower, Recorder, SIZE, WS, create_svg, draw_circle, log, side_color,
     __hasProp = Object.prototype.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
@@ -24,8 +24,6 @@
   SIZE = 60;
 
   DUR = 30;
-
-  ANIMATE_TIME = 2000;
 
   log = function() {
     return console.log(arguments);
@@ -105,6 +103,9 @@
       this.div_round = $('#current-round');
       this.div_maxround = $('#max-round');
       this.div_logs = $('#logs');
+      this.div_map_name = $('#map-name');
+      this.div_map_author = $('#map-author');
+      this.div_map_desc = $('#map-desc');
     }
 
     GameShower.prototype.show_move_desc = function(e) {
@@ -115,13 +116,18 @@
     };
 
     GameShower.prototype.show_planet_desc = function(e) {
-      var count, hold, id, planet_info, side;
+      var count, hold, id, planet_info, player, side, text;
       id = $(e.target).attr('planet_id');
       planet_info = this.map.planets[id];
       hold = this.info.holds[id];
       side = hold[0];
       count = hold[1];
-      return this.div_desc.html("<div class=\"desc-planet\">the planet: " + id + "<br/>            <span>def<span> " + planet_info.def + "<br/>            <span>res<span> " + planet_info.res + "<br/>            <span>cos<span> " + planet_info.cos + "<br/>            <span>max<span> " + planet_info.max + "<br/>            </div>            <div class=\"desc-holds\">with side: " + side + "<br/>            <div class=\"desc-holds\">count: " + count + "<br/>                ");
+      text = "<div class=\"desc-planet\">the planet: " + id + "<br/>            <span>def<span> " + planet_info.def + "<br/>            <span>res<span> " + planet_info.res + "<br/>            <span>cos<span> " + planet_info.cos + "<br/>            <span>max<span> " + planet_info.max + "<br/>            </div>                ";
+      if ((this.info != null) && side !== null) {
+        player = this.info.players[side];
+        text += "<div class=\"desc-holds\">with player: " + player.name + "            <div style='background: " + player.color + "' class='side-mark'/>                </div>            <div class=\"desc-holds\">count: " + count + "</div>                ";
+      }
+      return this.div_desc.html(text);
     };
 
     GameShower.prototype.show_route_desc = function(e) {
@@ -155,9 +161,13 @@
 
     GameShower.prototype.update_map = function() {
       var div_planet, i, planet, _len, _ref, _results;
+      this.animate_time = this.map.step * 1000;
       this.div_scene.find('.planet').remove();
       this.div_scene.find('.move').remove();
       this.div_maxround.html(this.map.max_round);
+      this.div_map_name.html(this.map.name);
+      this.div_map_author.html(this.map.author);
+      this.div_map_desc.html(this.map.desc);
       this.count_route_pos();
       this.div_planets = [];
       this.div_routes = [];
@@ -188,19 +198,29 @@
     };
 
     GameShower.prototype.update_info = function() {
-      var div_planet, hold, i, _len, _ref;
       this.div_round.html(this.info.round);
       this.update_players();
       this.update_logs();
       this.div_status.html(this.info.status);
-      _ref = this.info.holds;
+      this.update_moves();
+      return this.update_holds(this.info);
+    };
+
+    GameShower.prototype.update_holds = function(info) {
+      var div_planet, hold, i, _len, _ref, _results;
+      _ref = info.holds;
+      _results = [];
       for (i = 0, _len = _ref.length; i < _len; i++) {
         hold = _ref[i];
         div_planet = this.div_planets[i];
-        div_planet.css("background", side_color(hold[0]));
-        div_planet.html(hold[1]);
+        if (hold[0] !== null) {
+          div_planet.css("background", side_color(hold[0]));
+        } else {
+          div_planet.css("background", "#ccc");
+        }
+        _results.push(div_planet.html(hold[1]));
       }
-      return this.update_moves();
+      return _results;
     };
 
     GameShower.prototype.update_moves = function() {
@@ -225,10 +245,10 @@
         });
         div_move.html(count);
         div_move.hover(this.proxy(this.show_move_desc));
-        div_move.animate({
+        div_move.transition({
           left: pos[0],
           top: pos[1]
-        }, ANIMATE_TIME);
+        }, this.animate_time);
         this.div_moves.push(div_move);
         _results.push(this.div_scene.append(div_move));
       }
@@ -268,12 +288,20 @@
     };
 
     GameShower.prototype.update_players = function() {
-      var data, player, player_data, _i, _len, _ref;
+      var data, i, list, player, player_data, _len, _len2;
       data = [];
-      _ref = this.info.players;
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        player = _ref[_i];
-        player_data = ["" + player.side + " - " + player.name, "planets: " + player.planets, "units: " + player.units, "" + player.status];
+      list = this.info.players.slice();
+      for (i = 0, _len = list.length; i < _len; i++) {
+        player = list[i];
+        player.color = side_color(i);
+      }
+      list.sort(function(a, b) {
+        return a.planets - b.planets;
+      });
+      list.reverse();
+      for (i = 0, _len2 = list.length; i < _len2; i++) {
+        player = list[i];
+        player_data = ["" + player.side + " - " + player.name + " <div style='background: " + player.color + "' class='side-mark'/>", "planets: " + player.planets, "units: " + player.units, "" + player.status];
         data.push('<div class="player">' + player_data.join("<br/>") + '</div>');
       }
       return $('#players').html(data.join("\n"));
@@ -327,6 +355,7 @@
       this.on_record = false;
       this.data_list = [];
       this.replay_on = 0;
+      this.animate_time = 2000;
       Game.bind("data", this.proxy(this.save_data));
     }
 
@@ -344,7 +373,7 @@
       this.on_replay = !this.on_replay;
       this.div_replay.toggleClass('on');
       this.game.on_get_message = !this.on_replay;
-      return setTimeout(this.proxy(this.replay_timer), ANIMATE_TIME);
+      return setTimeout(this.proxy(this.replay_timer), this.animate_time);
     };
 
     Recorder.prototype.replay_timer = function() {
@@ -354,7 +383,7 @@
       this.div_replay_on.html(this.replay_on);
       this.replay_on += 1;
       this.replay_on %= this.data_list.length;
-      return setTimeout(this.proxy(this.replay_timer), ANIMATE_TIME);
+      return setTimeout(this.proxy(this.replay_timer), this.animate_time);
     };
 
     Recorder.prototype.save_data = function(data) {
