@@ -34,6 +34,10 @@ class SimpleAI():
 
     def is_next_round(self):
         self.cmd_info()
+        if not self.me and self.info['status'] == 'waitforplayer':
+            self.cmd_add()
+            self.init()
+        
         current_round = self.info['round']
         next_round = False
         if current_round > self.round:
@@ -268,8 +272,8 @@ class SimpleAI():
         plants_pair = self.get_best_planets(my_planets, weight)
         return self.move(plants_pair)
 
-def main(room):
-    rs = SimpleAI('flreeyv2', 'python', room=0)
+def main(room=0):
+    rs = SimpleAI('flreeyv2', 'python', room)
 
     while True:
         #服务器每三秒执行一次，所以没必要重复发送消息
@@ -283,10 +287,6 @@ def main(room):
         ##把操作发给服务器
         #rs.cmd_moves(result)
         time.sleep(0.7)
-        #加入房间
-        if not rs.me:
-            rs.init()
-            rs.cmd_add()
         
         if rs.is_next_round():
             start = time.time()
@@ -298,11 +298,6 @@ def main(room):
             print time.time() - start, rs.info['round'], result
             #把操作发给服务器
             rs.cmd_moves(result)
-        else:
-            #加入房间
-            if not rs.me:
-                rs.init()
-                rs.cmd_add()
 
 if __name__=="__main__":
     main()
