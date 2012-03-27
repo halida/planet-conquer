@@ -32,15 +32,28 @@ ws.onmessage = (e)->
   switch data.op
     when 'map'
       window.map = data
-      map.step = map.step * 1000 - (map.step * 100)
+      map.step = map.step * 1000
       map.dom = $('#map')
       cell = Math.floor(940/map.map_size[0])
       for p, i in map.planets
         p.id = i
-        p.dom = $("<div id='planet_#{i}' class='cell planet' style='margin:#{p.pos[1] * cell}px 0 0 #{p.pos[0] * cell}px'>#{i}</div>").appendTo(map.dom)
+        $("<div id='planet_#{i}' class='cell planet' style='margin:#{p.pos[1] * cell}px 0 0 #{p.pos[0] * cell}px'></div>").appendTo(map.dom)
+        p.dom = $('#planet_' + i)
         p.dom.data('planet', i)
+        map.offest_size = $('#planet_0').width() if i == 0
+        def = []
+        _.times(Math.floor(p.def + 1), ->
+          def.push '⊙'
+        )
+        def = def.join ' '
+        res = []
+        _.times(Math.floor(p.res), ->
+          res.push '★'
+        )
+        res = res.join ' '
+        p.dom.after("<span class='planet_info' style='margin:#{p.pos[1] * cell - 16}px 0 0 #{p.pos[0] * cell - map.offest_size / 2}px'>⊙#{p.def} ★#{p.res} + #{p.cos}</span><span class='planet_info' style='margin:#{p.pos[1] * cell + map.offest_size + 4}px 0 0 #{p.pos[0] * cell - map.offest_size / 2}px'>≥#{p.max}</span>").next()
         map.planets[i] = p
-      map.offest_size = $('#planet_0').width()
+      
       
       html = ["<svg style='width:100%;height:#{cell * map.map_size[1]}px;position:absolute'>"]
       for r in map.routes
@@ -63,7 +76,7 @@ ws.onmessage = (e)->
         if hold[0] isnt null
           planet.dom.html(hold[1])[0].className = 'cell player_' + hold[0]
         else
-          planet.dom.html(planet.id)[0].className = 'cell planet'
+          planet.dom.html('')[0].className = 'cell planet'
       
       for move in data.moves
         ((move)->
@@ -82,18 +95,10 @@ ws.onmessage = (e)->
       for t, i in _.sortBy(players, (p)->
         -(p.planets*10000 + p.units)
       )
-        top.push("<div class='top_#{i}' style='color:#{t.color}'><span>#{i+1}</span><p>#{t.name}<br />Planets: #{t.planets}<br />Units: #{t.units}</p></div>")
+        top.push("<div class='top_#{i}' style='color:#{t.color}'><span>#{i+1}</span><p><strong>#{t.name}</strong><br />Planets: #{t.planets}<br />Units: #{t.units}<br />Status: #{t.status}</p></div>")
       $('#top').html(top.join(''))
       $('#round').html("Round #{data.round}/#{map.max_round}")
       $('#status').html(data.status)
 
 ws.onerror = (e)->
   console.log e if config.debug
-
-$('#map').on('mouseenter', '.cell', ->
-  data = $.data(this)
-  planet = map.planets[data.planet]
-  $('#planet').html("<hr /><h3>No.#{data.planet}</h3><p>DEF：X#{planet.def}</p><p>RES：X#{planet.res} +#{planet.cos}</p><p>MAX：#{planet.max}</p>")
-).on('mouseleave', '.cell', ->
-  $('#planet').html('')
-)

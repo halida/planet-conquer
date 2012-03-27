@@ -2,7 +2,7 @@
 @import "compass"
 
 $bg: #13131F
-$cell: floor((940 / 15) - 4)
+$cell: floor((940 / 15) - 20)
 
 @each $name in webkit, moz, ms
   @-#{$name}-keyframes move
@@ -39,6 +39,15 @@ body
     border-color: #fff
     color: #fff
     background: $bg
+  
+  .planet_info
+    position: absolute
+    display: block
+    color: #fff
+    width: #{$cell * 2}px
+    text-align: center
+    font-size: 11px
+    color: #888
 
   .move
     position: absolute
@@ -74,7 +83,7 @@ body
 #sidebar
   position: fixed
   width: 180px
-  padding: 10px
+  padding: 0 10px 10px 10px
   background: $bg
   top: 0
   left: 0
@@ -88,9 +97,11 @@ body
   p
     margin: 0
     line-height: 200%
+  strong
+    font-size: 20px
   span
     position: absolute
-    margin: 40px 0 0 120px
+    margin: 66px 0 0 120px
     font-size: 60px
     color: #444
     font-weight: bold
