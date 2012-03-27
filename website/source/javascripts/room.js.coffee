@@ -292,10 +292,12 @@ class GameShower extends Spine.Controller
 
     update_logs: ()->
         @logs = ['<div class="log">------------ round: '+@info.round+'</div>']
+        # console.log @info.logs
         for log in @info.logs
             switch log.type
                 when "production" then @display_production(log)
                 when "battle" then @display_battle(log)
+                # when "move" then @display_move(log)
 
         @div_logs.prepend @logs.join("\n")
 

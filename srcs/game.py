@@ -146,11 +146,20 @@ class Game():
     def do_player_op(self, n):
         for move in self.player_ops[n]:
             # check count <= self.holds[_from]
-            count, _from = move[3], move[1]
+            side, _from, _to, count, step = move
             if count <= self.holds[_from][1]:
                 # go!
                 self.holds[_from][1] -= count
                 self.moves.append(move)
+                self.logs.append(
+                    {'type': 'move',
+                     'side': side,
+                     'from': _from,
+                     'to': _to,
+                     'count': count,
+                     'step': step,
+                     })
+
                 # if all my armies gone?
                 if self.holds[_from][1] <= 0:
                     self.holds[_from] = [None, 0]
@@ -329,11 +338,17 @@ class Game():
             # 如果星球没有驻军, 就占领
             planet_side = side
             planet_count = count
-            self.logs.append(dict(type= "occupy", side=side, count=count)) 
+            self.logs.append(dict(type= "occupy",
+                                  side=side,
+                                  count=count,
+                                  planet=to)) 
         elif side == planet_side:
             # 如果是己方, 就加入
             planet_count += count
-            self.logs.append(dict(type= "join", side=side, count=count))
+            self.logs.append(dict(type= "join",
+                                  planet=to,
+                                  side=side,
+                                  count=count))
         else:
             # 敌方战斗
             # 防守方加权
