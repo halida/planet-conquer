@@ -51,7 +51,11 @@ page '/new.html', layout: false
 #   @which_fake_page = "Rendering a fake page with a variable"
 # end
 (0..1).each do |room_id|
-  page "/room_#{room_id}.html", proxy: "room.html" do
+  page "/room_#{room_id}.html", proxy: "new.html" do
+    @room_id = room_id
+    @game_server = GAME_SERVER
+  end
+  page "/old_#{room_id}.html", proxy: "room.html" do
     @room_id = room_id
     @game_server = GAME_SERVER
   end

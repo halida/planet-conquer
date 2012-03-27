@@ -10,4 +10,15 @@
       %h2#status
       #round
       #top
-    = javascript_include_tag 'jquery', 'bootstrap.min', 'underscore-min', 'new'
+    #logs
+    %audio(src="music/bg.ogg" autoplay loop)
+    = javascript_include_tag 'jquery', 'bootstrap.min', 'underscore-min'
+    %script
+      :erb
+        config = {
+          addr: '<%= @game_server %>',
+          room: <%= @room_id %>,
+          debug: true
+        }
+    = javascript_include_tag 'new'
+    

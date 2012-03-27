@@ -1,9 +1,3 @@
-config = {
-  addr: '127.0.0.1:9999'
-  room: 0
-  debug: true
-}
-
 if MozWebSocket?
   WS = MozWebSocket
 else
@@ -32,7 +26,7 @@ ws.onmessage = (e)->
   switch data.op
     when 'map'
       window.map = data
-      map.step = map.step * 1000
+      map.step = map.step * 1000 - 100
       map.dom = $('#map')
       cell = Math.floor(940/map.map_size[0])
       for p, i in map.planets
@@ -78,18 +72,35 @@ ws.onmessage = (e)->
         else
           planet.dom.html('')[0].className = 'cell planet'
       
-      for move in data.moves
-        ((move)->
-          from = map.planets[move[1]].dom
-          from_xy = from.offset()
-          to = map.planets[move[2]].dom
-          to_xy = to.offset()
-          dom = $("<div class='move player_#{move[0]}' style='left:#{from_xy.left + map.offest_size/3.7}px;top:#{from_xy.top + map.offest_size/3.7}px'>#{move[3]}</div>")
-          map.dom.append(dom)
-          dom.animate({left: to_xy.left + map.offest_size/3.7, top: to_xy.top + map.offest_size/3.7}, map.step, ->
-            dom.remove()
-          )
-        )(move)
+      logs = $('#logs').html('')
+      for log in data.logs
+        switch log.type
+          when 'move'
+            ((move)->
+              from = map.planets[move.from].dom
+              from_xy = from.offset()
+              to = map.planets[move.to].dom
+              to_xy = to.offset()
+              dom = $("<div class='move player_#{move.side}' style='left:#{from_xy.left + map.offest_size/3.7}px;top:#{from_xy.top + map.offest_size/3.7}px'>#{move.count}</div>")
+              map.dom.append(dom)
+              dom.animate({left: to_xy.left + map.offest_size/3.7, top: to_xy.top + map.offest_size/3.7}, map.step * move.step, ->
+                dom.remove()
+              )
+            )(log)
+            logs.trigger 'log', "<p style='color:#{players[log.side].color}'>#{players[log.side].name}: Send #{log.count} troops from No.#{log.from} to No.#{log.to}.</p>"
+          when 'production'
+            logs.trigger 'log', "<p style='color:#{players[log.side].color}'>#{players[log.side].name}: Planet No.#{log.planet} production to #{log.count}</p>"
+          when 'occupy'
+            $('#planet_' + log.planet).animate({
+              opacity: 0
+            }, 500, ->
+              $(this).animate({opacity: 1}, 500)
+            )
+          when 'battle'
+            if log.winner is log.defence
+              logs.trigger 'log', "<p style='color:#{players[log.winner].color}'>#{players[log.winner].name}: Successfully block the #{players[log.attack].name}'s offensive<p>"
+            else
+              logs.trigger 'log', "<p style='color:#{players[log.winner].color}'>#{players[log.winner].name}: Occupation of the No.#{log.planet} planet</p>"
       
       top = []
       for t, i in _.sortBy(players, (p)->
@@ -102,3 +113,7 @@ ws.onmessage = (e)->
 
 ws.onerror = (e)->
   console.log e if config.debug
+
+$('#logs').bind('log', (e, msg)->
+  this.innerHTML = msg + this.innerHTML
+)
