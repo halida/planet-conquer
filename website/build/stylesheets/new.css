@@ -43,35 +43,43 @@ body {
     font-size: 14px;
     text-align: center;
     color: black;
-    width: 58px;
-    height: 58px;
-    line-height: 58px;
+    width: 42px;
+    height: 42px;
+    line-height: 42px;
     border: 2px solid transparent; }
     #map .cell.planet, #map .cell.player_0, #map .cell.player_1, #map .cell.player_2, #map .cell.player_3 {
-      -webkit-border-radius: 31px;
-      -moz-border-radius: 31px;
-      -ms-border-radius: 31px;
-      -o-border-radius: 31px;
-      border-radius: 31px; }
+      -webkit-border-radius: 23px;
+      -moz-border-radius: 23px;
+      -ms-border-radius: 23px;
+      -o-border-radius: 23px;
+      border-radius: 23px; }
   #map .planet {
     border-color: white;
     color: white;
     background: #13131f; }
+  #map .planet_info {
+    position: absolute;
+    display: block;
+    color: white;
+    width: 84px;
+    text-align: center;
+    font-size: 11px;
+    color: #888888; }
   #map .move {
     position: absolute;
     overflow: hidden;
     font-size: 12px;
     text-align: center;
     color: white;
-    width: 29px;
-    height: 29px;
-    line-height: 29px;
+    width: 21px;
+    height: 21px;
+    line-height: 21px;
     border: 2px solid transparent;
-    -webkit-border-radius: 16.5px;
-    -moz-border-radius: 16.5px;
-    -ms-border-radius: 16.5px;
-    -o-border-radius: 16.5px;
-    border-radius: 16.5px;
+    -webkit-border-radius: 12.5px;
+    -moz-border-radius: 12.5px;
+    -ms-border-radius: 12.5px;
+    -o-border-radius: 12.5px;
+    border-radius: 12.5px;
     -webkit-animation: move 1s infinite;
     -moz-animation: move 1s infinite;
     -ms-animation: move 1s infinite;
@@ -96,7 +104,34 @@ body {
 #sidebar {
   position: fixed;
   width: 180px;
-  padding: 10px;
-  background: #eeeeee;
+  padding: 0 10px 10px 10px;
+  background: #13131f;
   top: 0;
-  left: 0; }
+  left: 0;
+  color: #888888; }
+
+#top div {
+  border: 2px solid #444444;
+  padding: 10px;
+  margin-bottom: 10px; }
+#top p {
+  margin: 0;
+  line-height: 200%; }
+#top strong {
+  font-size: 20px; }
+#top span {
+  position: absolute;
+  margin: 66px 0 0 120px;
+  font-size: 60px;
+  color: #444444;
+  font-weight: bold; }
+
+#logs {
+  position: fixed;
+  bottom: 0;
+  height: 60px;
+  overflow-y: scroll;
+  width: 100%;
+  text-align: center; }
+  #logs p {
+    margin-bottom: 3px; }

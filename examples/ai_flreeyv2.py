@@ -286,7 +286,7 @@ def main(room=0):
         #print time.time() - start, rs.info['round'], result
         ##把操作发给服务器
         #rs.cmd_moves(result)
-        time.sleep(0.7)
+        time.sleep(1.4)
         
         if rs.is_next_round():
             start = time.time()

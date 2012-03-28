@@ -9,69 +9,44 @@
         <link href="stylesheets/site.css" media="screen" rel="stylesheet" type="text/css" />
         <script src="javascripts/jquery.js" type="text/javascript"></script>
         <script src="javascripts/spine.js" type="text/javascript"></script>
-        <link href="stylesheets/room.css" media="screen" rel="stylesheet" type="text/css" />
-        <script src="javascripts/jquery.transit.js" type="text/javascript"></script>
-        <script src="javascripts/room.js" type="text/javascript"></script>
+        
       </meta>
     </meta>
   </head>
-  <body class='room'>
+  <body class='new'>
     <div class='hide-all'></div>
-    <div id='board-head-outter'>
-      <div id='board-head'>
-        <h1>planet conquer</h1>
-        <div id='round'>
-          round
-          <span id='current-round'>0</span>
-          /
-          <span id='max-round'>0</span>
+    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+    <html>
+      <head>
+        <title>New Room</title>
+        <link href="stylesheets/new.css" media="screen" rel="stylesheet" type="text/css" />
+      </head>
+      <body>
+        <div class='container'>
+          <div id='map'></div>
         </div>
-        <div id='game-status'></div>
-      </div>
-    </div>
-    <div id='board-scene'></div>
-    <div id='board-side-left'>
-      <div class='side-block' id='map-info'>
-        <p>
-          <span id='map-name'></span>
-          by
-          <span id='map-author'></span>
-        </p>
-        <p id='map-desc'></p>
-      </div>
-      <div class='side-block' id='players'></div>
-      <div class='side-block' id='desc'></div>
-    </div>
-    <div id='board-side-right'>
-      <div class='side-block' id='recorder'>
-        <input class='btn record-record' type='button' value='record' />
-        <input class='btn record-replay' type='button' value='replay' />
-        <span class='record-display'>
-          <span class='replay-on'>0</span>
-          /
-          <span class='record-count'>0</span>
-        </span>
-      </div>
-      <div class='side-block' id='logs'></div>
-    </div>
+        <div id='sidebar'>
+          <h2 id='status'></h2>
+          <div id='round'></div>
+          <div id='top'></div>
+        </div>
+        <div id='logs'></div>
+        <audio autoplay='autoplay' loop='loop' src='music/bg.ogg'></audio>
+        <script src="javascripts/jquery.js" type="text/javascript"></script>
+        <script src="javascripts/bootstrap.min.js" type="text/javascript"></script>
+        <script src="javascripts/underscore-min.js" type="text/javascript"></script>
+        <script>
+    config = {
+      addr: 'localhost:9999',
+      room: 0,
+      debug: true
+    }
+        </script>
+        <script src="javascripts/new.js" type="text/javascript"></script>
+      </body>
+    </html>
   </body>
-  <script type='text/javascript'>
-    //<![CDATA[
-      (function() {
-    var game, shower;
   
-    game = new Game();
-  
-    shower = new GameShower(game, "#board");
-  
-    window.recorder = new Recorder(game, "#recorder");
-  
-    game.set_server("localhost:9999", 0);
-  
-  }).call(this);
-  
-    //]]>
-  </script>
   <script type='text/javascript'>
     //<![CDATA[
       var _gaq = _gaq || [];

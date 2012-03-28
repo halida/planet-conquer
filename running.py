@@ -69,14 +69,14 @@ def run_all():
     q = Queue()
     ps.append(Process(target=start_game, args=(q,)))
     ps.append(Process(target=start_http))
-    ps.append(Process(target=start_brower))
+    # ps.append(Process(target=start_brower))
 
     for p in ps:
         time.sleep(1)
         p.start()
 
-    rooms = {0: [['ai_flreeyv2', 'ai_flreeyv2'], []]}
-    rooms.update({1: [['ai_flreeyv2', 'ai_flreeyv2'], []]})
+    rooms = {0: [['ai_flreeyv2', 'ai_flreeyv2', 'ai_flreeyv2', 'ai_flreeyv2'], []]}
+    # rooms.update({1: [['ai_flreeyv2', 'ai_flreeyv2'], []]})
     start_room(0, rooms)
     #start_room(1, rooms)
 

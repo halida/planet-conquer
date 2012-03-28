@@ -1,11 +1,5 @@
 (function() {
-  var WS, config;
-
-  config = {
-    addr: '127.0.0.1:9999',
-    room: 0,
-    debug: true
-  };
+  var WS;
 
   if (typeof MozWebSocket !== "undefined" && MozWebSocket !== null) {
     WS = MozWebSocket;
@@ -34,23 +28,36 @@
   };
 
   ws.onmessage = function(e) {
-    var cell, data, from, hold, html, i, move, p, planet, planet_id, r, t, to, top, _fn, _i, _j, _len, _len2, _len3, _len4, _len5, _ref, _ref2, _ref3, _ref4, _ref5;
+    var cell, data, def, from, hold, html, i, log, logs, p, planet, planet_id, r, res, t, to, top, _i, _j, _len, _len2, _len3, _len4, _len5, _ref, _ref2, _ref3, _ref4, _ref5;
     data = $.parseJSON(e.data);
     if (config.debug) console.log(data);
     switch (data.op) {
       case 'map':
         window.map = data;
+        map.step = map.step * 1000;
         map.dom = $('#map');
         cell = Math.floor(940 / map.map_size[0]);
         _ref = map.planets;
         for (i = 0, _len = _ref.length; i < _len; i++) {
           p = _ref[i];
           p.id = i;
-          p.dom = $("<div id='planet_" + i + "' class='cell planet' style='margin:" + (p.pos[1] * cell) + "px 0 0 " + (p.pos[0] * cell) + "px'>" + i + "</div>").appendTo(map.dom);
+          $("<div id='planet_" + i + "' planet_type='" + (p.type || 'normal') + "' class='cell planet planet-" + p.type + "' style='margin:" + (p.pos[1] * cell) + "px 0 0 " + (p.pos[0] * cell) + "px'></div>").appendTo(map.dom);
+          p.dom = $('#planet_' + i);
           p.dom.data('planet', i);
+          if (i === 0) map.offest_size = $('#planet_0').width();
+          def = [];
+          _.times(Math.floor(p.def + 1), function() {
+            return def.push('⊙');
+          });
+          def = def.join(' ');
+          res = [];
+          _.times(Math.floor(p.res), function() {
+            return res.push('★');
+          });
+          res = res.join(' ');
+          p.dom.after("<span class='planet_info' style='margin:" + (p.pos[1] * cell - 16) + "px 0 0 " + (p.pos[0] * cell - map.offest_size / 2) + "px'>⊙" + p.def + " ★" + p.res + " + " + p.cos + "</span><span class='planet_info' style='margin:" + (p.pos[1] * cell + map.offest_size + 4) + "px 0 0 " + (p.pos[0] * cell - map.offest_size / 2) + "px'>≥" + p.max + "</span>").next();
           map.planets[i] = p;
         }
-        map.offest_size = $('#planet_0').width();
         html = ["<svg style='width:100%;height:" + (cell * map.map_size[1]) + "px;position:absolute'>"];
         _ref2 = map.routes;
         for (_i = 0, _len2 = _ref2.length; _i < _len2; _i++) {
@@ -76,28 +83,51 @@
           if (hold[0] !== null) {
             planet.dom.html(hold[1])[0].className = 'cell player_' + hold[0];
           } else {
-            planet.dom.html(planet.id)[0].className = 'cell planet';
+            planet.dom.html('')[0].className = 'cell planet';
           }
         }
-        _ref4 = data.moves;
-        _fn = function(move) {
-          var dom, from_xy, to_xy;
-          from = map.planets[move[1]].dom;
-          from_xy = from.offset();
-          to = map.planets[move[2]].dom;
-          to_xy = to.offset();
-          dom = $("<div class='move player_" + move[0] + "' style='left:" + (from_xy.left + map.offest_size / 3.7) + "px;top:" + (from_xy.top + map.offest_size / 3.7) + "px'>" + move[3] + "</div>");
-          map.dom.append(dom);
-          return dom.animate({
-            left: to_xy.left + map.offest_size / 3.7,
-            top: to_xy.top + map.offest_size / 3.7
-          }, 1800, function() {
-            return dom.remove();
-          });
-        };
+        logs = $('#logs').html('');
+        _ref4 = data.logs;
         for (_j = 0, _len4 = _ref4.length; _j < _len4; _j++) {
-          move = _ref4[_j];
-          _fn(move);
+          log = _ref4[_j];
+          switch (log.type) {
+            case 'move':
+              (function(move) {
+                var dom, from_xy, to_xy;
+                from = map.planets[move.from].dom;
+                from_xy = from.offset();
+                to = map.planets[move.to].dom;
+                to_xy = to.offset();
+                dom = $("<div class='move player_" + move.side + "' style='left:" + (from_xy.left + map.offest_size / 3.7) + "px;top:" + (from_xy.top + map.offest_size / 3.7) + "px'>" + move.count + "</div>");
+                map.dom.append(dom);
+                return dom.animate({
+                  left: to_xy.left + map.offest_size / 3.7,
+                  top: to_xy.top + map.offest_size / 3.7
+                }, map.step * (move.step - 1), function() {
+                  return dom.remove();
+                });
+              })(log);
+              logs.trigger('log', "<p style='color:" + players[log.side].color + "'>" + players[log.side].name + ": Send " + log.count + " troops from No." + log.from + " to No." + log.to + ".</p>");
+              break;
+            case 'production':
+              logs.trigger('log', "<p style='color:" + players[log.side].color + "'>" + players[log.side].name + ": Planet No." + log.planet + " production to " + log.count + "</p>");
+              break;
+            case 'occupy':
+              $('#planet_' + log.planet).animate({
+                opacity: 0
+              }, 500, function() {
+                return $(this).animate({
+                  opacity: 1
+                }, 500);
+              });
+              break;
+            case 'battle':
+              if (log.winner === log.defence) {
+                logs.trigger('log', "<p style='color:" + players[log.winner].color + "'>" + players[log.winner].name + ": Successfully block the " + players[log.attack].name + "'s offensive<p>");
+              } else {
+                logs.trigger('log', "<p style='color:" + players[log.winner].color + "'>" + players[log.winner].name + ": Occupation of the No." + log.planet + " planet</p>");
+              }
+          }
         }
         top = [];
         _ref5 = _.sortBy(players, function(p) {
@@ -105,9 +135,11 @@
         });
         for (i = 0, _len5 = _ref5.length; i < _len5; i++) {
           t = _ref5[i];
-          top.push("<p style='color:" + t.color + "'>No." + (i + 1) + " " + t.name + " " + t.planets + "/" + t.units + "</p>");
+          top.push("<div class='top_" + i + "' style='color:" + t.color + "'><span>" + (i + 1) + "</span><p><strong>" + t.name + "</strong><br />Planets: " + t.planets + "<br />Units: " + t.units + "<br />Status: " + t.status + "</p></div>");
         }
-        return $('#top').html(top.join(''));
+        $('#top').html(top.join(''));
+        $('#round').html("Round " + data.round + "/" + map.max_round);
+        return $('#status').html(data.status);
     }
   };
 
@@ -115,13 +147,8 @@
     if (config.debug) return console.log(e);
   };
 
-  $('#map').on('mouseenter', '.cell', function() {
-    var data, planet;
-    data = $.data(this);
-    planet = map.planets[data.planet];
-    return $('#planet').html("<hr /><h3>No." + data.planet + "</h3><p>DEF：X" + planet.def + "</p><p>RES：X" + planet.res + " +" + planet.cos + "</p><p>MAX：" + planet.max + "</p>");
-  }).on('mouseleave', '.cell', function() {
-    return $('#planet').html('');
+  $('#logs').bind('log', function(e, msg) {
+    return this.innerHTML = msg + this.innerHTML;
   });
 
 }).call(this);

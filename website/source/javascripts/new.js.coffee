@@ -26,12 +26,12 @@ ws.onmessage = (e)->
   switch data.op
     when 'map'
       window.map = data
-      map.step = map.step * 1000 - 100
+      map.step = map.step * 1000
       map.dom = $('#map')
       cell = Math.floor(940/map.map_size[0])
       for p, i in map.planets
         p.id = i
-        $("<div id='planet_#{i}' class='cell planet' style='margin:#{p.pos[1] * cell}px 0 0 #{p.pos[0] * cell}px'></div>").appendTo(map.dom)
+        $("<div id='planet_#{i}' planet_type='#{p.type || 'normal'}' class='cell planet planet-#{p.type}' style='margin:#{p.pos[1] * cell}px 0 0 #{p.pos[0] * cell}px'></div>").appendTo(map.dom)
         p.dom = $('#planet_' + i)
         p.dom.data('planet', i)
         map.offest_size = $('#planet_0').width() if i == 0
@@ -47,8 +47,8 @@ ws.onmessage = (e)->
         res = res.join ' '
         p.dom.after("<span class='planet_info' style='margin:#{p.pos[1] * cell - 16}px 0 0 #{p.pos[0] * cell - map.offest_size / 2}px'>⊙#{p.def} ★#{p.res} + #{p.cos}</span><span class='planet_info' style='margin:#{p.pos[1] * cell + map.offest_size + 4}px 0 0 #{p.pos[0] * cell - map.offest_size / 2}px'>≥#{p.max}</span>").next()
         map.planets[i] = p
-      
-      
+
+
       html = ["<svg style='width:100%;height:#{cell * map.map_size[1]}px;position:absolute'>"]
       for r in map.routes
         continue if r[0] > r[1]
@@ -57,7 +57,7 @@ ws.onmessage = (e)->
         html.push("<line x1='#{from.left + (map.offest_size / 2)}' y1='#{from.top + (map.offest_size / 2)}' x2='#{to.left + (map.offest_size / 2)}' y2='#{to.top + (map.offest_size / 2)}' style='stroke:#444;stroke-width:2px' stroke-dasharray='3,3' />")
       html.push('</svg>')
       $('body').prepend(html.join(''))
-    
+
     when 'info'
       window.players = data.players
       players[0].color = '#EE2C44' if players[0]
@@ -71,7 +71,7 @@ ws.onmessage = (e)->
           planet.dom.html(hold[1])[0].className = 'cell player_' + hold[0]
         else
           planet.dom.html('')[0].className = 'cell planet'
-      
+
       logs = $('#logs').html('')
       for log in data.logs
         switch log.type
@@ -83,7 +83,7 @@ ws.onmessage = (e)->
               to_xy = to.offset()
               dom = $("<div class='move player_#{move.side}' style='left:#{from_xy.left + map.offest_size/3.7}px;top:#{from_xy.top + map.offest_size/3.7}px'>#{move.count}</div>")
               map.dom.append(dom)
-              dom.animate({left: to_xy.left + map.offest_size/3.7, top: to_xy.top + map.offest_size/3.7}, map.step * move.step, ->
+              dom.animate({left: to_xy.left + map.offest_size/3.7, top: to_xy.top + map.offest_size/3.7}, map.step * (move.step-1), ->
                 dom.remove()
               )
             )(log)
@@ -101,7 +101,7 @@ ws.onmessage = (e)->
               logs.trigger 'log', "<p style='color:#{players[log.winner].color}'>#{players[log.winner].name}: Successfully block the #{players[log.attack].name}'s offensive<p>"
             else
               logs.trigger 'log', "<p style='color:#{players[log.winner].color}'>#{players[log.winner].name}: Occupation of the No.#{log.planet} planet</p>"
-      
+
       top = []
       for t, i in _.sortBy(players, (p)->
         -(p.planets*10000 + p.units)
