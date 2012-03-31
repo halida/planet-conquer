@@ -32,6 +32,9 @@
 body {
   background: #13131f; }
 
+#map-info {
+  margin-bottom: 20px; }
+
 #map {
   width: 100%;
   overflow: hidden;
@@ -103,28 +106,32 @@ body {
 
 #sidebar {
   position: fixed;
-  width: 180px;
-  padding: 0 10px 10px 10px;
-  background: #13131f;
   top: 0;
   left: 0;
+  padding: 0 10px 10px 10px;
+  color: #888888;
+  background: #13131f; }
+
+#about a {
   color: #888888; }
 
-#top div {
-  border: 2px solid #444444;
-  padding: 10px;
-  margin-bottom: 10px; }
-#top p {
-  margin: 0;
-  line-height: 200%; }
-#top strong {
-  font-size: 20px; }
-#top span {
-  position: absolute;
-  margin: 66px 0 0 120px;
-  font-size: 60px;
-  color: #444444;
-  font-weight: bold; }
+#top {
+  width: 180px; }
+  #top div {
+    border: 2px solid #444444;
+    padding: 10px;
+    margin-bottom: 10px; }
+  #top p {
+    margin: 0;
+    line-height: 200%; }
+  #top strong {
+    font-size: 20px; }
+  #top span {
+    position: absolute;
+    margin: 66px 0 0 120px;
+    font-size: 60px;
+    color: #444444;
+    font-weight: bold; }
 
 #logs {
   position: fixed;

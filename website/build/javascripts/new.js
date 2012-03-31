@@ -28,7 +28,7 @@
   };
 
   ws.onmessage = function(e) {
-    var cell, data, def, from, hold, html, i, log, logs, p, planet, planet_id, r, res, t, to, top, _i, _j, _len, _len2, _len3, _len4, _len5, _ref, _ref2, _ref3, _ref4, _ref5;
+    var cell, data, def, from, hold, html, i, info, log, logs, p, planet, planet_id, r, res, t, to, top, _i, _j, _len, _len2, _len3, _len4, _len5, _ref, _ref2, _ref3, _ref4, _ref5;
     data = $.parseJSON(e.data);
     if (config.debug) console.log(data);
     switch (data.op) {
@@ -37,6 +37,10 @@
         map.step = map.step * 1000;
         map.dom = $('#map');
         cell = Math.floor(940 / map.map_size[0]);
+        info = "<h2 id='map-name'>" + map.name + "</h2>";
+        info += " <div id='map-author'>author: " + map.author + "</div>";
+        info += "<div id='map-desc'>" + map.desc + "</div>";
+        $('#map-info').html(info);
         _ref = map.planets;
         for (i = 0, _len = _ref.length; i < _len; i++) {
           p = _ref[i];
@@ -71,6 +75,7 @@
         return $('body').prepend(html.join(''));
       case 'info':
         window.players = data.players;
+        if (!data.players) return;
         if (players[0]) players[0].color = '#EE2C44';
         if (players[1]) players[1].color = '#42C3D9';
         if (players[2]) players[2].color = '#E96FA9';
