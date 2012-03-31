@@ -29,6 +29,12 @@ ws.onmessage = (e)->
       map.step = map.step * 1000
       map.dom = $('#map')
       cell = Math.floor(940/map.map_size[0])
+
+      info = "<h2 id='map-name'>#{map.name}</h2>"
+      info += " <div id='map-author'>author: #{map.author}</div>"
+      info += "<div id='map-desc'>#{map.desc}</div>"
+      $('#map-info').html(info)
+
       for p, i in map.planets
         p.id = i
         $("<div id='planet_#{i}' planet_type='#{p.type || 'normal'}' class='cell planet planet-#{p.type}' style='margin:#{p.pos[1] * cell}px 0 0 #{p.pos[0] * cell}px'></div>").appendTo(map.dom)
@@ -60,6 +66,7 @@ ws.onmessage = (e)->
 
     when 'info'
       window.players = data.players
+      return unless data.players
       players[0].color = '#EE2C44' if players[0]
       players[1].color = '#42C3D9' if players[1]
       players[2].color = '#E96FA9' if players[2]

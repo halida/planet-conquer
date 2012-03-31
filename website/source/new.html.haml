@@ -7,9 +7,12 @@
     .container
       #map
     #sidebar
+      #map-info
       %h2#status
       #round
       #top
+      #about
+        = link_to "rubyvspython.org", "http://rubyvspython.org", target: "_blank"
     #logs
     %audio(src="music/bg.ogg" autoplay loop)
     = javascript_include_tag 'jquery', 'bootstrap.min', 'underscore-min'
