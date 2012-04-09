@@ -4,7 +4,7 @@ author: resty
 version: 0.1
 
 max_round: 8000
-max_player: 8
+max_player: 4
 start_unit: 100
 starts:
   - A

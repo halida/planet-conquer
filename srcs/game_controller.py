@@ -41,7 +41,7 @@ class Controller():
         """
         op = data['op']
         if op == 'add':
-            return self.game.add_player(data['name'], data['side'])
+            return self.game.add_player(data.get('name', 'unknown'), data.get('side', 'unknown'))
         
         elif op in ('moves'):
             if isinstance(data['moves'] , basestring):

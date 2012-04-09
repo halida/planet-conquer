@@ -21,6 +21,7 @@ class SimpleAI():
         self.name = ai_name
         self.side = side
         self.me = None
+        self.round = None
 
     def init(self):
         #获取地图
@@ -37,7 +38,8 @@ class SimpleAI():
         if not self.me and self.info['status'] == 'waitforplayer':
             self.cmd_add()
             self.init()
-        
+
+        if not self.round: return
         current_round = self.info['round']
         next_round = False
         if current_round > self.round:
@@ -61,6 +63,7 @@ class SimpleAI():
                           urllib.urlencode(data),
                           {'Content-Type': 'application/x-www-form-urlencoded'})
         result = self.conn.getresponse().read()
+        # logging.debug(result)
         return json.loads(result)
 
     def cmd_add(self):
