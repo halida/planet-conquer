@@ -298,9 +298,9 @@ class Game():
             self.start()
             return True
 
-        # 游戏开始的时候, 需要有2个以上的玩家加入.
+        # 游戏开始的时候, 需要有N个以上的玩家加入.
         if self.status == WAITFORPLAYER:
-            if len(self.players) < 2: return
+            if len(self.players) < self.map.min_player: return
             self.status = RUNNING
             self.log('game running.')
 

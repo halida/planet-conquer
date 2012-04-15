@@ -133,8 +133,10 @@ def main():
         s = Server()
         s.run(max_waits=5.0, enable_no_resp_die=True)
     elif cmd == 'local':
-        s = Server()
-        s.run(max_waits=1.0, enable_no_resp_die=True)
+        from lib import GEME_STEP_TIME
+        Server().run(max_waits=GEME_STEP_TIME,
+                     min_waits=GEME_STEP_TIME,
+                     enable_no_resp_die=False)
     else:
         print usage
         

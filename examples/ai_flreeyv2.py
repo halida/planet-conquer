@@ -39,7 +39,7 @@ class SimpleAI():
             self.cmd_add()
             self.init()
 
-        if not self.round: return
+        # if not self.round: return
         current_round = self.info['round']
         next_round = False
         if current_round > self.round:
