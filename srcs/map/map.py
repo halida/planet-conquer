@@ -3,7 +3,7 @@
 """
 module: map
 """
-import yaml, string
+import yaml, string, random
 
 class Map:
     # planet tokens
@@ -70,6 +70,7 @@ class Map:
                        
         self.starts = [self.planet_name_to_id[name]
                        for name in self.meta['starts']]
+        random.shuffle(self.starts)
         
 def test():
     """

@@ -124,7 +124,8 @@ class Game():
             if kw['op'] == 'moves':
                 moves = []
                 for count, _from, to in kw['moves']:
-                    if count == 0: continue
+                    count = int(count)
+                    if count <= 0: continue
                     # 检查moves合法性
                     owner, armies = self.holds[_from]
                     if owner != n:

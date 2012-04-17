@@ -1,4 +1,4 @@
-GAME_SERVER = "localhost:9999"
+GAME_SERVER = "pythonvsruby.org:9999"
 ### 
 # Compass
 ###
