@@ -77,7 +77,7 @@ def run_all():
 
     rooms = {0: [['ai_flreeyv2', 'ai_flreeyv2', 'ai_flreeyv2', 'ai_flreeyv2'], []]}
     # rooms.update({1: [['ai_flreeyv2', 'ai_flreeyv2'], []]})
-    start_room(0, rooms)
+    # start_room(0, rooms)
     #start_room(1, rooms)
 
     while True:

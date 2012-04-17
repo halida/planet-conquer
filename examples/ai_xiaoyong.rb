@@ -7,22 +7,24 @@ require 'timeout'
 
 SERVER = "localhost"
 PORT = 9999
-ROOM = 0
 AGGRESSION_START = 0.8 # 0.8 might be a good choice after trying 0.618, 0.7, 0.8, 0.9 and 1.0
 AGGRESSION_MID = 0.618
 SHIFT = 2 # Shift base, the more shift, the more conserved
 
 class PlanetAI
-  def initialize
+  def initialize room
     @conn = Net::HTTP.new(SERVER, PORT)
-    @room = ROOM
+    @room = room
     @last_round_id = -1
+    @me = {}
   end
+
+  attr_accessor :me
   
   def cmd(cmd, data={})
     data['op'] = cmd
     data['room'] = @room
-#    puts data.to_json if data['op'] == 'moves'
+    #    puts data.to_json if data['op'] == 'moves'
     request = Net::HTTP::Post.new("/cmd")
     request.set_form_data(data)
     response = @conn.request(request)
@@ -43,17 +45,16 @@ class PlanetAI
       # neighbors[0]: id of neighbor planet
       # neighbors[1]: distance to the neighbor planet
     end
-#    puts @map
+    #    puts @map
   end
 
   def cmd_info
     @info = cmd "info"
-    exit if @info['status'] == 'finished'
     # Info about moves
-#    print 'My moves: '
-#    print @info['moves'].select { |m| m[0] == @me['seq'] }.map { |m| m[4] }.join(' ') + "\n"
-#    print 'Enemy moves: '
-#    print @info['moves'].select { |m| m[0] == @me['seq'] }.map { |m| m[4] }.join(' ') + "\n"
+    #    print 'My moves: '
+    #    print @info['moves'].select { |m| m[0] == @me['seq'] }.map { |m| m[4] }.join(' ') + "\n"
+    #    print 'Enemy moves: '
+    #    print @info['moves'].select { |m| m[0] == @me['seq'] }.map { |m| m[4] }.join(' ') + "\n"
   end
 
   def cmd_moves moves
@@ -138,7 +139,7 @@ class PlanetAI
 
       my_planets = @my_planets
       left_planets = @my_planets.select { |id, p| p[:rearness].nil? }
-#      puts "# of my planets: #{left_planets.size} / #{@my_planets.size}"
+      #      puts "# of my planets: #{left_planets.size} / #{@my_planets.size}"
     end
   end
 
@@ -150,7 +151,7 @@ class PlanetAI
     @last_round_id = @info['round'] 
 
     update_map
-#    puts @my_planets
+    #    puts @my_planets
 
     return if @lose_flag || @win_flag
 
@@ -180,7 +181,7 @@ class PlanetAI
         reinforce_moves = []
         reinforce = 0
         success_flag = false
-      # Get help from nearby rear planets or front line planets that have spare force
+        # Get help from nearby rear planets or front line planets that have spare force
         @my_planets[id][:my_neighbors].select { |n| spare_forces[n[0]][0] > 0 && n[1] <= spare_forces[id][1] }.sort_by { |n| n[1] }.each do |n|
           send = spare_forces[n[0]][0]
           next unless send > 0
@@ -257,7 +258,7 @@ class PlanetAI
       else
         # Preserve rate = e ^ -rearness
         rate = Math.exp( -(p[:rearness] / @max_rearness.to_f) )
-#        puts "rate: #{rate} #{p[:rearness]} / #@max_rearness"
+        #        puts "rate: #{rate} #{p[:rearness]} / #@max_rearness"
         left_force = (q['max'] * rate - q['cos']).to_i
       end
       left_force = [left_force, 1].max
@@ -371,7 +372,7 @@ class PlanetAI
       q = @map['planets'][t[0]]
 
       side, count = condition_after_given_rounds(t[0], t[1])
-#      if side.nil? || (side == @me['seq'] && @info['holds'][id][1] > count) # It's empty or has been occupied by myself by then
+      #      if side.nil? || (side == @me['seq'] && @info['holds'][id][1] > count) # It's empty or has been occupied by myself by then
       if side.nil?
         nil_targets << [t[0]]
       elsif side != @me['seq'] && spare_forces[id][0] > count*q['def']
@@ -410,19 +411,34 @@ class PlanetAI
 
 end
 
+def run room
+  ai = PlanetAI.new room
+  ai.cmd_map
+  
+  while true
+    Timeout::timeout(2) {
+      if ai.me['id']
+        info = ai.cmd_info
+        if info['status'] == 'finished'
+          ai.me = {}
+          next
+        end
+        ai.step
+      else
+        ai.cmd_add 
+      end
+    }
+    sleep 0.3
+  end
+end
 
-ai = PlanetAI.new
-ai.cmd_map
-ai.cmd_add
 while true
   begin
-    Timeout::timeout(2) {
-      ai.cmd_info
-      ai.step
-#      puts ai.step
-    }
+    room = ARGV.length > 0 ? ARGV[0].to_i : 0
+    run room
   rescue
-    puts 'Network error, reconnecting...'
+    puts "network error, retry.."
+    sleep 1
   end
-  sleep 0.3
 end
+
