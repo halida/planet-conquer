@@ -3,7 +3,7 @@
 """
 module: ai_halida
 """
-import json, time
+import json, time, random
 import urllib, httplib, logging
 
 logging.basicConfig(level=logging.DEBUG,
@@ -34,7 +34,8 @@ class SimpleAI():
 
     def cmd_add(self):
         self.me = self.cmd("add",
-                           dict(name = "SimplePython", side='python'))
+                           dict(name = "halida", side='python'))
+        print self.me
         return self.me
     
     def cmd_map(self):
@@ -50,26 +51,30 @@ class SimpleAI():
 
     def step(self):
         moves = []
-        small_hold = 50
-        for i, s in enumerate(self.info['holds']):
+        small_hold = 10
+        cs = [(i, s) for i, s in enumerate(self.info['holds'])]
+        random.shuffle(cs)
+        for i, s in cs:
+        # for i, s in enumerate(self.info['holds']):
             side, count = s
             # 寻找自己的星球
             if side != self.me['seq']:
                 continue
 
             for route in self.map['routes']:
-                # 数量超过一定程度的时候, 才派兵
+                # # 数量超过一定程度的时候, 才派兵
                 if count < small_hold:
                     break
-                sended = count / 2
                 # 当前星球的路径, 并且对方星球不是自己的星球
                 _from, to, step = route
                 if _from != i or self.info['holds'][to][0] == self.me['seq']:
                     continue
-                
+
+                if self.info['holds'][to][1] > count:
+                    continue
                 # 派兵!
-                moves.append([sended, _from, to])
-                count -= sended
+                moves.append([count/2, _from, to])
+                count -= count/2
 
         return moves
 
@@ -83,7 +88,6 @@ def main():
     rs.cmd_add()
     while True:
         time.sleep(1.0)
-        rs = SimpleAI()
         rs.cmd_info()
         result = rs.step()
         print result
