@@ -71,7 +71,7 @@ body {
   #map .move {
     position: absolute;
     overflow: hidden;
-    font-size: 12px;
+    font-size: 10px;
     text-align: center;
     color: white;
     width: 21px;
