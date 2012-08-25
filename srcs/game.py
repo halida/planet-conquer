@@ -11,6 +11,8 @@ from scores import add_score
 WAITFORPLAYER='waitforplayer'
 RUNNING='running'
 FINISHED='finished'
+MAINTAIN_LEVEL_1 = 1.5
+MAINTAIN_LEVEL_2 = 2
 
 DEFAULT_MAP = 'srcs/map/fight_here.yml'
 # DEFAULT_MAP = 'srcs/map/test.yml'
@@ -55,6 +57,8 @@ class Game():
             
         self.set_map(m)            
         
+        self.map_max_units = m.max_sum
+        self.maintain_fee = m.meta.get('maintain_fee', False)
         self.start()
 
     def log(self, msg):
@@ -115,8 +119,15 @@ class Game():
         player_id = len(self.players)-1
         planet_id = self.map.starts[player_id]
         self.holds[planet_id] = [player_id, self.map.meta['start_unit']]
+        # 用户加入时调整维护费用
+        self.adjust_mt_fee()
         # 返回玩家的顺序, 以及玩家的id(用来验证控制权限)
         return dict(seq=len(self.players) - 1, id=player.id)
+
+    def adjust_mt_fee(self):
+        """动态调整维修费用"""
+        active_playes = len([i if i.alive for i in self.players])
+        self.mt_base_line = int(self.map_max_units / float(2) / active_players
 
     def get_seq(self, id):
         """根据玩家的id获取seq"""
@@ -305,12 +316,26 @@ class Game():
         for move in arrives:
             self.battle(move)
 
+    def mt_level(self, _side, base_line=2000):
+        """
+        根据 玩家 units & base_line 返回增长系数, 最高为 1
+        """
+        _units = self.get_info()['players'][_side]['units']
+        if _units <= base_line:
+            return float(1)
+        elif _units <= base_line * MAINTAIN_LEVEL_1:
+            return float(0.5)
+        elif _units <= base_line * MAINTAIN_LEVEL_2:
+            return float(0.25)
+        else:
+            return float(0)
+
     def next_round(self):
         # 生产回合
         for i, data in enumerate(self.holds):
             side, count = data
             if side == None: continue
-            next = self.count_growth(count, self.planets[i])
+            next = self.count_growth(count, self.planets[i], self.mt_level(side, self.mt_base_line))
             if next <= 0:
                 side = None
                 next = 0
@@ -419,11 +444,14 @@ class Game():
                                   winner=planet_side))
         self.holds[to] = [planet_side, planet_count]
 
-    def count_growth(self, planet_count, planet):
+    def count_growth(self, planet_count, planet, mt_proc = 1):
         max = planet['max']
         res = planet['res']
         cos = planet['cos']
-        new_count = int(planet_count * res + cos)
+        # 兵力增量乘以维护费用水平(增长系数)
+        new_armies = (planet_count * (res - 1) + cos)
+        if self.maintain_fee: new_armies *= mt_proc
+        new_count = int(planet_count + new_armies)
         if planet_count < max:
             planet_count = min(new_count, max)
         elif new_count < planet_count:
@@ -458,6 +486,8 @@ class Game():
         # 判断是否没有响应时间过长
         if player.no_resp_time >= MAX_LOST_TURN:
             player.alive = False
+            # 用户丢失后调整维护费用
+            self.adjust_mt_fee()
             logging.debug('kill no response player: %d' % \
                          self.players.index(player))
             self.log('kill player for no response %s: , round is %s, time is %s' % (player.name, round, player.no_resp_time))
