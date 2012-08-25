@@ -126,8 +126,8 @@ class Game():
 
     def adjust_mt_fee(self):
         """动态调整维修费用"""
-        active_playes = len([i if i.alive for i in self.players])
-        self.mt_base_line = int(self.map_max_units / float(2) / active_players
+        active_players = len([i for i in self.players if i.alive])
+        self.mt_base_line = int(self.map_max_units / float(2) / active_players)
 
     def get_seq(self, id):
         """根据玩家的id获取seq"""
