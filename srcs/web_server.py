@@ -89,7 +89,12 @@ class Cmd(tornado.web.RequestHandler):
         # warp list
         for key in data:
             data[key] = data[key][0]
-        data = json.dumps(data)
+        
+        if data.has_key('data'):
+            data = data['data']
+        else:
+            data = json.dumps(data)
+            
         oper.send_unicode(data)
         result = oper.recv()
         print 'result', result
