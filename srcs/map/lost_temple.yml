@@ -1,0 +1,429 @@
+name: Four Side
+desc: ""
+author: lastland
+version: 0.1
+
+max_round: 8000
+max_player: 4
+start_unit: 100
+starts:
+  - A
+  - F
+  - K
+  - P
+
+maintain_fee: True
+
+map: |
+  A.............F
+  ...C.......H...
+  ..D.........I..
+  .B.E...U...J.G.
+  ....h.....i....
+  .......Y.......
+  ......c.d......
+  ...W.a.g.b.X...
+  ......e.f......
+  .......Z.......
+  ....j.....k....
+  .L.O...V...T.Q.
+  ..N.........S..
+  ...M.......R...
+  K.............P
+
+planets:
+  A:
+    type: base
+    def: 2
+    res: 1.2
+    cos: 0
+    max: 1000
+  B:
+    type: resource
+    def: 1.5
+    res: 1.1
+    cos: 20
+    max: 1000
+  C:
+    type: resource
+    def: 1.5
+    res: 1.1
+    cos: 20
+    max: 1000
+  D:
+    type: resource
+    def: 1.5
+    res: 1.1
+    cos: 20
+    max: 1000
+  E:
+    type: resource
+    def: 2
+    res: 1
+    cos: 5
+    max: 1500
+  F:
+    type: base
+    def: 2
+    res: 1.2
+    cos: 0
+    max: 1000
+  G:
+    type: resource
+    def: 1.5
+    res: 1.1
+    cos: 20
+    max: 1000
+  H:
+    type: resource
+    def: 1.5
+    res: 1.1
+    cos: 20
+    max: 1000
+  I:
+    type: resource
+    def: 1.5
+    res: 1.1
+    cos: 20
+    max: 1000
+  J:
+    type: resource
+    def: 2
+    res: 1
+    cos: 5
+    max: 1500
+  K:
+    type: base
+    def: 2
+    res: 1.2
+    cos: 0
+    max: 1000
+  L:
+    type: resource
+    def: 1.5
+    res: 1.1
+    cos: 20
+    max: 1000
+  M:
+    type: resource
+    def: 1.5
+    res: 1.1
+    cos: 20
+    max: 1000
+  N:
+    type: resource
+    def: 1.5
+    res: 1.1
+    cos: 20
+    max: 1000
+  O:
+    type: resource
+    def: 2
+    res: 1
+    cos: 5
+    max: 1500
+  P:
+    type: base
+    def: 2
+    res: 1.5
+    cos: 0
+    max: 1000
+  Q:
+    type: resource
+    def: 1.5
+    res: 1.1
+    cos: 20
+    max: 1000
+  R:
+    type: resource
+    def: 1.5
+    res: 1.1
+    cos: 20
+    max: 1000
+  S:
+    type: resource
+    def: 1.5
+    res: 1.1
+    cos: 20
+    max: 1000
+  T:
+    type: resource
+    def: 2
+    res: 1
+    cos: 5
+    max: 1500
+  U:
+    type: resource
+    def: 1
+    res: 0.6
+    cos: 0
+    max: 300
+  V:
+    type: resource
+    def: 1
+    res: 0.6
+    cos: 0
+    max: 300
+  W:
+    type: resource
+    def: 1
+    res: 0.6
+    cos: 0
+    max: 300
+  X:
+    type: resource
+    def: 1
+    res: 0.6
+    cos: 0
+    max: 300
+  Y:
+    type: resource
+    def: 1.2
+    res: 1.2
+    cos: 0
+    max: 300
+  Z:
+    type: resource
+    def: 1.2
+    res: 1.2
+    cos: 5
+    max: 300
+  a:
+    type: resource
+    def: 1.2
+    res: 1.2
+    cos: 5
+    max: 300
+  b:
+    type: resource
+    def: 1.2
+    res: 1.2
+    cos: 5
+    max: 300
+  c:
+    type: resource
+    def: 1
+    res: 1.5
+    cos: 5
+    max: 800
+  d:
+    type: resource
+    def: 1
+    res: 1.5
+    cos: 5
+    max: 800
+  e:
+    type: resource
+    def: 1
+    res: 1.5
+    cos: 5
+    max: 800
+  f:
+    type: resource
+    def: 1
+    res: 1.5
+    cos: 5
+    max: 800
+  g:
+    type: resource
+    def: 3
+    res: 1
+    cos: 5
+    max: 100
+  h:
+    type: resource
+    def: 1.5
+    res: 1
+    cos: 5
+    max: 100
+  i:
+    type: resource
+    def: 1.5
+    res: 1
+    cos: 5
+    max: 100
+  j:
+    type: resource
+    def: 1.5
+    res: 1
+    cos: 5
+    max: 100
+  k:
+    type: resource
+    def: 1.5
+    res: 1
+    cos: 5
+    max: 100
+
+routes:
+  - - A
+    - C
+    - 3
+  - - A
+    - B
+    - 3
+  - - A
+    - D
+    - 2
+  - - D
+    - E
+    - 2
+  - - C
+    - E
+    - 3
+  - - B
+    - E
+    - 3
+  - - E
+    - h
+    - 4
+  - - U
+    - h
+    - 3
+  - - W
+    - h
+    - 3
+  - - W
+    - a
+    - 2
+  - - U
+    - Y
+    - 2
+  - - Y
+    - c
+    - 2
+  - - a
+    - c
+    - 2
+  - - W
+    - a
+    - 2
+  - - F
+    - H
+    - 3
+  - - F
+    - G
+    - 3
+  - - F
+    - I
+    - 2
+  - - I
+    - J
+    - 2
+  - - H
+    - J
+    - 3
+  - - G
+    - J
+    - 3
+  - - J
+    - i
+    - 4
+  - - U
+    - i
+    - 3
+  - - X
+    - i
+    - 3
+  - - X
+    - b
+    - 2
+  - - Y
+    - d
+    - 2
+  - - d
+    - b
+    - 2
+  - - K
+    - M
+    - 3
+  - - K
+    - L
+    - 3
+  - - K
+    - N
+    - 2
+  - - N
+    - O
+    - 2
+  - - M
+    - O
+    - 3
+  - - L
+    - O
+    - 3
+  - - O
+    - j
+    - 4
+  - - V
+    - j
+    - 3
+  - - W
+    - j
+    - 3
+  - - Z
+    - e
+    - 2
+  - - a
+    - e
+    - 2
+  - - P
+    - R
+    - 3
+  - - P
+    - Q
+    - 3
+  - - P
+    - S
+    - 2
+  - - S
+    - T
+    - 2
+  - - R
+    - T
+    - 3
+  - - Q
+    - T
+    - 3
+  - - T
+    - k
+    - 4
+  - - V
+    - k
+    - 3
+  - - X
+    - k
+    - 3
+  - - Z
+    - f
+    - 2
+  - - f
+    - b
+    - 2
+  - - V
+    - Z
+    - 2
+  - - Y
+    - g
+    - 2
+  - - a
+    - g
+    - 2
+  - - b
+    - g
+    - 2
+  - - Z
+    - g
+    - 2
+  - - A
+    - K
+    - 21
+  - - A
+    - F
+    - 21
+  - - F
+    - P
+    - 21
+  - - K
+    - P
+    - 21
