@@ -166,6 +166,9 @@ class Game():
             elif armies < count:
                 self.log('not enuough armies, round=%s, move=[%s, %s, %s]') % (self.round, armies, _from, to)
                 continue
+            elif count < 1:
+                self.log('no impositive armies, round=%s, move=[%s, %s, %s]') % (self.round, armies, _from, to)
+                continue
             step = self.routes[(_from, to)]
             moves.append([n, _from, to, count, step])
             
