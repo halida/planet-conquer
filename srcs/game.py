@@ -109,10 +109,15 @@ class Game():
         player_id = len(self.players)-1
         planet_id = self.map.starts[player_id]
         self.holds[planet_id] = [player_id, self.map.meta['start_unit']]
-        # 动态调整维修费用
-        self.mt_base_line = int(self.map_max_units / float(2) / len(self.players))
+        # 用户加入时调整维护费用
+        self.adjust_mt_fee()
         # 返回玩家的顺序, 以及玩家的id(用来验证控制权限)
         return dict(seq=len(self.players) - 1, id=player.id)
+
+    def adjust_mt_fee(self):
+        """动态调整维修费用"""
+        active_playes = len([i if i.alive for i in self.players])
+        self.mt_base_line = int(self.map_max_units / float(2) / active_players
 
     def get_seq(self, id):
         """根据玩家的id获取seq"""
@@ -436,6 +441,8 @@ class Game():
         # 判断是否没有响应时间过长
         if player.no_resp_time >= MAX_LOST_TURN:
             player.alive = False
+            # 用户丢失后调整维护费用
+            self.adjust_mt_fee()
             logging.debug('kill no response player: %d' % \
                          self.players.index(player))
             self.log('kill player for no response %s: , round is %s, time is %s' % (player.name, round, player.no_resp_time))
