@@ -38,7 +38,7 @@ class SimpleAI():
                                 side='python'))
         if not self.me.has_key('seq'): return
         
-        self.id = self.me['seq']
+        self.user_id = self.me['seq']
         return self.me
     
     def cmd_map(self):
@@ -56,8 +56,7 @@ class SimpleAI():
         # for i, s in enumerate(self.info['holds']):
             side, count = s
             # 寻找自己的星球
-            if side != self.id:
-                continue
+            if side != self.user_id: continue
 
             for route in self.map['routes']:
                 # # 数量超过一定程度的时候, 才派兵
@@ -65,7 +64,7 @@ class SimpleAI():
                     break
                 # 当前星球的路径, 并且对方星球不是自己的星球
                 _from, to, step = route
-                if _from != i or self.info['holds'][to][0] == self.id:
+                if _from != i or self.info['holds'][to][0] == self.user_id:
                     continue
 
                 if self.info['holds'][to][1] > count:
@@ -85,13 +84,13 @@ class SimpleAI():
 
     def choose_tactic(self):
         # check can use terminator
-        if self.info['players'][self.id]['points'] < 3: return
+        if self.info['players'][self.user_id]['points'] < 2: return
         
         # get max unit player
         target_player = None
         target_count = 0
         for i, player in enumerate(self.info['players']):
-            if i == self.id: continue
+            if i == self.user_id: continue
             if player["units"] < target_count: continue
             target_player = i
             target_count = player["units"]
@@ -103,6 +102,7 @@ class SimpleAI():
                for i, v in enumerate(self.info["holds"])
                if v[0] == target_player
                ]
+        if len(ps) <= 0: return
         planet = ps[random.randint(0, len(ps)-1)]
         return dict(type='terminator', planet=planet)
 
@@ -121,13 +121,13 @@ def main(room=0):
         while True:
             time.sleep(1.0)
             rs.cmd_info()
+            if rs.info['status'] == 'finished': break
             try:
                 result = rs.step()
                 print result
-                if result['status'] != 'ok':
-                    break
+                if result['status'] == 'noid': break
             except:
-                break
+                raise
     
 if __name__=="__main__":
     main()
