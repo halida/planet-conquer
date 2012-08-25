@@ -11,6 +11,8 @@ from scores import add_score
 WAITFORPLAYER='waitforplayer'
 RUNNING='running'
 FINISHED='finished'
+MAINTAIN_LEVEL_1 = 1.5
+MAINTAIN_LEVEL_2 = 2
 
 DEFAULT_MAP = 'srcs/map/fight_here.yml'
 # DEFAULT_MAP = 'srcs/map/test.yml'
@@ -264,7 +266,7 @@ class Game():
         for move in arrives:
             self.battle(move)
 
-    def mt_level(self, _side, base_line=200):
+    def mt_level(self, _side, base_line=2000):
         """
         根据 玩家 units & base_line 返回增长系数, 最高为 1
         """
@@ -283,7 +285,7 @@ class Game():
         for i, data in enumerate(self.holds):
             side, count = data
             if side == None: continue
-            next = self.count_growth(count, self.planets[i])
+            next = self.count_growth(count, self.planets[i], self.mt_level(side))
             if next <= 0:
                 side = None
                 next = 0
@@ -388,11 +390,13 @@ class Game():
                                   winner=planet_side))
         self.holds[to] = [planet_side, planet_count]
 
-    def count_growth(self, planet_count, planet):
+    def count_growth(self, planet_count, planet, mt_proc = 1):
         max = planet['max']
         res = planet['res']
         cos = planet['cos']
-        new_count = int(planet_count * res + cos)
+        # 兵力增量乘以维护费用水平(增长系数)
+        new_armies = (planet_count * (res - 1) + cos) * mt_proc
+        new_count = int(planet_count + new_armies)
         if planet_count < max:
             planet_count = min(new_count, max)
         elif new_count < planet_count:
