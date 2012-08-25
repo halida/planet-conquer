@@ -72,6 +72,11 @@ class Map:
                        for name in self.meta['starts']]
         random.shuffle(self.starts)
         
+        self.max_sum = 0
+        # 计算 map 上所有星球的最大产兵量总和
+        for i in self.planets:
+            self.max_sum += int(i['max'])
+
 def test():
     """
     >>> map = Map.loadfile("srcs/map/test.yml")
