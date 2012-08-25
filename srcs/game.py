@@ -262,10 +262,6 @@ class Game():
         return arrives
     
     def battle_stage(self, arrives):
-        #for move in arrives:
-        #    self.battle(move)
-        #
-        #return
         for i in range(len(self.holds)):
             # move[2] means destination of move
             arrive_moves = [move for move in arrives
@@ -277,10 +273,9 @@ class Game():
         #按节点进行结算
         army = {}
         planet_side, planet_count = self.holds[to]
-        if planet_side != None:
-            army[planet_side] = planet_count
-
         _def = self.planets[to]['def']
+        if planet_side != None:
+            army[planet_side] = planet_count * _def
 
 	for i,move in enumerate(arrivemoves):
             # move[0] is side of move
@@ -288,9 +283,6 @@ class Game():
                 army[move[0]] = 0
 
             army[move[0]] += move[3]        
-
-        if planet_side != None:
-            army[planet_side] *= _def 
 
 	best_army = None
         for key in army:
@@ -310,13 +302,7 @@ class Game():
                     if army[key] == army[best_army]:
                         planet_side, planet_count = None, 0
                         break
-                    if len(army) > 2:
-                        self.logs.append("Before_Planet_count %d, Len %d, Key_army %d, Best_army %d\n" 
-                                         %(planet_count, len(army), army[key], army[best_army]))
                     planet_count -= int(math.ceil(army[key]**2/float(army[best_army]*(len(army)-1))))
-                    if len(army) > 2:
-                        self.logs.append("After_Planet_count %d, Len %d, Key_army %d, Best_army %d\n" 
-                                         %(planet_count, len(army), army[key], army[best_army]))
 
         if planet_side == None:
             # 如果星球没有驻军, 就占领
