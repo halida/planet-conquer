@@ -1,0 +1,75 @@
+name: ut_test
+desc: >-
+  this is test map for ut.
+author: halida, resty
+version: 0.1
+
+max_round: 8000
+max_player: 4
+start_unit: 100
+starts:
+  - A
+  - B
+  - C
+  - D
+
+map: |
+  A...B
+  .....
+  ..E..
+  .....
+  C...D
+planets:
+  A:
+    def: 2
+    res: 1.1
+    cos: 10
+    max: 1000
+  B:
+    def: 2
+    res: 1
+    cos: 10
+    max: 1000
+  C:
+    def: 2
+    res: 1
+    cos: 10
+    max: 1000
+  D:
+    def: 2
+    res: 1
+    cos: 10
+    max: 1000
+
+  E:
+    def: 0.5
+    res: 1.5
+    cos: 0
+    max: 300
+
+
+routes:
+  - - A
+    - B
+    - 2
+  - - A
+    - C
+    - 2
+  - - D
+    - B
+    - 2
+  - - C
+    - D
+    - 2
+  - - A
+    - E
+    - 1
+  - - B
+    - E
+    - 1
+  - - C
+    - E
+    - 1
+  - - D
+    - E
+    - 1

@@ -1,9 +1,12 @@
 # test_code for games
 
 import game
+import map.map
 from map.map import Map
 from game import Game, Player
 from nose.tools import *
+
+map.map.random_starts = False
 
 def player_test():
     player = Player(game="game_instance", name="player_name")
@@ -39,7 +42,7 @@ def count_growth_test():
 
 
 def move_test():
-    g = Game(enable_no_resp_die = False, map = "srcs/map/test.yml")
+    g = Game(enable_no_resp_die = False, map = "srcs/map/ut_test.yml")
     
     # add_player
     player1 = g.add_player('player1')
@@ -54,7 +57,7 @@ def move_test():
     
 
 def move_zero_test():
-    g = Game(enable_no_resp_die = False, map = "srcs/map/test.yml")
+    g = Game(enable_no_resp_die = False, map = "srcs/map/ut_test.yml")
     # add_player
     player1 = g.add_player('player1')
     eq_(player1['seq'], 0)
@@ -70,7 +73,7 @@ def move_zero_test():
     
 def play_game_case_test():
     # init game
-    g = Game(enable_no_resp_die = False, map = "srcs/map/test.yml")
+    g = Game(enable_no_resp_die = False, map = "srcs/map/ut_test.yml")
     yield check_game_empty, g, game.WAITFORPLAYER
     
     # add_player
@@ -118,3 +121,4 @@ def play_game_case_test():
     print g.moves
     
     
+

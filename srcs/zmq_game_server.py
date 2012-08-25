@@ -12,7 +12,7 @@ from game import *
 context = zmq.Context()
 
 # room的个数
-ROOMS = 4
+ROOMS = 100
 
 class Server():
     """

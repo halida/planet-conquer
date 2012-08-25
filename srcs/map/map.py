@@ -5,6 +5,7 @@ module: map
 """
 import yaml, string, random
 
+random_starts = True
 class Map:
     # planet tokens
     planet_tokens = string.uppercase + string.lowercase
@@ -70,7 +71,8 @@ class Map:
                        
         self.starts = [self.planet_name_to_id[name]
                        for name in self.meta['starts']]
-        random.shuffle(self.starts)
+        if random_starts:
+            random.shuffle(self.starts)
         
 def test():
     """
