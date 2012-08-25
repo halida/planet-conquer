@@ -264,6 +264,20 @@ class Game():
         for move in arrives:
             self.battle(move)
 
+    def mt_level(self, _side, base_line=200):
+        """
+        根据 玩家 units & base_line 返回增长系数, 最高为 1
+        """
+        _units = self.get_info()['players'][_side]['units']
+        if _units <= base_line:
+            return float(1)
+        elif _units <= base_line * MAINTAIN_LEVEL_1:
+            return float(0.5)
+        elif _units <= base_line * MAINTAIN_LEVEL_2:
+            return float(0.25)
+        else:
+            return float(0)
+
     def next_round(self):
         # 生产回合
         for i, data in enumerate(self.holds):
