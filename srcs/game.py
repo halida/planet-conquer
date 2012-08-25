@@ -6,6 +6,7 @@ module: player_game
 from lib import *
 from map.map import Map
 from scores import add_score
+import math
 
 # 游戏状态
 WAITFORPLAYER='waitforplayer'
@@ -15,7 +16,7 @@ MAINTAIN_LEVEL_1 = 1.5
 MAINTAIN_LEVEL_2 = 2
 
 DEFAULT_MAP = 'srcs/map/fight_here.yml'
-# DEFAULT_MAP = 'srcs/map/test.yml'
+#DEFAULT_MAP = 'srcs/map/test.yml'
 
 MAX_LOST_TURN = 3
 
@@ -313,8 +314,64 @@ class Game():
         return arrives
     
     def battle_stage(self, arrives):
-        for move in arrives:
-            self.battle(move)
+        for i in range(len(self.holds)):
+            # move[2] means destination of move
+            arrive_moves = [move for move in arrives
+	                  if move[2] == i]
+            if len(arrive_moves) > 0:
+                self.battle_multi(arrive_moves, i)
+
+    def battle_multi(self, arrivemoves, to):
+        #按节点进行结算
+        army = {}
+        planet_side, planet_count = self.holds[to]
+        _def = self.planets[to]['def']
+        if planet_side != None:
+            army[planet_side] = planet_count * _def
+
+	for i,move in enumerate(arrivemoves):
+            # move[0] is side of move
+            if move[0] not in army:
+                army[move[0]] = 0
+
+            army[move[0]] += move[3]        
+
+	best_army = None
+        for key in army:
+            if best_army == None:
+                best_army = key
+            elif army[key] > army[best_army]:
+                best_army = key
+
+        if best_army == None:
+            self.logs.append(dict(type = "army",armys = army))
+            return
+        planet_count = army[best_army]
+        if len(army) > 1:
+            for key in army:
+                # 数量一样的话，全灭
+                if key != best_army:
+                    if army[key] == army[best_army]:
+                        planet_side, planet_count = None, 0
+                        break
+                    planet_count -= int(math.ceil(army[key]**2/float(army[best_army]*(len(army)-1))))
+
+        if planet_side == None:
+            # 如果星球没有驻军, 就占领
+            planet_side = best_army
+            self.logs.append(dict(type= "occupy",
+                                  side=planet_side,
+                                  count=planet_count,
+                                  planet=to)) 
+        else:
+            # 防守方加权
+            if best_army == planet_side:
+                planet_count = int(planet_count/ _def)
+
+            planet_side = best_army
+
+        self.holds[to] = [planet_side, planet_count]
+        
 
     def mt_level(self, _side, base_line=2000):
         """

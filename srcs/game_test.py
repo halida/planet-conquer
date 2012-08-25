@@ -70,7 +70,43 @@ def move_zero_test():
     eq_(g.holds, [[0, 100], [1, 100], [None, 0], [None, 0], [None, 0]])
     g.next_round()
     eq_(g.holds, [[0, 120], [1, 110], [None, 0], [None, 0], [None, 0]])
+   
+def multi_battle_case_test():
+    g = Game(enable_no_resp_die = False, map = "srcs/map/ut_test.yml")
+    yield check_game_empty, g, game.WAITFORPLAYER
+
+    player1 = g.add_player('player1')
+    eq_(player1['seq'], 0)
+    player2 = g.add_player('player2')
+    eq_(player2['seq'], 1)
+    player3 = g.add_player('player3')
+    eq_(player3['seq'], 2)
     
+    #round 0:
+    eq_(g.holds, [[0, 100],[1, 100], [2, 100], [None, 0], [None, 0]])
+    eq_(g.status, game.WAITFORPLAYER)
+    eq_(g.round, 0)
+    #round 1:
+    ok_(g.step())
+    eq_(g.holds, [[0, 120], [1, 110], [2, 110], [None, 0], [None, 0]])
+    #round 2:
+    g.set_player_op(player1['id'], dict(op='moves', moves=[[50, 0, 4],]))
+    #g.set_player_op(player1['id'], dict(op='moves', moves=[[100, 0, 4], ]))
+    g.step()
+    eq_(g.holds, [[0, 87], [1, 120], [2, 120], [None, 0], [0, 75]])
+    #round 3:
+    g.set_player_op(player1['id'], dict(op='moves', moves=[[50, 0, 4], ]))
+    g.set_player_op(player2['id'], dict(op='moves', moves=[[100, 1, 4], ]))
+    g.set_player_op(player3['id'], dict(op='moves', moves=[[110, 2, 4], ]))
+    g.step()
+    eq_(g.holds, [[0, 50], [1, 30], [2, 20], [None, 0], [2, 43]])
+    #round 4:
+    g.set_player_op(player1['id'], dict(op='moves', moves=[[21, 0, 4], ]))
+    g.set_player_op(player2['id'], dict(op='moves', moves=[[10, 1, 4], ]))
+    g.set_player_op(player3['id'], dict(op='moves', moves=[[1, 4, 2], ]))
+    g.step()
+    eq_(g.holds, [[0, 41], [1, 30], [2, 30], [None, 0], [None, 0]])
+ 
 def play_game_case_test():
     # init game
     g = Game(enable_no_resp_die = False, map = "srcs/map/ut_test.yml")
@@ -109,7 +145,7 @@ def play_game_case_test():
     g.step()
     # Attack: 100 Defence 150 => 150 - 100 * 100 / 150 = 84 ~ 168
     # growth: 168 * 1.5 = 252
-    eq_(g.holds, [[None, 0], [1, 910], [None, 0], [None, 0], [0, 252]])
+    eq_(g.holds, [[None, 0], [1, 910], [None, 0], [None, 0], [0, 249]])
     g.step()
     eq_(g.holds, [[None, 0], [1, 920], [None, 0], [None, 0], [0, 300]])
     # get a new planet
