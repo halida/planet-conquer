@@ -96,7 +96,8 @@ ws.onmessage = (e)->
             )(log)
             logs.trigger 'log', "<p style='color:#{players[log.side].color}'>#{players[log.side].name}: Send #{log.count} troops from No.#{log.from} to No.#{log.to}.</p>"
           when 'production'
-            logs.trigger 'log', "<p style='color:#{players[log.side].color}'>#{players[log.side].name}: Planet No.#{log.planet} production to #{log.count}</p>"
+            true
+            # logs.trigger 'log', "<p style='color:#{players[log.side].color}'>#{players[log.side].name}: Planet No.#{log.planet} production to #{log.count}</p>"
           when 'occupy'
             $('#planet_' + log.planet).animate({
               opacity: 0
@@ -108,12 +109,16 @@ ws.onmessage = (e)->
               logs.trigger 'log', "<p style='color:#{players[log.winner].color}'>#{players[log.winner].name}: Successfully block the #{players[log.attack].name}'s offensive<p>"
             else
               logs.trigger 'log', "<p style='color:#{players[log.winner].color}'>#{players[log.winner].name}: Occupation of the No.#{log.planet} planet</p>"
+          when 'tactic'
+            tactic = log.tactic
+            logs.trigger 'log', "<p style='color: red'>tactic: #{tactic.type}</p>"
+
 
       top = []
       for t, i in _.sortBy(players, (p)->
         -(p.planets*10000 + p.units)
       )
-        top.push("<div class='top_#{i}' style='color:#{t.color}'><span>#{i+1}</span><p><strong>#{t.name}</strong><br />Planets: #{t.planets}<br />Units: #{t.units}<br />Status: #{t.status}</p></div>")
+        top.push("<div class='top_#{i}' style='color:#{t.color}'><span>#{i+1}</span><p><strong>#{t.name}</strong><br />Planets: #{t.planets}<br />Units: #{t.units}<br />Status: #{t.status}<br />Points: #{t.points}</p></div>")
       $('#top').html(top.join(''))
       $('#round').html("Round #{data.round}/#{map.max_round}")
       $('#status').html(data.status)
@@ -124,3 +129,6 @@ ws.onerror = (e)->
 $('#logs').bind('log', (e, msg)->
   this.innerHTML = msg + this.innerHTML
 )
+
+$('#show_logs').click ->
+    $("#logs").toggle(200)

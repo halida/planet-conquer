@@ -46,6 +46,8 @@ class Controller():
         elif op in ('moves'):
             if isinstance(data['moves'] , basestring):
                 data['moves'] = json.loads(data['moves'])
+            if data.has_key('tactic') and isinstance(data['tactic'] , basestring):
+                data['tactic'] = json.loads(data['tactic'])
             return dict(status=self.game.set_player_op(data['id'], data))
         
         elif op == 'map':

@@ -12,8 +12,11 @@
       #round
       #top
       #about
-        = link_to "rubyvspython.org", "http://rubyvspython.org", target: "_blank"
-    #logs
+        %p
+          %a#show_logs > show logs
+        %p
+          = link_to "rubyvspython.org", "http://rubyvspython.org", target: "_blank"
+    #logs{style: "display: none"}
     %audio(src="music/bg.ogg" autoplay loop)
     = javascript_include_tag 'jquery', 'bootstrap.min', 'underscore-min'
     %script

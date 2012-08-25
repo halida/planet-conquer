@@ -17,6 +17,10 @@ DEFAULT_MAP = 'srcs/map/fight_here.yml'
 
 MAX_LOST_TURN = 3
 
+TACTIC_COST = {
+    'terminator': 3,
+    }
+
 class Player():
     def __init__(self, game, name="", side='python'):
         """设置player
@@ -86,7 +90,11 @@ class Game():
         self.moves = []
         self.players = []
         self.loop_count = 0
+        
         self.player_ops = []
+        self.player_points = []
+        self.player_tactics = []
+        
         self.status = WAITFORPLAYER
 
         self.holds = [[None, 0] for i in range(len(self.map.planets))]
@@ -99,6 +107,8 @@ class Game():
         player = Player(self, name, side)
         self.players.append(player)
         self.player_ops.append(None)
+        self.player_points.append(0)
+        self.player_tactics.append(None)
         # 强制更新info
         self.info = None
         # 玩家加入地图
@@ -119,30 +129,46 @@ class Game():
         n = self.get_seq(id)
         if n == None:
             return "noid"
+        # 检查玩家是否还活着
+        if not self.players[n].alive:
+            return "not alive"
         
         try:
             if kw['op'] == 'moves':
-                moves = []
-                for count, _from, to in kw['moves']:
-                    count = int(count)
-                    if count <= 0: continue
-                    # 检查moves合法性
-                    owner, armies = self.holds[_from]
-                    if owner != n:
-                        self.log('not your planet, round=%s, move=[%s, %s, %s]') % (self.round, armies, _from, to)
-                        continue
-                    elif armies < count:
-                        self.log('not enuough armies, round=%s, move=[%s, %s, %s]') % (self.round, armies, _from, to)
-                        continue
-                    step = self.routes[(_from, to)]
-                    moves.append([n, _from, to, count, step])
-                self.player_ops[n] = moves
-                #print 'set_player_op id:%s'% n, self.round, self.player_ops, moves
-                return 'ok'
+                return self.set_player_moves(n, kw)
             else:
                 return 'wrong op: ' + kw['op']
-        except Exception:
-            return 'invalid command'
+        except Exception as e:
+            return 'invalid command: ' + e.message
+
+    def set_player_moves(self, n, kw):
+        moves = []
+        for count, _from, to in kw['moves']:
+            count = int(count)
+            if count <= 0: continue
+            # 检查moves合法性
+            owner, armies = self.holds[_from]
+            if owner != n:
+                self.log('not your planet, round=%s, move=[%s, %s, %s]') % (self.round, armies, _from, to)
+                continue
+            elif armies < count:
+                self.log('not enuough armies, round=%s, move=[%s, %s, %s]') % (self.round, armies, _from, to)
+                continue
+            step = self.routes[(_from, to)]
+            moves.append([n, _from, to, count, step])
+            
+        if kw.has_key('tactic'):
+            tactic = kw['tactic']
+            if tactic['type'] not in TACTIC_COST.keys():
+                return "wrong tactic type: %s" % tactic['type']
+            if TACTIC_COST[tactic['type']] < self.player_points[n]:
+                return "no enough points"
+            # todo check tactic
+            self.player_tactics[n] = tactic
+            
+        self.player_ops[n] = moves
+        #print 'set_player_op id:%s'% n, self.round, self.player_ops, moves
+        return 'ok'
 
     def do_player_op(self, n):
         for move in self.player_ops[n]:
@@ -165,6 +191,19 @@ class Game():
                 if self.holds[_from][1] <= 0:
                     self.holds[_from] = [None, 0]
         self.player_ops[n] = None
+
+        if self.player_tactics[n]:
+            tactic = self.player_tactics[n]
+            if tactic["type"] == 'terminator':
+                planet = tactic["planet"]
+                self.holds[planet] = [None, 0]
+                self.player_points[n] -= TACTIC_COST['terminator']
+                self.logs.append({
+                    'type': "tactic",
+                    'tactic': tactic,
+                    })
+        self.player_tactics[n] = None
+            
 
     def check_winner(self):
         """
@@ -208,6 +247,8 @@ class Game():
             side = move[0]
             count = move[3]
             player_infos[side]["units"] += count
+        for side, points in enumerate(self.player_points):
+            player_infos[side]['points'] = points
         return player_infos
 
     def get_info(self):
@@ -310,6 +351,10 @@ class Game():
             self.status = FINISHED
             self.check_winner()
             self.loop_count = 0
+
+        # points
+        for i in range(len(self.player_points)):
+            self.player_points[i] += 1
 
         # move stage
         self.move_stage()
