@@ -31,7 +31,7 @@ def start_game(q):
                  msg_queue=q)
 
 def start_http():
-    from srcs.web_server import main
+    from srcs import web_server
     sys.stdout = Logger('http.log')
     #application.settings['debug'] = False
     #application.listen(9999)
@@ -40,7 +40,7 @@ def start_http():
     #except KeyboardInterrupt:
         #print "bye!"
 
-    main()
+    web_server.main()
 
 def start_ai(name, roomid):
     ai = __import__('examples.%s' % name, globals(), locals(), ['main'])
