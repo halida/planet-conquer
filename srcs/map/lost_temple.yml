@@ -125,7 +125,7 @@ planets:
   P:
     type: base
     def: 2
-    res: 1.5
+    res: 1.2
     cos: 0
     max: 1000
   Q:
