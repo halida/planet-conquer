@@ -105,7 +105,7 @@ def multi_battle_case_test():
     g.set_player_op(player2['id'], dict(op='moves', moves=[[10, 1, 4], ]))
     g.set_player_op(player3['id'], dict(op='moves', moves=[[1, 4, 2], ]))
     g.step()
-    eq_(g.holds, [[0, 41], [1, 30], [2, 30], [None, 0], [None, 0]])
+    eq_(g.holds, [[0, 41], [1, 30], [2, 31], [None, 0], [None, 0]])
  
 def play_game_case_test():
     # init game

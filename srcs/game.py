@@ -325,10 +325,12 @@ class Game():
                 self.battle_multi(arrive_moves, i)
 
     def battle_multi(self, arrivemoves, to):
-        #按节点进行结算
+        # 按节点进行结算
         army = {}
         planet_side, planet_count = self.holds[to]
         _def = self.planets[to]['def']
+        _old_planet_count = planet_count
+        _reinforce_count = 0
         if planet_side != None:
             army[planet_side] = planet_count * _def
 
@@ -336,8 +338,11 @@ class Game():
             # move[0] is side of move
             if move[0] not in army:
                 army[move[0]] = 0
+            army[move[0]] += move[3]
 
-            army[move[0]] += move[3]        
+        # 记录援军数量
+        if planet_side != None:
+            _reinforce_count = army[planet_side] - _old_planet_count * _def
 
 	best_army = None
         for key in army:
@@ -369,8 +374,9 @@ class Game():
         else:
             # 防守方加权
             if best_army == planet_side:
-                planet_count = int(planet_count/ _def)
-
+                _pre_battle = _old_planet_count * _def + _reinforce_count
+                planet_count = int((_reinforce_count + _old_planet_count) *
+                                   (planet_count / _pre_battle))
             planet_side = best_army
 
         self.holds[to] = [planet_side, planet_count]
