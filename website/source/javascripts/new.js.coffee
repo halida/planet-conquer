@@ -1,3 +1,38 @@
+#--------------------------------------
+# music
+onmusic = true
+audio = $('audio#music')[0]
+onmusic_btn = $('#music_play')
+
+onmusic_btn.click ->
+    if onmusic
+        audio.pause()
+        onmusic_btn.text("=")
+    else
+        audio.play()
+        onmusic_btn.text(">")
+    onmusic = not onmusic
+
+#--------------------------------------
+# background
+bg_img = $('.bg img')
+bg_img.load ->
+    bg_img.addClass('on')
+
+#--------------------------------------
+# game play
+onplay = true
+onplay_btn = $('#game_play')
+
+onplay_btn.click ->
+    if onplay
+        onplay_btn.text("=")
+    else
+        onplay_btn.text(">")
+    onplay = not onplay
+
+#--------------------------------------
+# game
 if MozWebSocket?
   WS = MozWebSocket
 else
@@ -21,6 +56,7 @@ ws.onopen = ->
   ws.send 'info'
 
 ws.onmessage = (e)->
+  return unless onplay
   data = $.parseJSON(e.data)
   console.log data if config.debug
   switch data.op
@@ -118,7 +154,7 @@ ws.onmessage = (e)->
       for t, i in _.sortBy(players, (p)->
         -(p.planets*10000 + p.units)
       )
-        top.push("<div class='top_#{i}' style='color:#{t.color}'><span>#{i+1}</span><p><strong>#{t.name}</strong><br />Planets: #{t.planets}<br />Units: #{t.units}<br />Status: #{t.status}<br />Points: #{t.points}</p></div>")
+        top.push("<div class='top_#{i}' style='color:#{t.color}'><span>#{i+1}</span><p><strong>#{t.name}</strong><br />Planets: #{t.planets}<br />Units: #{t.units}<br />status: #{t.status}<br/>Points: #{t.points}</p></div>")
       $('#top').html(top.join(''))
       $('#round').html("Round #{data.round}/#{map.max_round}")
       $('#status').html(data.status)

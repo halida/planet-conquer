@@ -6,7 +6,14 @@
   %body
     .container
       #map
+
     #sidebar
+      #ctl
+        music: 
+        %a#music_play >
+        game:
+        %a#game_play >
+
       #map-info
       %h2#status
       #round
@@ -16,8 +23,11 @@
           %a#show_logs > show logs
         %p
           = link_to "rubyvspython.org", "http://rubyvspython.org", target: "_blank"
+
     #logs{style: "display: none"}
-    %audio(src="music/bg.ogg" autoplay loop)
+
+    %audio#music(src="music/bg.mp3" autoplay loop)
+
     = javascript_include_tag 'jquery', 'bootstrap.min', 'underscore-min'
     %script
       :erb
