@@ -15,8 +15,8 @@ FINISHED='finished'
 MAINTAIN_LEVEL_1 = 1.5
 MAINTAIN_LEVEL_2 = 2
 
-DEFAULT_MAP = 'srcs/map/fight_here.yml'
-#DEFAULT_MAP = 'srcs/map/test.yml'
+#DEFAULT_MAP = 'srcs/map/fight_here.yml'
+DEFAULT_MAP = 'srcs/map/test.yml'
 
 MAX_LOST_TURN = 3
 
@@ -286,8 +286,14 @@ class Game():
         if self.round > self.max_round:
             return True
 
+        player_infos = self.get_player_infos()
+        
+        # save user alive status
+        for i, p in enumerate(player_infos):
+            self.players[i].alive = p['units'] > 0
+
         alives = [True
-                  for p in self.get_player_infos()
+                  for p in player_infos
                   if p['units'] > 0]
         if sum(alives) <= 1:
             return True
@@ -455,7 +461,7 @@ class Game():
         
         # battle stage
         self.battle_stage(arrives)
-            
+
         # next round
         self.next_round()
         return True
