@@ -1,0 +1,137 @@
+@import "bootstrap.min.css"
+@import "compass"
+
+$bg: #13131F
+$cell: floor((940 / 15) - 20)
+
+@each $name in webkit, moz, ms
+  @-#{$name}-keyframes move
+    0%
+      opacity: 1
+    50%
+      opacity: 0.6
+    100%
+      opacity: 1
+
+body
+  background: $bg
+  /* background-image: url("/images/bg.jpg")
+  /* background-position: left top
+  /* background-attachment: fixed
+  /* background-repeat: no-repeat
+  /* background-color: $bg
+
+#map
+  width: 100%
+  overflow: hidden
+  margin-top: 20px
+
+  .cell
+    overflow: hidden
+    position: absolute
+    display: block
+    font-size: 14px
+    text-align: center
+    color: #000
+    width: #{$cell}px
+    height: #{$cell}px
+    line-height: #{$cell}px
+    border: 2px solid transparent
+    &.planet, &.player_0, &.player_1, &.player_2, &.player_3
+      +border-radius(#{$cell/2 + 2}px)
+
+  .planet
+    border-color: #fff
+    color: #fff
+    background: $bg
+    &[planet_type=normal]
+    &[planet_type=base]
+    &[planet_type=defence]
+    &[planet_type=resource]
+  
+  .planet_info
+    position: absolute
+    display: block
+    color: #fff
+    width: #{$cell * 2}px
+    text-align: center
+    font-size: 11px
+    color: #888
+
+  .move
+    position: absolute
+    overflow: hidden
+    font-size: 10px
+    text-align: center
+    color: #fff
+    width: #{$cell/2}px
+    height: #{$cell/2}px
+    line-height: #{$cell/2}px
+    border: 2px solid transparent
+    +border-radius(#{$cell/4 + 2}px)
+    @each $name in webkit, moz, ms
+      -#{$name}-animation: move 1s infinite
+    pointer-events: none
+  
+.player_0
+  background: #EE2C44
+  border-color: lighten(#EE2C44, 20%)
+
+.player_1
+  background: #42C3D9
+  border-color: lighten(#42C3D9, 20%)
+
+.player_2
+  background: #E96FA9
+  border-color: lighten(#E96FA9, 20%)
+  
+.player_3
+  background: #A5CF4E
+  border-color: lighten(#A5CF4E, 20%)
+
+#sidebar
+  position: fixed
+  top: 0
+  left: 0
+  padding: 0 10px 10px 10px
+  color: #888
+  background: $bg
+  +opacity(0.8)
+  a
+    cursor: pointer
+    text-decoration: none
+
+
+#about
+  a
+    color: #888
+
+#top
+  width: 180px
+
+  div
+    border: 2px solid #444
+    padding: 10px
+    margin-bottom: 10px
+  p
+    margin: 0
+    line-height: 200%
+  strong
+    font-size: 20px
+  span
+    position: absolute
+    margin: 66px 0 0 120px
+    font-size: 60px
+    color: #444
+    font-weight: bold
+
+#logs
+  position: fixed
+  top: 0
+  right: 0
+  width: 260px
+  overflow-y: scroll
+  height: 100%
+  text-align: left
+  p
+    margin-bottom: 3px
