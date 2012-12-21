@@ -176,7 +176,7 @@ class Game():
             tactic = kw['tactic']
             if tactic['type'] not in TACTIC_COST.keys():
                 return "wrong tactic type: %s" % tactic['type']
-            if TACTIC_COST[tactic['type']] < self.player_points[n]:
+            if TACTIC_COST[tactic['type']] > self.player_points[n]:
                 return "no enough points"
             # todo check tactic
             self.player_tactics[n] = tactic
