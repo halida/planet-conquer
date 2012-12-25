@@ -36,7 +36,8 @@
         config = {
           addr: '<%= @game_server %>',
           room: <%= @room_id %>,
-          debug: true
+          debug: true,
+          code_url: '<%= asset_url 'javascripts/svg_code.js' %>'
         }
     = javascript_include_tag 'svg_room'
     

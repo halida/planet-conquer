@@ -32,50 +32,61 @@ onplay_btn.click ->
     onplay = not onplay
 
 #--------------------------------------
-# game
+# display game
+window.board = board = bonsai.run(
+    document.getElementById('map'),
+    url: config.code_url
+    )
+
+#--------------------------------------
+# websocket
 if MozWebSocket?
     WS = MozWebSocket
 else
     WS = WebSocket
 
-#--------------------------------------
-# websocket
-this.ws = new WS("ws://#{config.addr}/info")
-ws._send = ws.send
+init_websocket = ->
+    ws = new WS("ws://#{config.addr}/info")
+    ws._send = ws.send
 
-ws.send = (data)->
-    if typeof data is 'string'
-        data = {op: data}
+    ws.send = (data)->
+        if typeof data is 'string'
+            data = {op: data}
 
-    data.room = config.room
-    this._send JSON.stringify(data)
+        data.room = config.room
+        this._send JSON.stringify(data)
 
-ws.onopen = ->
-    ws.send 'setroom'
-    ws.send 'map'
-    ws.send 'info'
+    ws.onopen = ->
+        ws.send 'setroom'
+        ws.send 'map'
+        ws.send 'info'
 
-ws.onmessage = (e)->
-    return unless onplay
-    data = $.parseJSON(e.data)
-    console.log data if config.debug
-    switch data.op
-        when 'map'
-            init_map(data)
-        when 'info'
-            return
-            # update_info(data)
+    ws.onmessage = (e)->
+        console.log 'xxx'
+        return unless onplay
+        data = $.parseJSON(e.data)
+        console.log data if config.debug
+        switch data.op
+            when 'map'
+                init_map(data)
+            when 'info'
+                update_info(data)
+
+    ws.onerror = (e)->
+        console.log e if config.debug
+
+board.on 'load', ->
+    console.log 'load'
+    init_websocket()
+
+    board.on 'message:echo', (data)->
+        console.log 'echo: ', data
 
 #--------------------------------------
 # display game
 
 window.init_map = (data)->
     window.map = data
-    map.step = map.step * 1000
-    map.dom = $('#map')
-    map.cell = cell = Math.floor(940/map.map_size[0])
-    map.dom.css('width', cell * map.map_size[0])
-    map.dom.css('height', cell * map.map_size[1])
 
     # show map info
     info = "<h2 id='map-name'>#{map.name}</h2>"
@@ -83,50 +94,13 @@ window.init_map = (data)->
     info += "<div id='map-desc'>#{map.desc}</div>"
     $('#map-info').html(info)
 
-    bonsai.run(map.dom[0],
-        width: cell * map.map_size[0],
-        height: cell * map.map_size[1],
-        code: -> window.draw_map(),
-        )
+    board.sendMessage('map', data)
 
-window.draw_map = ->
-    new Rect(10, 10, 100, 100).addTo(stage).attr('fillColor', 'green')
-    map = window.map
-    console.log 'xxx'
-    for p, i in map.planets
-        p.id = i
-        c = new Circle(p.pos[0] * cell, p.pos[1] * cell, cell/2 + 2,)
-        c.fill('green')
-        continue
-
-        $("<div id='planet_#{i}' planet_type='#{p.type || 'normal'}' class='cell planet planet-#{p.type}' style='margin:#{p.pos[1] * cell}px 0 0 #{p.pos[0] * cell}px'></div>").appendTo(map.dom)
-        p.dom = $('#planet_' + i)
-        p.dom.data('planet', i)
-        map.offest_size = $('#planet_0').width() if i == 0
-        def = []
-        _.times(Math.floor(p.def + 1), ->
-          def.push '⊙'
-        )
-        def = def.join ' '
-        res = []
-        _.times(Math.floor(p.res), ->
-          res.push '★'
-        )
-        res = res.join ' '
-        p.dom.after("<span class='planet_info' style='margin:#{p.pos[1] * cell - 16}px 0 0 #{p.pos[0] * cell - map.offest_size / 2}px'>⊙#{p.def} ★#{p.res} + #{p.cos}</span><span class='planet_info' style='margin:#{p.pos[1] * cell + map.offest_size + 4}px 0 0 #{p.pos[0] * cell - map.offest_size / 2}px'>≤#{p.max}</span>").next()
-        map.planets[i] = p
-
-
-    html = ["<svg style='width:100%;height:#{cell * map.map_size[1]}px;position:absolute'>"]
-    for r in map.routes
-        continue if r[0] > r[1]
-        from = $('#planet_' + r[0]).offset()
-        to = $('#planet_' + r[1]).offset()
-        html.push("<line x1='#{from.left + (map.offest_size / 2)}' y1='#{from.top + (map.offest_size / 2)}' x2='#{to.left + (map.offest_size / 2)}' y2='#{to.top + (map.offest_size / 2)}' style='stroke:#444;stroke-width:2px' stroke-dasharray='3,3' />")
-    html.push('</svg>')
-    $('body').prepend(html.join(''))
 
 window.update_info = (data)->
+    board.sendMessage('info', data)
+    return
+
     window.players = data.players
     return unless data.players
     players[0].color = '#EE2C44' if players[0]
@@ -193,9 +167,6 @@ window.update_info = (data)->
 
 #--------------------------------------
 # log
-ws.onerror = (e)->
-    console.log e if config.debug
-
 $('#logs').bind('log', (e, msg)->
     this.innerHTML = msg + this.innerHTML
 )
