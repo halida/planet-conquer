@@ -218,6 +218,6 @@ $('#show_logs').click ->
 
 #--------------------------------------
 # main
-onmusic_btn.click()
+# onmusic_btn.click()
 # onplay_btn.click()
 init_websocket()
