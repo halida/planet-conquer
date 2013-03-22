@@ -1,3 +1,4 @@
+/* line 3, index.css.sass */
 html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video {
   margin: 0;
   padding: 0;
@@ -8,6 +9,7 @@ html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockq
   font-size: 12px; }
 
 /* HTML5 display-role reset for older browsers */
+/* line 13, index.css.sass */
 article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section {
   display: block; }
 
@@ -20,55 +22,69 @@ article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, 
   font-family: "04B";
   src: url("/assets/04B.ttf"); }
 
+/* line 25, index.css.sass */
 html {
   min-width: 300px; }
 
+/* line 28, index.css.sass */
 body {
   line-height: 1;
   /* color: #0A667D */
   color: #99cccc; }
 
+/* line 33, index.css.sass */
 p {
   margin: 6px 0px; }
 
+/* line 36, index.css.sass */
 em {
   font-weight: bold; }
 
+/* line 39, index.css.sass */
 a {
   text-decoration: none;
   color: #0a667d;
   cursor: pointer; }
+  /* line 43, index.css.sass */
   a:hover {
     color: #37d8f9; }
 
+/* line 46, index.css.sass */
 ol, ul {
   list-style: none; }
 
+/* line 49, index.css.sass */
 blockquote, q {
   quotes: none; }
 
+/* line 53, index.css.sass */
 blockquote:before, blockquote:after {
   content: "";
   content: none; }
 
+/* line 58, index.css.sass */
 q:before, q:after {
   content: "";
   content: none; }
 
+/* line 62, index.css.sass */
 table {
   border-collapse: collapse;
   border-spacing: 0; }
 
 /*html */
+/* line 69, index.css.sass */
 body {
   background: #172137 url(../images/bg.gif);
   font-family: Arial, Helvetica, sans-serif;
   text-align: center; }
 
+/* line 74, index.css.sass */
 header {
   /* background: url(/assets/header_bg.png) repeat-x center */
   padding: 30px 0 0; }
 
+/* line 78, index.css.sass */
 #logo {
   display: block;
   height: 116px;
@@ -76,12 +92,14 @@ header {
   padding-top: 25px;
   width: 413px; }
 
+/* line 85, index.css.sass */
 #main {
   background: url(../images/main_bg.png);
   padding-top: 10px;
   width: 100%;
   text-align: left; }
 
+/* line 91, index.css.sass */
 #user_bar {
   max-width: 930px;
   margin: 0 auto 10px auto;
@@ -89,12 +107,14 @@ header {
   padding-right: 10px;
   color: #0a667d; }
 
+/* line 98, index.css.sass */
 #content {
   margin: 0 auto;
   width: 1068px;
   padding-bottom: 20px;
   display: table; }
 
+/* line 104, index.css.sass */
 h1 {
   font-family: "Lucida Grande", "Lucida Sans Unicode", Helvetica, Arial, Verdana, sans-serif;
   font-size: 13px;
@@ -102,6 +122,7 @@ h1 {
   /* color: #37D8F9 */
   padding-bottom: 5px; }
 
+/* line 111, index.css.sass */
 .info {
   -webkit-font-smoothing: antialiased;
   font-family: "Lucida Grande", "Lucida Sans Unicode", Helvetica, Arial, Verdana, sans-serif;
@@ -109,6 +130,7 @@ h1 {
   color: #0a667d;
   line-height: 1.5em; }
 
+/* line 118, index.css.sass */
 #place {
   margin: 0 auto;
   border-style: solid;
@@ -118,56 +140,82 @@ h1 {
   background: #040a19;
   width: 930px;
   opacity: 0.8; }
+  /* line 128, index.css.sass */
   #place .left_content {
     width: 659px;
     padding: 20px;
     border-style: solid;
     border-right: thick solid #07243a;
     border-right-width: 1px; }
+    /* line 136, index.css.sass */
     #place .left_content a:link, #place .left_content a:visited {
       color: #008abf;
       text-decoration: none; }
+    /* line 139, index.css.sass */
     #place .left_content a:hover {
       color: #00b4f7;
       text-decoration: underline; }
+    /* line 142, index.css.sass */
     #place .left_content a:active {
       color: #008abf;
       text-decoration: none; }
+  /* line 145, index.css.sass */
   #place .mini_title {
     border-style: solid;
     border-bottom: thick solid #07243a;
     border-bottom-width: 1px;
     padding-bottom: 10px; }
+  /* line 151, index.css.sass */
+  #place .challenge_info h2, #place .mini_title h2 {
+    color: white;
+    font-size: 13px;
+    margin-bottom: 10px; }
+  /* line 155, index.css.sass */
+  #place .challenge_info ul, #place .mini_title ul {
+    list-style-type: disc;
+    margin-left: 30px;
+    margin-bottom: 20px; }
+    /* line 159, index.css.sass */
+    #place .challenge_info ul li, #place .mini_title ul li {
+      margin-bottom: 3px; }
+  /* line 161, index.css.sass */
   #place .challenge_info {
     padding-top: 10px;
     font-size: 12px;
     line-height: 1.5em; }
+    /* line 165, index.css.sass */
     #place .challenge_info h1 {
       color: white; }
+  /* line 167, index.css.sass */
   #place .title_bar_l {
     height: 42px;
     border-style: solid;
     border-bottom: thick solid #07243a;
     border-bottom-width: 1px;
     width: 692px; }
+  /* line 173, index.css.sass */
   #place .right_nav {
     width: 100%;
     max-width: 230px;
     float: right;
     height: 100%; }
+    /* line 178, index.css.sass */
     #place .right_nav .title_bar_r {
       border-style: solid;
       border-bottom: thick solid #07243a;
       border-bottom-width: 1px;
       width: 232px; }
+  /* line 183, index.css.sass */
   #place .title_bar_r h1 {
     margin: 12px 0px 12px 12px; }
 
+/* line 186, index.css.sass */
 #room_icons {
   border-style: solid;
   border-bottom: thick solid #07243a;
   border-bottom-width: 1px;
   padding: 33px 3px 20px; }
+  /* line 191, index.css.sass */
   #room_icons .room_icon {
     margin-left: 20px;
     margin-bottom: 20px;
@@ -182,68 +230,89 @@ h1 {
     background-color: #11b734;
     text-align: center;
     color: white; }
+    /* line 201, index.css.sass */
     #room_icons .room_icon:hover {
       color: black; }
+    /* line 203, index.css.sass */
     #room_icons .room_icon .number, #room_icons .room_icon .room {
       text-align: center; }
+    /* line 206, index.css.sass */
     #room_icons .room_icon .number {
       font-size: 26px;
       font-weight: bold;
       padding-top: 10px; }
+    /* line 210, index.css.sass */
     #room_icons .room_icon .room {
       font-size: 10px;
       font-weight: bold; }
+  /* line 214, index.css.sass */
   #room_icons #room-0 {
     background-color: #11b734; }
+  /* line 216, index.css.sass */
   #room_icons #room-1 {
     background-color: #7f1995; }
+  /* line 218, index.css.sass */
   #room_icons #room-2 {
     background-color: #219fef; }
+  /* line 220, index.css.sass */
   #room_icons #room-3 {
     background-color: #f2590d; }
 
+/* line 223, index.css.sass */
 #game_replay {
   border-bottom: thick solid #07243a;
   border-bottom-width: 1px; }
+  /* line 226, index.css.sass */
   #game_replay ul {
     margin: 10px;
     list-style: square inside; }
+    /* line 229, index.css.sass */
     #game_replay ul li {
       line-height: 140%; }
+      /* line 231, index.css.sass */
       #game_replay ul li.more {
         text-align: right;
         list-style: none; }
 
+/* line 235, index.css.sass */
 #schedule {
   border: 1px solid;
   padding: 2px;
   text-align: center; }
+  /* line 239, index.css.sass */
   #schedule td {
     border: 1px solid;
     padding: 2px;
     text-align: center; }
 
+/* line 244, index.css.sass */
 #sponsor_icon {
   border-style: solid;
   border-bottom: thick solid #07243a;
   border-bottom-width: 1px; }
+  /* line 248, index.css.sass */
   #sponsor_icon .img {
     margin: 18px 0px 0px 25px; }
 
+/* line 251, index.css.sass */
 #sponsor, #follow .img, #twitter {
   margin: 18px 0px 18px 25px; }
 
+/* line 254, index.css.sass */
 #member_icon {
   margin: 10px auto 10px auto;
   width: 60px; }
+  /* line 257, index.css.sass */
   #member_icon img {
     padding-right: 10px;
     display: block;
     margin: 0 auto;
     width: 11px; }
 
+/* line 263, index.css.sass */
 footer {
   margin: 10px auto 0px auto; }
+  /* line 265, index.css.sass */
   footer #footer-desc {
     color: #6dcff6;
     font-family: "04B", Arial, Helvetica, sans-serif;
@@ -252,6 +321,7 @@ footer {
     line-height: 15px;
     text-align: center; }
 
+/* line 273, index.css.sass */
 .flash {
   z-index: 888;
   position: fixed;
@@ -264,23 +334,29 @@ footer {
   filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=90);
   opacity: 0.9; }
 
+/* line 284, index.css.sass */
 #flash_error {
   background: red;
   color: white; }
 
+/* line 288, index.css.sass */
 #flash_notice {
   background: yellow;
   color: black; }
 
+/* line 292, index.css.sass */
 ul#maps {
   color: white; }
 
 /*clear */
+/* line 297, index.css.sass */
 .clear {
   clear: both; }
 
+/* line 300, index.css.sass */
 #scoreboard-link {
   margin: 6px 0px; }
+  /* line 302, index.css.sass */
   #scoreboard-link a {
     margin-left: 23px;
     display: inline-block;
@@ -300,44 +376,55 @@ ul#maps {
     width: 150px;
     font-size: 12px;
     font-weight: bold; }
+    /* line 315, index.css.sass */
     #scoreboard-link a:active {
       -webkit-box-shadow: black 2px 2px 10px inset;
       -moz-box-shadow: black 2px 2px 10px inset;
       box-shadow: black 2px 2px 10px inset; }
+    /* line 317, index.css.sass */
     #scoreboard-link a:hover {
       color: black; }
 
+/* line 322, index.css.sass */
 #replays {
   margin: 20px; }
 
+/* line 325, index.css.sass */
 #scoreboard {
   margin: 20px auto;
   display: table; }
+  /* line 328, index.css.sass */
   #scoreboard .daily, #scoreboard .weekly, #scoreboard .monthly {
     display: inline-block;
     min-width: 250px;
     float: left;
     vertical-align: top;
     margin-bottom: 10px; }
+    /* line 334, index.css.sass */
     #scoreboard .daily th, #scoreboard .weekly th, #scoreboard .monthly th {
       min-width: 100px;
       height: 50px;
       font-size: 30px;
       text-align: center; }
+    /* line 339, index.css.sass */
     #scoreboard .daily td, #scoreboard .weekly td, #scoreboard .monthly td {
       min-width: 100px;
       font-size: 20px; }
+    /* line 342, index.css.sass */
     #scoreboard .daily td.name, #scoreboard .weekly td.name, #scoreboard .monthly td.name {
       color: #88db99;
       text-align: left; }
+    /* line 345, index.css.sass */
     #scoreboard .daily td.score, #scoreboard .weekly td.score, #scoreboard .monthly td.score {
       color: #a5c9e7;
       text-align: right; }
 
+/* line 349, index.css.sass */
 #logo-img {
   width: 100%;
   max-width: 413px; }
 
+/* line 353, index.css.sass */
 input[type=submit] {
   font-size: 12px;
   font-weight: bold;
@@ -356,19 +443,23 @@ input[type=submit] {
   text-align: center;
   filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=80);
   opacity: 0.8; }
+  /* line 366, index.css.sass */
   input[type=submit]:hover {
     filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=100);
     opacity: 1; }
+  /* line 368, index.css.sass */
   input[type=submit]:active {
     -webkit-box-shadow: black 2px 2px 10px inset;
     -moz-box-shadow: black 2px 2px 10px inset;
     box-shadow: black 2px 2px 10px inset; }
 
+/* line 371, index.css.sass */
 input[type=submit].on {
   -webkit-box-shadow: black 2px 2px 10px inset;
   -moz-box-shadow: black 2px 2px 10px inset;
   box-shadow: black 2px 2px 10px inset; }
 
+/* line 374, index.css.sass */
 select {
   font-size: 12px;
   cursor: pointer;
@@ -386,16 +477,20 @@ select {
   text-align: left;
   filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=80);
   opacity: 0.8; }
+  /* line 386, index.css.sass */
   select:hover {
     filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=100);
     opacity: 1; }
+  /* line 388, index.css.sass */
   select option {
     padding: 6px;
     background-color: #0f9fbc; }
 
+/* line 393, index.css.sass */
 select#maps, select#snake-type {
   min-width: 221px; }
 
+/* line 396, index.css.sass */
 input[type=text], input[type=password], input[type=email] {
   height: 24px;
   min-width: 200px;
@@ -407,6 +502,7 @@ input[type=text], input[type=password], input[type=email] {
   border-radius: 4px;
   padding-left: 4px; }
 
+/* line 403, index.css.sass */
 textarea {
   border: 1px solid #0f9fbc;
   -webkit-border-radius: 4px;
@@ -416,11 +512,14 @@ textarea {
   border-radius: 4px;
   padding-left: 4px; }
 
+/* line 408, index.css.sass */
 .clearfix {
   clear: both; }
 
+/* line 412, index.css.sass */
 .platform {
   float: left; }
+  /* line 415, index.css.sass */
   .platform .platform-img {
     float: left;
     width: 160px;
@@ -430,12 +529,15 @@ textarea {
     -o-border-radius: 5px;
     border-radius: 5px;
     border: 2px solid #0a3d5b; }
+    /* line 420, index.css.sass */
     .platform .platform-img:hover {
       border: 2px solid #00b4f7; }
+  /* line 422, index.css.sass */
   .platform .platform-desc {
     padding-left: 180px;
     padding-right: 10px; }
 
+/* line 426, index.css.sass */
 .platform-img-dialog {
   display: none;
   position: fixed;
@@ -450,13 +552,16 @@ textarea {
   border: 2px solid #0a3d5b;
   background: #040a19;
   z-index: 1000; }
+  /* line 436, index.css.sass */
   .platform-img-dialog.on {
     display: block;
     z-index: 500; }
+  /* line 439, index.css.sass */
   .platform-img-dialog .platform-img-big {
     padding: 0px;
     width: 600px; }
 
+/* line 443, index.css.sass */
 .dlg-close {
   position: absolute;
   right: 0px;
@@ -465,6 +570,7 @@ textarea {
   width: 9px;
   height: 9px; }
 
+/* line 451, index.css.sass */
 .hide-all {
   position: fixed;
   top: 0;
@@ -474,16 +580,19 @@ textarea {
   background: black;
   display: none;
   z-index: -3; }
+  /* line 460, index.css.sass */
   .hide-all.on {
     z-index: 100;
     filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=50);
     opacity: 0.5;
     display: block; }
 
+/* line 466, index.css.sass */
 .left_content {
   overflow: hidden;
   position: relative; }
 
+/* line 469, index.css.sass */
 .brainstorming {
   width: 132px;
   position: absolute;

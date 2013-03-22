@@ -1,44 +1,44 @@
 @import url(bootstrap.min.css);
 @-#{$name}-keyframes move {
-  /* line 9, new.css.sass */
+  /* line 9, svg_room.css.sass */
   0% {
     opacity: 1; }
 
-  /* line 11, new.css.sass */
+  /* line 11, svg_room.css.sass */
   50% {
     opacity: 0.6; }
 
-  /* line 13, new.css.sass */
+  /* line 13, svg_room.css.sass */
   100% {
     opacity: 1; } }
 
 @-#{$name}-keyframes move {
-  /* line 9, new.css.sass */
+  /* line 9, svg_room.css.sass */
   0% {
     opacity: 1; }
 
-  /* line 11, new.css.sass */
+  /* line 11, svg_room.css.sass */
   50% {
     opacity: 0.6; }
 
-  /* line 13, new.css.sass */
+  /* line 13, svg_room.css.sass */
   100% {
     opacity: 1; } }
 
 @-#{$name}-keyframes move {
-  /* line 9, new.css.sass */
+  /* line 9, svg_room.css.sass */
   0% {
     opacity: 1; }
 
-  /* line 11, new.css.sass */
+  /* line 11, svg_room.css.sass */
   50% {
     opacity: 0.6; }
 
-  /* line 13, new.css.sass */
+  /* line 13, svg_room.css.sass */
   100% {
     opacity: 1; } }
 
-/* line 16, new.css.sass */
+/* line 16, svg_room.css.sass */
 body {
   background: #13131f;
   /* background-image: url("/images/bg.jpg") */
@@ -47,12 +47,14 @@ body {
   /* background-repeat: no-repeat */
   /* background-color: $bg */ }
 
-/* line 24, new.css.sass */
+/* line 24, svg_room.css.sass */
 #map {
   width: 100%;
   overflow: hidden;
-  margin-top: 20px; }
-  /* line 29, new.css.sass */
+  margin: 20px auto 0 auto;
+  width: 800px;
+  height: 800px; }
+  /* line 31, svg_room.css.sass */
   #map .cell {
     overflow: hidden;
     position: absolute;
@@ -64,19 +66,19 @@ body {
     height: 42px;
     line-height: 42px;
     border: 2px solid transparent; }
-    /* line 40, new.css.sass */
+    /* line 42, svg_room.css.sass */
     #map .cell.planet, #map .cell.player_0, #map .cell.player_1, #map .cell.player_2, #map .cell.player_3 {
       -webkit-border-radius: 23px;
       -moz-border-radius: 23px;
       -ms-border-radius: 23px;
       -o-border-radius: 23px;
       border-radius: 23px; }
-  /* line 43, new.css.sass */
+  /* line 45, svg_room.css.sass */
   #map .planet {
     border-color: white;
     color: white;
     background: #13131f; }
-  /* line 52, new.css.sass */
+  /* line 54, svg_room.css.sass */
   #map .planet_info {
     position: absolute;
     display: block;
@@ -85,7 +87,7 @@ body {
     text-align: center;
     font-size: 11px;
     color: #888888; }
-  /* line 61, new.css.sass */
+  /* line 63, svg_room.css.sass */
   #map .move {
     position: absolute;
     overflow: hidden;
@@ -106,27 +108,27 @@ body {
     -ms-animation: move 1s infinite;
     pointer-events: none; }
 
-/* line 76, new.css.sass */
+/* line 78, svg_room.css.sass */
 .player_0 {
   background: #ee2c44;
   border-color: #f68a98; }
 
-/* line 80, new.css.sass */
+/* line 82, svg_room.css.sass */
 .player_1 {
   background: #42c3d9;
   border-color: #97deea; }
 
-/* line 84, new.css.sass */
+/* line 86, svg_room.css.sass */
 .player_2 {
   background: #e96fa9;
   border-color: #f7c7de; }
 
-/* line 88, new.css.sass */
+/* line 90, svg_room.css.sass */
 .player_3 {
   background: #a5cf4e;
   border-color: #cee59e; }
 
-/* line 92, new.css.sass */
+/* line 94, svg_room.css.sass */
 #sidebar {
   position: fixed;
   top: 0;
@@ -136,31 +138,31 @@ body {
   background: #13131f;
   filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=80);
   opacity: 0.8; }
-  /* line 100, new.css.sass */
+  /* line 102, svg_room.css.sass */
   #sidebar a {
     cursor: pointer;
     text-decoration: none; }
 
-/* line 106, new.css.sass */
+/* line 108, svg_room.css.sass */
 #about a {
   color: #888888; }
 
-/* line 109, new.css.sass */
+/* line 111, svg_room.css.sass */
 #top {
   width: 180px; }
-  /* line 112, new.css.sass */
+  /* line 114, svg_room.css.sass */
   #top div {
     border: 2px solid #444444;
     padding: 10px;
     margin-bottom: 10px; }
-  /* line 116, new.css.sass */
+  /* line 118, svg_room.css.sass */
   #top p {
     margin: 0;
     line-height: 200%; }
-  /* line 119, new.css.sass */
+  /* line 121, svg_room.css.sass */
   #top strong {
     font-size: 20px; }
-  /* line 121, new.css.sass */
+  /* line 123, svg_room.css.sass */
   #top span {
     position: absolute;
     margin: 66px 0 0 120px;
@@ -168,7 +170,7 @@ body {
     color: #444444;
     font-weight: bold; }
 
-/* line 128, new.css.sass */
+/* line 130, svg_room.css.sass */
 #logs {
   position: fixed;
   top: 0;
@@ -177,6 +179,6 @@ body {
   overflow-y: scroll;
   height: 100%;
   text-align: left; }
-  /* line 136, new.css.sass */
+  /* line 138, svg_room.css.sass */
   #logs p {
     margin-bottom: 3px; }

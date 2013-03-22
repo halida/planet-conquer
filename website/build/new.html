@@ -9,16 +9,27 @@
       <div id='map'></div>
     </div>
     <div id='sidebar'>
+      <div id='ctl'>
+        music:
+        <a id='music_play'>></a>
+        game:
+        <a id='game_play'>></a>
+      </div>
       <div id='map-info'></div>
       <h2 id='status'></h2>
       <div id='round'></div>
       <div id='top'></div>
       <div id='about'>
-        <a target="_blank" href="http://rubyvspython.org">rubyvspython.org</a>
+        <p>
+          <a id='show_logs'>> show logs</a>
+        </p>
+        <p>
+          <a target="_blank" href="http://rubyvspython.org">rubyvspython.org</a>
+        </p>
       </div>
     </div>
-    <div id='logs'></div>
-    <audio autoplay='autoplay' loop='loop' src='music/bg.ogg'></audio>
+    <div id='logs' style='display: none'></div>
+    <audio autoplay='autoplay' id='music' loop='loop' src='music/bg.mp3'></audio>
     <script src="javascripts/jquery.js" type="text/javascript"></script>
     <script src="javascripts/bootstrap.min.js" type="text/javascript"></script>
     <script src="javascripts/underscore-min.js" type="text/javascript"></script>

@@ -1,7 +1,7 @@
 (function() {
   var DUR, Game, GameShower, Recorder, SIZE, WS, create_svg, draw_circle, log, side_color,
-    __hasProp = Object.prototype.hasOwnProperty,
-    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
+    __hasProp = {}.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
   if (typeof MozWebSocket !== "undefined" && MozWebSocket !== null) {
     WS = MozWebSocket;
@@ -46,7 +46,9 @@
       console.log('set server:', this.addr, "with room: ", this.room);
       this.ws = new WS("ws://" + addr + "/info");
       this.ws.onmessage = this.proxy(function(e) {
-        if (!this.on_get_message) return;
+        if (!this.on_get_message) {
+          return;
+        }
         return Game.trigger("data", $.parseJSON(e.data));
       });
       this.ws.onerror = function(e) {
@@ -138,7 +140,9 @@
       _ref = this.info.moves;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         move = _ref[_i];
-        if (move[1] !== route[0] || move[2] !== route[1]) continue;
+        if (move[1] !== route[0] || move[2] !== route[1]) {
+          continue;
+        }
         moves.push(move);
       }
       return this.div_desc.html("            <div class=\"desc-route\">                step: " + route[2] + "                moves: " + moves + "            </div>            ");
@@ -155,12 +159,14 @@
           this.map = data;
           return this.update_map();
         default:
-          if (data.status !== 'ok') return console.log(data);
+          if (data.status !== 'ok') {
+            return console.log(data);
+          }
       }
     };
 
     GameShower.prototype.update_map = function() {
-      var div_planet, i, planet, _len, _ref, _results;
+      var div_planet, i, planet, _i, _len, _ref, _results;
       this.animate_time = this.map.step * 1000;
       this.div_scene.find('.planet').remove();
       this.div_scene.find('.move').remove();
@@ -176,7 +182,7 @@
       this.div_scene.height(SIZE * this.map.map_size[1]);
       _ref = this.map.planets;
       _results = [];
-      for (i = 0, _len = _ref.length; i < _len; i++) {
+      for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
         planet = _ref[i];
         div_planet = $("<div/>");
         div_planet.attr({
@@ -207,10 +213,10 @@
     };
 
     GameShower.prototype.update_holds = function(info) {
-      var div_planet, hold, i, _len, _ref, _results;
+      var div_planet, hold, i, _i, _len, _ref, _results;
       _ref = info.holds;
       _results = [];
-      for (i = 0, _len = _ref.length; i < _len; i++) {
+      for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
         hold = _ref[i];
         div_planet = this.div_planets[i];
         if (hold[0] !== null) {
@@ -224,14 +230,14 @@
     };
 
     GameShower.prototype.update_moves = function() {
-      var count, div_move, i, move, next, pos, remain, side, to, _from, _len, _ref, _ref2, _results;
+      var count, div_move, i, move, next, pos, remain, side, to, _from, _i, _len, _ref, _ref1, _results;
       this.div_scene.find('.move').remove();
       _ref = this.info.moves;
       _results = [];
-      for (i = 0, _len = _ref.length; i < _len; i++) {
+      for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
         move = _ref[i];
         side = move[0], _from = move[1], to = move[2], count = move[3], remain = move[4];
-        _ref2 = this.get_route_pos_and_next(_from, to, remain), pos = _ref2[0], next = _ref2[1];
+        _ref1 = this.get_route_pos_and_next(_from, to, remain), pos = _ref1[0], next = _ref1[1];
         div_move = $("<div/>");
         div_move.attr({
           id: "move-" + i,
@@ -262,15 +268,15 @@
     };
 
     GameShower.prototype.count_route_pos = function() {
-      var dx, dy, fx, fy, i, j, move_step, route, step, to, tx, ty, _from, _len, _ref, _ref2, _ref3, _ref4, _results;
+      var dx, dy, fx, fy, i, j, move_step, route, step, to, tx, ty, _from, _i, _j, _len, _ref, _ref1, _ref2, _ref3, _results;
       this.route_move_pos = {};
       _ref = this.map.routes;
       _results = [];
-      for (i = 0, _len = _ref.length; i < _len; i++) {
+      for (i = _i = 0, _len = _ref.length; _i < _len; i = ++_i) {
         route = _ref[i];
         _from = route[0], to = route[1], step = route[2];
-        _ref2 = this.map.planets[_from].pos, fx = _ref2[0], fy = _ref2[1];
-        _ref3 = this.map.planets[to].pos, tx = _ref3[0], ty = _ref3[1];
+        _ref1 = this.map.planets[_from].pos, fx = _ref1[0], fy = _ref1[1];
+        _ref2 = this.map.planets[to].pos, tx = _ref2[0], ty = _ref2[1];
         tx = tx * SIZE + SIZE / 2;
         ty = ty * SIZE + SIZE / 2;
         fx = fx * SIZE + SIZE / 2;
@@ -278,7 +284,7 @@
         dx = (tx - fx) / (step - 1);
         dy = (ty - fy) / (step - 1);
         move_step = [];
-        for (j = 0, _ref4 = step - 1; 0 <= _ref4 ? j <= _ref4 : j >= _ref4; 0 <= _ref4 ? j++ : j--) {
+        for (j = _j = 0, _ref3 = step - 1; 0 <= _ref3 ? _j <= _ref3 : _j >= _ref3; j = 0 <= _ref3 ? ++_j : --_j) {
           move_step.push([fx + dx * j, fy + dy * j]);
         }
         this.route_move_pos[to * 1000 + _from] = move_step;
@@ -288,10 +294,10 @@
     };
 
     GameShower.prototype.update_players = function() {
-      var data, i, list, player, player_data, _len, _len2;
+      var data, i, list, player, player_data, _i, _j, _len, _len1;
       data = [];
       list = this.info.players.slice();
-      for (i = 0, _len = list.length; i < _len; i++) {
+      for (i = _i = 0, _len = list.length; _i < _len; i = ++_i) {
         player = list[i];
         player.color = side_color(i);
       }
@@ -299,7 +305,7 @@
         return a.planets - b.planets;
       });
       list.reverse();
-      for (i = 0, _len2 = list.length; i < _len2; i++) {
+      for (i = _j = 0, _len1 = list.length; _j < _len1; i = ++_j) {
         player = list[i];
         player_data = ["" + player.side + " - " + player.name + " <div style='background: " + player.color + "' class='side-mark'/>", "planets: " + player.planets, "units: " + player.units, "" + player.status];
         data.push('<div class="player">' + player_data.join("<br/>") + '</div>');
@@ -308,7 +314,7 @@
     };
 
     GameShower.prototype.update_logs = function() {
-      var log, _i, _len, _ref;
+      var _i, _len, _ref;
       this.logs = ['<div class="log">------------ round: ' + this.info.round + '</div>'];
       _ref = this.info.logs;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -325,7 +331,9 @@
     };
 
     GameShower.prototype.display_battle = function(data) {
-      if (data.attack === data.defence) return;
+      if (data.attack === data.defence) {
+        return;
+      }
       return this.logs.push('<div class="log">' + ("planet: " + data.planet + ": player " + data.attack + " attack player " + data.defence + ".") + '</div>');
     };
 
@@ -377,8 +385,12 @@
     };
 
     Recorder.prototype.replay_timer = function() {
-      if (!this.on_replay) return;
-      if (this.data_list.length <= 0) return;
+      if (!this.on_replay) {
+        return;
+      }
+      if (this.data_list.length <= 0) {
+        return;
+      }
       Game.trigger("data", this.data_list[this.replay_on]);
       this.div_replay_on.html(this.replay_on);
       this.replay_on += 1;
@@ -387,7 +399,9 @@
     };
 
     Recorder.prototype.save_data = function(data) {
-      if (!this.on_record) return;
+      if (!this.on_record) {
+        return;
+      }
       this.data_list.push(data);
       return this.div_record_count.html(this.data_list.length);
     };

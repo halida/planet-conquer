@@ -13,53 +13,55 @@
       </meta>
     </meta>
   </head>
-  <body class='room_1'>
+  <body class='svg'>
     <div class='hide-all'></div>
     <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-    <html>
-      <head>
-        <title>New Room</title>
-        <link href="stylesheets/new.css" media="screen" rel="stylesheet" type="text/css" />
-      </head>
-      <body>
-        <div class='container'>
-          <div id='map'></div>
-        </div>
-        <div id='sidebar'>
-          <div id='ctl'>
-            music:
-            <a id='music_play'>></a>
-            game:
-            <a id='game_play'>></a>
-          </div>
-          <div id='map-info'></div>
-          <h2 id='status'></h2>
-          <div id='round'></div>
-          <div id='top'></div>
-          <div id='about'>
-            <p>
-              <a id='show_logs'>> show logs</a>
-            </p>
-            <p>
-              <a target="_blank" href="http://rubyvspython.org">rubyvspython.org</a>
-            </p>
-          </div>
-        </div>
-        <div id='logs' style='display: none'></div>
-        <audio autoplay='autoplay' id='music' loop='loop' src='music/bg.mp3'></audio>
-        <script src="javascripts/jquery.js" type="text/javascript"></script>
-        <script src="javascripts/bootstrap.min.js" type="text/javascript"></script>
-        <script src="javascripts/underscore-min.js" type="text/javascript"></script>
-        <script>
-    config = {
-      addr: '127.0.0.1:9999',
-      room: 1,
-      debug: true
-    }
-        </script>
-        <script src="javascripts/new.js" type="text/javascript"></script>
-      </body>
-    </html>
+<html>
+  <head>
+    <title>New Room</title>
+    <link href="stylesheets/svg_room.css" media="screen" rel="stylesheet" type="text/css" />
+  </head>
+  <body>
+    <div class='container'>
+      <div id='map'></div>
+    </div>
+    <div id='sidebar'>
+      <div id='ctl'>
+        music:
+        <a id='music_play'>></a>
+        game:
+        <a id='game_play'>></a>
+      </div>
+      <div id='map-info'></div>
+      <h2 id='status'></h2>
+      <div id='round'></div>
+      <div id='top'></div>
+      <div id='about'>
+        <p>
+          <a id='show_logs'>> show logs</a>
+        </p>
+        <p>
+          <a target="_blank" href="http://rubyvspython.org">rubyvspython.org</a>
+        </p>
+      </div>
+    </div>
+    <div id='logs' style='display: none'></div>
+    <audio autoplay='autoplay' id='music' loop='loop' src='music/bg.mp3'></audio>
+    <script src="javascripts/jquery.js" type="text/javascript"></script>
+    <script src="javascripts/bootstrap.min.js" type="text/javascript"></script>
+    <script src="javascripts/underscore-min.js" type="text/javascript"></script>
+    <script src="javascripts/raphael-min.js" type="text/javascript"></script>
+    <script>
+config = {
+  addr: '',
+  room: ,
+  debug: true,
+  code_url: 'javascripts/svg_code.js'
+}
+    </script>
+    <script src="javascripts/svg_room.js" type="text/javascript"></script>
+  </body>
+</html>
   </body>
   
   <script type='text/javascript'>

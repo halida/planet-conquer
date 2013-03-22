@@ -1,8 +1,10 @@
+/* line 10, room.css.sass */
 #board-head-outter {
   position: fixed;
   top: 0px;
   width: 100%;
   z-index: 100; }
+  /* line 14, room.css.sass */
   #board-head-outter #board-head {
     width: 800px;
     height: 60px;
@@ -11,16 +13,13 @@
     padding: 0px 10px 10px;
     -moz-border-radius-bottomleft: 5px;
     -webkit-border-bottom-left-radius: 5px;
-    -ms-border-bottom-left-radius: 5px;
-    -o-border-bottom-left-radius: 5px;
     border-bottom-left-radius: 5px;
     -moz-border-radius-bottomright: 5px;
     -webkit-border-bottom-right-radius: 5px;
-    -ms-border-bottom-right-radius: 5px;
-    -o-border-bottom-right-radius: 5px;
     border-bottom-right-radius: 5px;
     line-height: 20px; }
 
+/* line 24, room.css.sass */
 #board-scene {
   margin: 100px auto 20px;
   padding: 20px;
@@ -30,61 +29,58 @@
   position: relative;
   -moz-border-radius-topleft: 5px;
   -webkit-border-top-left-radius: 5px;
-  -ms-border-top-left-radius: 5px;
-  -o-border-top-left-radius: 5px;
   border-top-left-radius: 5px;
   -moz-border-radius-topright: 5px;
   -webkit-border-top-right-radius: 5px;
-  -ms-border-top-right-radius: 5px;
-  -o-border-top-right-radius: 5px;
   border-top-right-radius: 5px;
   z-index: 30; }
 
+/* line 34, room.css.sass */
 #board-side-left {
   left: 0px; }
+  /* line 36, room.css.sass */
   #board-side-left .side-block {
     -moz-border-radius-topright: 5px;
     -webkit-border-top-right-radius: 5px;
-    -ms-border-top-right-radius: 5px;
-    -o-border-top-right-radius: 5px;
     border-top-right-radius: 5px;
     -moz-border-radius-bottomright: 5px;
     -webkit-border-bottom-right-radius: 5px;
-    -ms-border-bottom-right-radius: 5px;
-    -o-border-bottom-right-radius: 5px;
     border-bottom-right-radius: 5px; }
 
+/* line 38, room.css.sass */
 #board-side-right {
   right: 0px; }
+  /* line 40, room.css.sass */
   #board-side-right .side-block {
     -moz-border-radius-topleft: 5px;
     -webkit-border-top-left-radius: 5px;
-    -ms-border-top-left-radius: 5px;
-    -o-border-top-left-radius: 5px;
     border-top-left-radius: 5px;
     -moz-border-radius-bottomleft: 5px;
     -webkit-border-bottom-left-radius: 5px;
-    -ms-border-bottom-left-radius: 5px;
-    -o-border-bottom-left-radius: 5px;
     border-bottom-left-radius: 5px; }
 
+/* line 43, room.css.sass */
 #board-side-left, #board-side-right {
   position: fixed;
   top: 100px;
   width: 300px; }
+  /* line 47, room.css.sass */
   #board-side-left .side-block, #board-side-right .side-block {
     background: #aaaaaa;
     padding: 10px;
     line-height: 20px;
     margin-bottom: 20px; }
+  /* line 53, room.css.sass */
   #board-side-left #logs, #board-side-right #logs {
     overflow-y: scroll;
     height: 200px; }
 
+/* line 57, room.css.sass */
 .planet, .move {
   position: absolute;
   font-size: 10px; }
 
+/* line 61, room.css.sass */
 .move {
   width: 16px;
   height: 16px;
@@ -92,6 +88,7 @@
   background: #cccccc;
   text-align: center; }
 
+/* line 69, room.css.sass */
 .planet {
   width: 26px;
   height: 21px;
@@ -104,6 +101,7 @@
   border-radius: 18px;
   background: #cccccc; }
 
+/* line 80, room.css.sass */
 .btn {
   font-size: 12px;
   cursor: pointer;
@@ -120,12 +118,15 @@
   opacity: 0.8;
   font-weight: bold;
   border: 3px solid #62626b; }
+  /* line 91, room.css.sass */
   .btn:hover, .btn.on {
     filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=100);
     opacity: 1; }
+  /* line 93, room.css.sass */
   .btn.on {
     border: 3px solid #f10606; }
 
+/* line 98, room.css.sass */
 .player .side-mark, .desc-holds .side-mark {
   float: right;
   width: 10px;
