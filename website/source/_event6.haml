@@ -1,0 +1,100 @@
+:css
+  .mini_title{line-height: 16px}
+
+.mini_title
+
+  %h2 Latest News
+  %p
+    We are looking for volunteers to develop the 2013 contest platform! 
+    <br/>
+    If you are interested in that, please feel free to <a href="mailto: mike@gurudigger.com">contact us</a>.
+
+.challenge_info
+
+  %h2 About Us
+  %p PythonVSRuby (Or RubyVSPython) was founded on 2011. We are an organization concentrate on better technical exchange between the engineers who use python or ruby. We hope under our work, more python engineers could know ruby and vice versa.
+  %p We are a little bit boring of the regular "lecture" way for the technical exchange. Let alone the endless and meaningless argument for which one is the best language.
+  %p We like coding. So we want to do that with coding. If it will be an interesting "contest", that will be perfect.
+  %p So every year,  we will come together as volunteers and develop a new platform for the Python and Ruby fans where could "play" on for a year and even longer.  And also every year, we will organize 3 events:
+
+  %p
+    %ul
+      %li Spring - New platform "celebrating" contest.
+      %li Summer - Making a sprint of the platform by a hackathon.
+      %li Winter - Final contest of the year.
+
+  %h2 FAQ
+
+  %p
+    Q. Why there is only ruby and python, no other language?<br/>
+    A. Because we really love them. :)
+
+  %p
+    Q. I really don't like to argue for which language is better.....<br/>
+    A.  Sorry, we don't like that either.
+
+  %p
+    Q. Why you build a contest platform which basically I need to write an AI by using Ruby and Python?<br/>
+    A.  We guess most of the people who come to "play" know one language but not the other. So we design that on purpose. As for writing an AI, it is the best way to get something start with a new language. You don't need to put a lot of time and could work something out. You could use that to take a try for another language.  And writing an AI is interesting, you don't think so? :-)
+
+  %p{style: 'margin-bottom: 30px'}
+    Q. Why the name is RubyVsPython not PythonVSRuby?<br/>
+    A. The winner of the final contest on every year will decide the name for next year. 
+
+  %h2 Contest Platform
+
+  .platform{platform_id: 1}
+    = image_tag "Planet_Conquer_thumbnail.jpg", class: "platform-img"
+    .platform-desc
+      %p= link_to "Planet Conquer", "https://github.com/halida/planet-conquer/wiki", target: "_blank"
+      %p Year: 2012
+      %p Winner: Liu Cheng
+
+
+  .platform{platform_id: 2}
+    = image_tag "Snake_Challenge_thumbnail.jpg", class: "platform-img"
+    .platform-desc
+      %p= link_to "Snake Challege", "https://github.com/halida/snake-challenge/wiki", target: "_blank"
+      %p Year: 2011
+      %p Winner: Lu Jun
+
+  .clearfix  
+
+- content_for :javascripts do
+  .platform-img-dialog{platform_id: 1}
+    = image_tag "close.png", class: "dlg-close"
+    = image_tag "Planet_Conquer_Big.jpg", class: "platform-img-big"      
+  .platform-img-dialog{platform_id: 2}
+    = image_tag "close.png", class: "dlg-close"
+    = image_tag "Snake_Challenge_Big.jpg", class: "platform-img-big"      
+
+  :coffeescript
+    show_dlg = (dlg)->
+      dlg = $(dlg)
+
+      left = $(window).width() - $(dlg).width()
+      left /= 2
+      top = $(window).height() - $(dlg).height()
+      top /= 2
+      dlg.css('left', left)
+      dlg.css('top', top)
+
+      dlg.toggleClass('on')
+      $('.hide-all').toggleClass('on')
+
+    $('.platform-img').click ()->
+      parent = $($(this).parent())
+      platform_id = parent.attr('platform_id')
+      show_dlg ".platform-img-dialog[platform_id="+platform_id+"]"
+  
+    $('.platform-img-dialog').click ()->
+      $(this).toggleClass('on')
+      $('.hide-all').toggleClass('on')
+  
+    close_all = (e)->
+      $('.hide-all').removeClass('on')
+      $('.platform-img-dialog').removeClass('on')
+      e.preventDefault()
+
+    $('.hide-all').click close_all
+  
