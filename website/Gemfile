@@ -3,3 +3,4 @@ source 'http://ruby.taobao.org/'
 gem "middleman", "~>3.0.6"
 gem 'coffee-filter'
 gem 'therubyracer'
+gem 'libv8'
